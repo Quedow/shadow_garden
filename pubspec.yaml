@@ -1,0 +1,37 @@
+name: shadow_garden
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.2.6 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  provider: ^6.1.1
+  audio_video_progress_bar: ^2.0.1
+  just_audio: ^0.9.36
+  just_audio_background: ^0.0.1-beta.11
+  rxdart: ^0.27.7
+  audio_session: ^0.1.18
+  permission_handler: ^11.2.0
+  lottie: ^3.0.0
+  marquee: ^2.2.3
+  metadata_god: ^0.5.2+1
+  on_audio_query: ^2.9.0
+  # carousel_slider: ^4.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/audios/
+    - assets/images/
+    - assets/icons/
+    - assets/data/audio_songs.json

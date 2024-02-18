@@ -1,0 +1,52 @@
+[
+    {
+        "id" : 0,
+        "title" : "Four Seasons",
+        "artist" : "Vivaldi",
+        "album": "The album",
+        "url" : "assets/audios/1.mp3",
+        "image" : "assets/images/1.jpg"
+    },
+    {
+        "id" : 1,
+        "title" : "Turkish March",
+        "artist" : "Mozart",
+        "url" : "assets/audios/2.mp3",
+        "image" : "assets/images/2.jpg"
+    },
+    {
+        "id" : 2,
+        "title" : "Für Elise",
+        "artist" : "Beethoven",
+        "url" : "assets/audios/3.mp3",
+        "image" : "assets/images/3.jpg"
+    },
+    {
+        "id" : 3,
+        "title" : "Nocturne op.9 No.2",
+        "artist" : "Chopin",
+        "url" : "assets/audios/4.mp3",
+        "image" : "assets/images/4.jpg"
+    },
+    {
+        "id" : 4,
+        "title" : "Canon",
+        "artist" : "Johann Pachelbel",
+        "url" : "assets/audios/5.mp3",
+        "image" : "assets/images/5.jpg"
+    },
+    {
+        "id" : 5,
+        "title" : "Jingle Bells",
+        "artist" : "J.L. Pierpont",
+        "url" : "assets/audios/6.mp3",
+        "image" : "assets/images/6.jpg"
+    },
+    {
+        "id" : 6,
+        "title" : "Minuet in G",
+        "artist" : "J.S. Bach",
+        "url" : "assets/audios/7.mp3",
+        "image" : "assets/images/7.jpg"
+    }
+]
