@@ -12,7 +12,7 @@ class AudioProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<PositionData>(
       stream: _positionDataStream,
       builder: (context, snapshot) {
         final positionData = snapshot.data;

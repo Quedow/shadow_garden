@@ -10,7 +10,7 @@ abstract class Functions {
     await audioPlayer.setLoopMode(LoopMode.all);
     bool audioSongsFound = await audioProvider.fetchAudioSongs();
     if (audioSongsFound) {
-      await audioPlayer.setAudioSource(audioProvider.playlists, initialIndex: 0);
+      await audioPlayer.setAudioSource(audioProvider.playlist, initialIndex: 0);
     }
   }
 
@@ -28,14 +28,15 @@ abstract class Functions {
   }
 
   static void onTrackLongPress(AudioProvider audioProvider, AudioPlayer audioPlayer, BuildContext context, int index) {
-    audioProvider.playlists.move(index, (audioPlayer.currentIndex ?? 0) + 1);
+    audioProvider.playlist.move(index, (audioPlayer.currentIndex ?? 0) + 1);
     
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Add to next song'), backgroundColor: ThemeColors.secondaryColor, behavior: SnackBarBehavior.floating, duration: Duration(seconds: 2))
     );
   }
 
-  static void onSortBtnTap(AudioPlayer audioPlayer) {
-    audioPlayer.setShuffleModeEnabled(true);
+  static Future<void> updatePlaylist(AudioProvider audioProvider, AudioPlayer audioPlayer) async {
+    audioProvider.setPlaylist();
+    await audioPlayer.setAudioSource(audioProvider.playlist, initialIndex: 0);
   }
 }

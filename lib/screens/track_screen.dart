@@ -21,9 +21,7 @@ class TrackBanner extends StatelessWidget {
     final int currentIndex = audioPlayer.currentIndex ?? 0;
     final MediaItem? currentMetadata = sequenceState?.sequence[currentIndex].tag;
 
-    if (currentMetadata == null) {
-      return const SizedBox.shrink();
-    }
+    if (currentMetadata == null) { return const SizedBox.shrink(); }
 
     return GestureDetector(
       onTap: () {
@@ -33,11 +31,14 @@ class TrackBanner extends StatelessWidget {
           context: context,
           enableDrag: true,
           builder: (BuildContext context) {
-            return StreamBuilder<SequenceState?>(
-              stream: audioPlayer.sequenceStateStream,
+            // return StreamBuilder<SequenceState?>(
+            return StreamBuilder<int?>(
+              // stream: audioPlayer.sequenceStateStream,
+              stream: audioPlayer.currentIndexStream,
               builder: (context, snapshot) {
-                final SequenceState? sequenceState = snapshot.data;
-                final int currentIndex = audioPlayer.currentIndex ?? 0;
+                // final SequenceState? sequenceState = snapshot.data;
+                // final int currentIndex = audioPlayer.currentIndex ?? 0;
+                final int currentIndex = snapshot.data ?? 0;
                 final MediaItem? currentMetadata = sequenceState?.sequence[currentIndex].tag;
 
                 if (currentMetadata == null) { return const SizedBox.shrink(); }
@@ -50,11 +51,14 @@ class TrackBanner extends StatelessWidget {
       },
       child: Container(
         decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.white, width: 1.0))),
-        child: StreamBuilder<SequenceState?>(
-          stream: audioPlayer.sequenceStateStream,
+        // return StreamBuilder<SequenceState?>(
+        child: StreamBuilder<int?>(
+          // stream: audioPlayer.sequenceStateStream,
+          stream: audioPlayer.currentIndexStream,
           builder: (context, snapshot) {
-            final SequenceState? sequenceState = snapshot.data;
-            final int currentIndex = audioPlayer.currentIndex ?? 0;
+            // final SequenceState? sequenceState = snapshot.data;
+            // final int currentIndex = audioPlayer.currentIndex ?? 0;
+            final int currentIndex = snapshot.data ?? 0;
             final MediaItem? currentMetadata = sequenceState?.sequence[currentIndex].tag;
 
             if (currentMetadata == null) { return const SizedBox.shrink(); }
