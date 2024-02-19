@@ -29,6 +29,7 @@ class AudioProvider extends ChangeNotifier {
         orderType: OrderType.ASC_OR_SMALLER,
         sortType: SongSortType.TITLE,
         ignoreCase: true,
+        path: "/storage/emulated/0/Music"
       );
 
       if(_songs.isEmpty) { return false; }
