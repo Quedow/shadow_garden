@@ -75,7 +75,7 @@ class TrackBanner extends StatelessWidget {
     const double playBtnWidth = 50;
     final double availableWidth = screenWidth - (imgWidth - playBtnWidth)/2;
 
-    return Container(
+    return Container( 
       width: screenWidth,
       color: ThemeColors.backgroundOled,
       child: ListTile(
