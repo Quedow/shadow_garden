@@ -1,8 +1,13 @@
+// import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
+// import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
-import 'package:shadow_garden/utils/functions.dart';
+import 'package:numberpicker/numberpicker.dart';
+// import 'package:shadow_garden/utils/functions.dart';
 
 class Controls extends StatelessWidget {
   final AudioPlayer audioPlayer;
@@ -73,35 +78,116 @@ class PlayButton extends StatelessWidget {
   }
 }
 
-class LoopButton extends StatelessWidget {
-  final AudioPlayer audioPlayer;
+// class LoopButton extends StatefulWidget {
+//   final AudioPlayer audioPlayer;
+//   final int n; // Number of songs to repeat in custom loop mode
 
+//   const LoopButton({Key? key, required this.audioPlayer, this.n = 2}) : super(key: key);
+
+//   @override
+//   _LoopButtonState createState() => _LoopButtonState();
+// }
+
+// class _LoopButtonState extends State<LoopButton> { 
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     widget.audioPlayer.positionDiscontinuityStream.listen((discontinuity) {
+//       if (discontinuity.reason == PositionDiscontinuityReason.autoAdvance) {
+//         print("new song______________________________4");  
+//       }
+//     });
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return StreamBuilder<LoopMode>(
+//       stream: widget.audioPlayer.loopModeStream,
+//       builder: (context, snapshot) {
+//         final LoopMode loopMode = snapshot.data ?? LoopMode.all;
+
+//         if (loopMode == LoopMode.off) {
+//           return IconButton(
+//             onPressed: () => widget.audioPlayer.setLoopMode(LoopMode.all),
+//             iconSize: IconSizes.iconBtnSize,
+//             color: ThemeColors.primaryColor,
+//             icon: Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor.withOpacity(0.5)),
+//           );
+//         } else if (loopMode == LoopMode.all) {
+//           return IconButton(
+//             onPressed: () => widget.audioPlayer.setLoopMode(LoopMode.one),
+//             iconSize: IconSizes.iconBtnSize,
+//             color: ThemeColors.primaryColor,
+//             icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor),
+//           );
+//         } else if (loopMode == LoopMode.one) {
+//           return IconButton(
+//             onPressed: () => widget.audioPlayer.setLoopMode(LoopMode.off), // We'll handle the looping manually
+//             iconSize: IconSizes.iconBtnSize,
+//             color: ThemeColors.primaryColor,
+//             icon: const Icon(Icons.repeat_one_rounded, color: ThemeColors.primaryColor),
+//           );
+//         } else {
+//           return IconButton(
+//             onPressed: () => widget.audioPlayer.setLoopMode(LoopMode.off),
+//             iconSize: IconSizes.iconBtnSize,
+//             color: ThemeColors.primaryColor,
+//             icon: const Icon(Icons.repeat_one_rounded, color: ThemeColors.primaryColor),
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
+
+// class LoopButton extends StatelessWidget {
+//   final AudioPlayer audioPlayer;
+
+//   const LoopButton({Key? key, required this.audioPlayer}) : super(key: key);
+
+class LoopButton extends StatefulWidget {
+  final AudioPlayer audioPlayer;
+  
   const LoopButton({Key? key, required this.audioPlayer}) : super(key: key);
+
+  @override
+  State<LoopButton> createState() => _LoopButtonState();
+}
+
+class _LoopButtonState extends State<LoopButton> {
+  late AudioProvider _audioProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioProvider = Provider.of<AudioProvider>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<LoopMode>(
-      stream: audioPlayer.loopModeStream,
+      stream: widget.audioPlayer.loopModeStream,
       builder: (context, snapshot) {
         final LoopMode loopMode = snapshot.data ?? LoopMode.all;
 
         if (loopMode == LoopMode.off) {
           return IconButton(
-            onPressed: () => audioPlayer.setLoopMode(LoopMode.all),
+            onPressed: () => customLoopMode(),
             iconSize: IconSizes.iconBtnSize,
             color: ThemeColors.primaryColor,
             icon: Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor.withOpacity(0.5)),
           );
         } else if (loopMode == LoopMode.all) {
             return IconButton(
-              onPressed: () => audioPlayer.setLoopMode(LoopMode.one),
+              onPressed: () => widget.audioPlayer.setLoopMode(LoopMode.one),
               iconSize: IconSizes.iconBtnSize,
               color: ThemeColors.primaryColor,
               icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor),
             );
         }
         return IconButton(
-          onPressed: () => audioPlayer.setLoopMode(LoopMode.off),
+          onPressed: () => widget.audioPlayer.setLoopMode(LoopMode.off),
           iconSize: IconSizes.iconBtnSize,
           color: ThemeColors.primaryColor,
           icon: const Icon(Icons.repeat_one_rounded, color: ThemeColors.primaryColor),
@@ -109,53 +195,22 @@ class LoopButton extends StatelessWidget {
       }
     );
   }
-}
 
-class SortButton extends StatefulWidget {
-  final AudioPlayer audioPlayer;
-  final AudioProvider audioProvider;
-
-  const SortButton({super.key, required this.audioPlayer, required this.audioProvider});
-
-  @override
-  SortButtonState createState() => SortButtonState();
-}
-
-class SortButtonState extends State<SortButton> {
-  int _state = 0;
-  final int _totalState = 5;
-
-  void _handleTap() {
-    AudioPlayer audioPlayer = widget.audioPlayer;
-    AudioProvider audioProvider = widget.audioProvider;
-
-    setState(() {
-      _state = (_state + 1) % _totalState;
-      switch(_state) {
-        case 0:
-          audioProvider.songs.sort((a, b) => a.title.compareTo(b.title));
-          break;
-        case 1:
-          audioProvider.songs.sort((a, b) => (a.album ?? '').compareTo(b.album ?? ''));
-          break;
-        case 2:
-          audioProvider.songs.sort((a, b) => (a.artist ?? '').compareTo(b.artist ?? ''));
-          break;
-        case 3:
-          audioProvider.songs.shuffle();
-          break;
-        case 4:
-          audioProvider.songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
-          break;
-      }
-      Functions.updatePlaylist(audioProvider, audioPlayer);
-    });
+  void customLoopMode() {
+    widget.audioPlayer.setLoopMode(LoopMode.all);
+    _audioProvider.setCustomLoop(widget.audioPlayer.currentIndex ?? 0, 3, widget.audioPlayer);
   }
+}
+
+class SortButtonIcon extends StatelessWidget {
+  final int state;
+
+  const SortButtonIcon({Key? key, required this.state}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     late IconData icon;
-    switch (_state) {
+    switch (state) {
       case 0:
         icon = Icons.music_note_rounded;
         break;
@@ -172,9 +227,6 @@ class SortButtonState extends State<SortButton> {
         icon = Icons.calendar_today_rounded;
         break;
     }
-    return IconButton(
-      icon: Icon(icon),
-      onPressed: _handleTap,
-    );
+    return Icon(icon);
   }
 }

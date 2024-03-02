@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
-import 'package:shadow_garden/screens/home_screen.dart';
 import 'package:provider/provider.dart';
+// import 'package:shadow_garden/screens/home_screen.dart';
+import 'package:shadow_garden/screens/songs_screen.dart';
+// import 'package:shadow_garden/screens/songs_screen.dart';
 
 Future<void> main() async {
   await JustAudioBackground.init(
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: HomeScreen(),
+      home: SongsScreen(),
       debugShowCheckedModeBanner: false
     );
   }

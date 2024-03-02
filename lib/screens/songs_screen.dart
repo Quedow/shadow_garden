@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
@@ -11,17 +11,18 @@ import 'package:shadow_garden/widgets/playing_animation.dart';
 // import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class SongsScreen extends StatefulWidget {
+  const SongsScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<SongsScreen> createState() => _SongsScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _SongsScreenState extends State<SongsScreen> {
   late AudioPlayer _audioPlayer;
   late AudioProvider _audioProvider;
   bool isPlaying = true;
+  int currentIndex = 0;
 
   int _state = 0;
   final int _totalState = 5;
@@ -47,7 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void sortSongs() {
-    _state = (_state + 1) % _totalState;
+    setState(() {
+      _state = (_state + 1) % _totalState;
+    });
     _audioProvider.sortSongs(true, _state, _audioPlayer);
   }
 
@@ -65,30 +68,32 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder<SequenceState?>(
-              stream: _audioPlayer.sequenceStateStream,
-              builder: (context, snapshot) {
-                final SequenceState? state = snapshot.data;
-                
-                if (state?.sequence.isEmpty ?? true) {
+            child: StreamBuilder<int?>(
+              stream: _audioPlayer.currentIndexStream,
+              builder: (context, snapshot) {           
+                if (_audioProvider.songs.isEmpty) {
                   return const Center(child: Text('No music found...', style: TextStyle(color: ThemeColors.primaryColor)));
                 } else {
-                  final int playlistLength = state!.sequence.length;
-                  
                   return ListView.builder(
-                    itemCount: playlistLength,
+                    itemCount: _audioProvider.songs.length,
                     itemBuilder: (context, index) {
-                      final MediaItem metadata = state.sequence[index].tag;
-                      final bool isCurrentItem = _audioPlayer.currentIndex == index;
+                      final SongModel metadata = _audioProvider.songs[index];
+                      // final int currentAudioId = int.parse(_audioPlayer.sequence?[_audioPlayer.currentIndex ?? 0].tag.id);
+                      // final int currentSongIndex = _audioProvider.songs.indexWhere((song) => song.id == currentAudioId);
+                      // final bool isCurrentSong = currentSongIndex == index;
+
+                      // final int currentAudioId = int.parse(_audioPlayer.sequence?[_audioPlayer.currentIndex ?? 0].tag.id);
+                      final int currentAudioId = int.parse(_audioPlayer.sequence?[snapshot.data ?? 0].tag.id);
+                      final SongModel currentSong = _audioProvider.songs.firstWhere((song) => song.id == currentAudioId);
+                      final bool isCurrentSong = currentSong == metadata;
 
                       return ListTile(
-                        onTap: () => Functions.onTap(_audioPlayer, isPlaying, isCurrentItem, index),
+                        onTap: () => Functions.onTap(_audioPlayer, isPlaying, isCurrentSong, index),
                         onLongPress: () => Functions.onLongPress(_audioProvider, _audioPlayer, context, index),
                         leading: Text('${index + 1}', style: Styles.audioLeadingTextStyle),
-                        // leading: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkFit: BoxFit.cover, artworkBorder: BorderRadius.circular(5.0)),
-                        title: TitleText(title: metadata.title, textStyle: Styles.trackHomeTitle(isCurrentItem)),
+                        title: TitleText(title: metadata.title, textStyle: Styles.trackHomeTitle(isCurrentSong)),
                         subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.trackPageSubtitle),
-                        trailing: PlayingAnimation(isCurrentSong: isCurrentItem, isPlaying: isPlaying),
+                        trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: isPlaying),
                         iconColor: ThemeColors.primaryColor,
                       );
                     }

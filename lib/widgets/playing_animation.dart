@@ -3,14 +3,14 @@ import 'package:lottie/lottie.dart';
 import 'package:shadow_garden/style/style.dart';
 
 class PlayingAnimation extends StatelessWidget {
-  final bool isCurrentItem;
+  final bool isCurrentSong;
   final bool isPlaying;
 
-  const PlayingAnimation({super.key, required this.isCurrentItem, required this.isPlaying});
+  const PlayingAnimation({super.key, required this.isCurrentSong, required this.isPlaying});
 
   @override
   Widget build(BuildContext context) {
-    if (isCurrentItem) {
+    if (isCurrentSong) {
       if (isPlaying) {
         return ColorFiltered(
           colorFilter: const ColorFilter.mode(ThemeColors.accentColor, BlendMode.srcATop),

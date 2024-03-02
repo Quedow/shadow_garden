@@ -27,16 +27,11 @@ abstract class Functions {
     }
   }
 
-  static void onTrackLongPress(AudioProvider audioProvider, AudioPlayer audioPlayer, BuildContext context, int index) {
+  static void onLongPress(AudioProvider audioProvider, AudioPlayer audioPlayer, BuildContext context, int index) {
     audioProvider.playlist.move(index, (audioPlayer.currentIndex ?? 0) + 1);
     
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Add to next song'), backgroundColor: ThemeColors.secondaryColor, behavior: SnackBarBehavior.floating, duration: Duration(seconds: 2))
     );
-  }
-
-  static Future<void> updatePlaylist(AudioProvider audioProvider, AudioPlayer audioPlayer) async {
-    audioProvider.setPlaylist();
-    await audioPlayer.setAudioSource(audioProvider.playlist, initialIndex: 0);
   }
 }

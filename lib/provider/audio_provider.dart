@@ -12,6 +12,9 @@ class AudioProvider extends ChangeNotifier {
   List<SongModel> _songs = [];
   List<SongModel> get songs => _songs;
 
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  AudioPlayer get audioPlayer => _audioPlayer;
+
   Future<bool> fetchAudioSongs() async {
     isLoading = true;
     notifyListeners();
@@ -58,5 +61,49 @@ class AudioProvider extends ChangeNotifier {
         ),
       ).toList()
     );
+  }
+
+void setCustomLoop(int currentIndex, int number, AudioPlayer audioPlayer) {
+  int endIndex = currentIndex + number;
+  endIndex = endIndex > songs.length ? songs.length : endIndex;
+  List<SongModel> slicedSongs = songs.sublist(currentIndex, endIndex);
+
+  _playlist = ConcatenatingAudioSource(
+    children: slicedSongs.map((song) => AudioSource.uri(
+        Uri.file(song.data),
+        tag: MediaItem(
+          id: song.id.toString(),
+          title: song.title,
+          album: song.album,
+          artist: song.artist
+        ),
+      ),
+    ).toList()
+  );
+  audioPlayer.setAudioSource(_playlist);
+}
+
+  void sortSongs(bool playlistIsSongs, int state, [AudioPlayer? audioPlayer]) {
+    switch(state) {
+      case 0:
+        songs.sort((a, b) => a.title.compareTo(b.title));
+        break;
+      case 1:
+        songs.sort((a, b) => (a.album ?? '').compareTo(b.album ?? ''));
+        break;
+      case 2:
+        songs.sort((a, b) => (a.artist ?? '').compareTo(b.artist ?? ''));
+        break;
+      case 3:
+        songs.shuffle();
+        break;
+      case 4:
+        songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
+        break;
+    }
+    if (playlistIsSongs && audioPlayer != null) {
+      setPlaylist();
+      audioPlayer.setAudioSource(_playlist);
+    }
   }
 }

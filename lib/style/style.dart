@@ -15,10 +15,10 @@ abstract class IconSizes {
 abstract class Styles {
   static TextStyle audioLeadingTextStyle = const TextStyle(color: ThemeColors.primaryColor, fontSize: 18, fontWeight: FontWeight.w500);
 
-  static TextStyle trackHomeTitle(bool isCurrentItem) {
+  static TextStyle trackHomeTitle(bool isCurrentSong) {
     return TextStyle(
-      color: isCurrentItem ? ThemeColors.accentColor : ThemeColors.primaryColor,
-      fontWeight: isCurrentItem ? FontWeight.bold : FontWeight.normal,
+      color: isCurrentSong ? ThemeColors.accentColor : ThemeColors.primaryColor,
+      fontWeight: isCurrentSong ? FontWeight.bold : FontWeight.normal,
       fontSize: 18,
     );
   }
