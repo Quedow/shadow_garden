@@ -8,20 +8,15 @@ import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shadow_garden/widgets/audio_progress_bar.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
-class TrackBanner extends StatelessWidget {
+class SongBanner extends StatelessWidget {
   final AudioPlayer audioPlayer;
-  final SequenceState? sequenceState;
   final bool isPlaying;
 
-  const TrackBanner({Key? key, required this.audioPlayer, required this.sequenceState, required this.isPlaying}) : super(key: key);
+  const SongBanner({Key? key, required this.audioPlayer, required this.isPlaying}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final int currentIndex = audioPlayer.currentIndex ?? 0;
-    final MediaItem? currentMetadata = sequenceState?.sequence[currentIndex].tag;
-
-    if (currentMetadata == null) { return const SizedBox.shrink(); }
 
     return GestureDetector(
       onTap: () {
@@ -31,19 +26,15 @@ class TrackBanner extends StatelessWidget {
           context: context,
           enableDrag: true,
           builder: (BuildContext context) {
-            // return StreamBuilder<SequenceState?>(
             return StreamBuilder<int?>(
-              // stream: audioPlayer.sequenceStateStream,
               stream: audioPlayer.currentIndexStream,
               builder: (context, snapshot) {
-                // final SequenceState? sequenceState = snapshot.data;
-                // final int currentIndex = audioPlayer.currentIndex ?? 0;
-                final int currentIndex = snapshot.data ?? 0;
-                final MediaItem? currentMetadata = sequenceState?.sequence[currentIndex].tag;
+                final int? currentIndex = snapshot.data;
 
-                if (currentMetadata == null) { return const SizedBox.shrink(); }
+                if (currentIndex == null) { return const SizedBox.shrink(); }
 
-                return getTrackPage(currentMetadata, screenWidth);
+                final MediaItem currentMetadata = audioPlayer.sequence?[currentIndex].tag;
+                return getSongPage(currentMetadata, screenWidth);
               }
             );
           }
@@ -51,31 +42,27 @@ class TrackBanner extends StatelessWidget {
       },
       child: Container(
         decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.white, width: 1.0))),
-        // return StreamBuilder<SequenceState?>(
         child: StreamBuilder<int?>(
-          // stream: audioPlayer.sequenceStateStream,
           stream: audioPlayer.currentIndexStream,
           builder: (context, snapshot) {
-            // final SequenceState? sequenceState = snapshot.data;
-            // final int currentIndex = audioPlayer.currentIndex ?? 0;
-            final int currentIndex = snapshot.data ?? 0;
-            final MediaItem? currentMetadata = sequenceState?.sequence[currentIndex].tag;
+            final int? currentIndex = snapshot.data;
 
-            if (currentMetadata == null) { return const SizedBox.shrink(); }
+            if (currentIndex == null) { return const SizedBox.shrink(); }
             
-            return getTrackBanner(currentMetadata, screenWidth);
+            final MediaItem currentMetadata = audioPlayer.sequenceState?.sequence[currentIndex].tag;
+            return getSongBanner(currentMetadata, screenWidth);
           }
         )
       )
     );
   }
 
-  Container getTrackBanner(MediaItem metadata, double screenWidth) {
+  Container getSongBanner(MediaItem metadata, double screenWidth) {
     const double imgWidth = 50;
     const double playBtnWidth = 50;
     final double availableWidth = screenWidth - (imgWidth - playBtnWidth)/2;
 
-    return Container( 
+    return Container(
       width: screenWidth,
       color: ThemeColors.backgroundOled,
       child: ListTile(
@@ -88,7 +75,7 @@ class TrackBanner extends StatelessWidget {
     );
   }
 
-  Container getTrackPage(MediaItem metadata, double screenWidth) {
+  Container getSongPage(MediaItem metadata, double screenWidth) {
     const double padding = 25;
     final double imgWidth = screenWidth - 2*padding;
 
@@ -99,7 +86,6 @@ class TrackBanner extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(width: imgWidth, height: imgWidth, decoration: BoxDecoration(color: ThemeColors.secondaryColor,borderRadius: BorderRadius.circular(20.0)), child: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkBorder: BorderRadius.circular(20.0), artworkWidth: imgWidth, artworkHeight: imgWidth, artworkFit: BoxFit.cover)),
-          // SizedBox.square(dimension: imgWidth, child: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkBorder: BorderRadius.circular(20.0), artworkWidth: imgWidth, artworkHeight: imgWidth, artworkFit: BoxFit.cover)),
           AudioProgressBar(positionDataStream: AudioStreamUtils.getPositionDataStream(audioPlayer), audioPlayer: audioPlayer),
           MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.trackPageTilte),
           MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.trackPageSubtitle,),

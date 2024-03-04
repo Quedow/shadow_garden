@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
-import 'package:shadow_garden/widgets/controls.dart';
-import 'package:shadow_garden/widgets/text_display.dart';
+import 'package:shadow_garden/screens/songs_list.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/utils/functions.dart';
-import 'package:shadow_garden/screens/track_screen.dart';
-import 'package:shadow_garden/widgets/playing_animation.dart';
-// import 'package:on_audio_query/on_audio_query.dart';
+import 'package:shadow_garden/screens/song_banner.dart';
 import 'package:provider/provider.dart';
+import 'package:shadow_garden/widgets/sort_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -29,9 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer();
     _audioProvider = Provider.of<AudioProvider>(context, listen: false);
-    Functions.init(_audioPlayer, _audioProvider);
+    Functions.init(_audioProvider);
+    _audioPlayer = _audioProvider.audioPlayer;
+
 
     _audioPlayer.playerStateStream.listen((state) {
       setState(() {
@@ -48,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void sortSongs() {
     _state = (_state + 1) % _totalState;
-    _audioProvider.sortSongs(true, _state, _audioPlayer);
+    _audioProvider.sortSongs(_state);
   }
 
   @override
@@ -64,40 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: ThemeColors.backgroundOled,
       body: Column(
         children: [
-          Expanded(
-            child: StreamBuilder<SequenceState?>(
-              stream: _audioPlayer.sequenceStateStream,
-              builder: (context, snapshot) {
-                final SequenceState? state = snapshot.data;
-                
-                if (state?.sequence.isEmpty ?? true) {
-                  return const Center(child: Text('No music found...', style: TextStyle(color: ThemeColors.primaryColor)));
-                } else {
-                  final int playlistLength = state!.sequence.length;
-                  
-                  return ListView.builder(
-                    itemCount: playlistLength,
-                    itemBuilder: (context, index) {
-                      final MediaItem metadata = state.sequence[index].tag;
-                      final bool isCurrentItem = _audioPlayer.currentIndex == index;
-
-                      return ListTile(
-                        onTap: () => Functions.onTap(_audioPlayer, isPlaying, isCurrentItem, index),
-                        onLongPress: () => Functions.onLongPress(_audioProvider, _audioPlayer, context, index),
-                        leading: Text('${index + 1}', style: Styles.audioLeadingTextStyle),
-                        // leading: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkFit: BoxFit.cover, artworkBorder: BorderRadius.circular(5.0)),
-                        title: TitleText(title: metadata.title, textStyle: Styles.trackHomeTitle(isCurrentItem)),
-                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.trackPageSubtitle),
-                        trailing: PlayingAnimation(isCurrentSong: isCurrentItem, isPlaying: isPlaying),
-                        iconColor: ThemeColors.primaryColor,
-                      );
-                    }
-                  );
-                }
-              }
-            )
-          ),
-          TrackBanner(audioPlayer: _audioPlayer, sequenceState: _audioPlayer.sequenceState, isPlaying: isPlaying),
+          SongsList(audioProvider: _audioProvider, isPlaying: isPlaying),
+          SongBanner(audioPlayer: _audioPlayer, isPlaying: isPlaying),
         ]
       ),
       bottomNavigationBar: Theme(

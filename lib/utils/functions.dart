@@ -3,14 +3,12 @@ import 'package:just_audio/just_audio.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
 
-enum SortMode { alpha, shuffle }
-
 abstract class Functions {
-  static Future<void> init(AudioPlayer audioPlayer, AudioProvider audioProvider) async {
-    await audioPlayer.setLoopMode(LoopMode.all);
+  static Future<void> init(AudioProvider audioProvider) async {
+    await audioProvider.audioPlayer.setLoopMode(LoopMode.all);
     bool audioSongsFound = await audioProvider.fetchAudioSongs();
     if (audioSongsFound) {
-      await audioPlayer.setAudioSource(audioProvider.playlist, initialIndex: 0);
+      await audioProvider.audioPlayer.setAudioSource(audioProvider.playlist, initialIndex: 0);
     }
   }
 

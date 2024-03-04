@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:shadow_garden/widgets/controls.dart';
+import 'package:shadow_garden/widgets/sort_button.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/utils/functions.dart';
-import 'package:shadow_garden/screens/track_screen.dart';
+import 'package:shadow_garden/screens/song_banner.dart';
 import 'package:shadow_garden/widgets/playing_animation.dart';
-// import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
 class SongsScreen extends StatefulWidget {
@@ -30,9 +29,9 @@ class _SongsScreenState extends State<SongsScreen> {
   @override
   void initState() {
     super.initState();
-    _audioPlayer = AudioPlayer();
     _audioProvider = Provider.of<AudioProvider>(context, listen: false);
-    Functions.init(_audioPlayer, _audioProvider);
+    Functions.init(_audioProvider);
+    _audioPlayer = _audioProvider.audioPlayer;
 
     _audioPlayer.playerStateStream.listen((state) {
       setState(() {
@@ -51,7 +50,7 @@ class _SongsScreenState extends State<SongsScreen> {
     setState(() {
       _state = (_state + 1) % _totalState;
     });
-    _audioProvider.sortSongs(true, _state, _audioPlayer);
+    _audioProvider.sortSongs(_state);
   }
 
   @override
@@ -78,11 +77,6 @@ class _SongsScreenState extends State<SongsScreen> {
                     itemCount: _audioProvider.songs.length,
                     itemBuilder: (context, index) {
                       final SongModel metadata = _audioProvider.songs[index];
-                      // final int currentAudioId = int.parse(_audioPlayer.sequence?[_audioPlayer.currentIndex ?? 0].tag.id);
-                      // final int currentSongIndex = _audioProvider.songs.indexWhere((song) => song.id == currentAudioId);
-                      // final bool isCurrentSong = currentSongIndex == index;
-
-                      // final int currentAudioId = int.parse(_audioPlayer.sequence?[_audioPlayer.currentIndex ?? 0].tag.id);
                       final int currentAudioId = int.parse(_audioPlayer.sequence?[snapshot.data ?? 0].tag.id);
                       final SongModel currentSong = _audioProvider.songs.firstWhere((song) => song.id == currentAudioId);
                       final bool isCurrentSong = currentSong == metadata;
@@ -102,7 +96,7 @@ class _SongsScreenState extends State<SongsScreen> {
               }
             )
           ),
-          TrackBanner(audioPlayer: _audioPlayer, sequenceState: _audioPlayer.sequenceState, isPlaying: isPlaying),
+          SongBanner(audioPlayer: _audioPlayer, isPlaying: isPlaying),
         ]
       ),
       bottomNavigationBar: Theme(

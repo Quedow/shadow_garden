@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 abstract class ThemeColors {
   static const primaryColor = Colors.white;
-  static const accentColor = Color(0xFFFBC711);
+  static const accentColor = Color(0xFFAAC9FF);
   static const secondaryColor = Color.fromARGB(255, 29, 37, 48);
 
   static const backgroundOled = Color.fromARGB(255, 0, 0, 0);
@@ -32,4 +32,8 @@ abstract class Styles {
   static TextStyle trackBannerSubtitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.w500, fontSize: 16);
 
   static TextStyle progressBarTime = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.w500);
+
+  static TextStyle numberPickerSelect = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.8), fontSize: 24, fontWeight: FontWeight.w300);
+  
+  static TextStyle numberPicker = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.15));
 }

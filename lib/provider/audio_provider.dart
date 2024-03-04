@@ -2,18 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shadow_garden/widgets/controls.dart';
 
 class AudioProvider extends ChangeNotifier {
   bool isLoading = false;
 
-  ConcatenatingAudioSource _playlist = ConcatenatingAudioSource(children: []);
-  ConcatenatingAudioSource get playlist => _playlist;
-
   List<SongModel> _songs = [];
   List<SongModel> get songs => _songs;
 
+  ConcatenatingAudioSource _playlist = ConcatenatingAudioSource(children: []);
+  ConcatenatingAudioSource get playlist => _playlist;
+
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioPlayer get audioPlayer => _audioPlayer;
+
+  int _songsPerLoop = 3;
+  int get songsPerLoop => _songsPerLoop;
+  set songsPerLoop(int number) {
+    _songsPerLoop = number;
+    notifyListeners();
+  }
+
+  CLoopMode _cLoopMode = CLoopMode.all;
+  CLoopMode get cLoopMode => _cLoopMode;
+  set cLoopMode(CLoopMode mode) {
+    _cLoopMode = mode;
+    notifyListeners();
+  }
 
   Future<bool> fetchAudioSongs() async {
     isLoading = true;
@@ -63,13 +78,31 @@ class AudioProvider extends ChangeNotifier {
     );
   }
 
-void setCustomLoop(int currentIndex, int number, AudioPlayer audioPlayer) {
-  int endIndex = currentIndex + number;
-  endIndex = endIndex > songs.length ? songs.length : endIndex;
-  List<SongModel> slicedSongs = songs.sublist(currentIndex, endIndex);
+  void resetPlaylist() async {
+    List<AudioSource> queue = songs.map((song) => AudioSource.uri(
+      Uri.file(song.data),
+      tag: MediaItem(
+        id: song.id.toString(),
+        title: song.title,
+        album: song.album,
+        artist: song.artist
+      ),
+    )).toList();
 
-  _playlist = ConcatenatingAudioSource(
-    children: slicedSongs.map((song) => AudioSource.uri(
+    await playlist.clear();
+    await playlist.addAll(queue);
+  }
+
+  void setCustomLoop() async {
+    if (audioPlayer.audioSource != null) {
+      final int currentId = int.parse(audioPlayer.sequence?[audioPlayer.currentIndex ?? 0].tag.id);
+      final int currentIndex = songs.indexOf(songs.firstWhere((song) => song.id == currentId));
+      
+      int lastIndex = (currentIndex + songsPerLoop > songs.length - 1) 
+        ? songs.length
+        : currentIndex + songsPerLoop;
+
+      List<AudioSource> queue = songs.sublist(currentIndex, lastIndex).map((song) => AudioSource.uri(
         Uri.file(song.data),
         tag: MediaItem(
           id: song.id.toString(),
@@ -77,13 +110,14 @@ void setCustomLoop(int currentIndex, int number, AudioPlayer audioPlayer) {
           album: song.album,
           artist: song.artist
         ),
-      ),
-    ).toList()
-  );
-  audioPlayer.setAudioSource(_playlist);
-}
+      )).toList();
 
-  void sortSongs(bool playlistIsSongs, int state, [AudioPlayer? audioPlayer]) {
+      await playlist.clear();
+      await playlist.addAll(queue);
+    }
+  }
+
+  void sortSongs(int state) {
     switch(state) {
       case 0:
         songs.sort((a, b) => a.title.compareTo(b.title));
@@ -101,9 +135,11 @@ void setCustomLoop(int currentIndex, int number, AudioPlayer audioPlayer) {
         songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
         break;
     }
-    if (playlistIsSongs && audioPlayer != null) {
-      setPlaylist();
-      audioPlayer.setAudioSource(_playlist);
-    }
+
+    // final int currentId = int.parse(audioPlayer.sequence?[audioPlayer.currentIndex ?? 0].tag.id);
+    // final int currentIndex = songs.indexOf(songs.firstWhere((song) => song.id == currentId));
+
+    setPlaylist();
+    audioPlayer.setAudioSource(_playlist);
   }
 }
