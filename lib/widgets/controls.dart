@@ -84,21 +84,21 @@ class _LoopButtonState extends State<LoopButton> {
 
     if (loopMode == CLoopMode.off) {
       return IconButton(
-        onPressed: () => setLoopMode(audioProvider, LoopMode.all, CLoopMode.custom),
+        onPressed: () => audioProvider.setLoopMode(LoopMode.all, CLoopMode.custom),
         iconSize: IconSizes.iconBtnSize,
         color: ThemeColors.primaryColor,
         icon: Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor.withOpacity(0.5)),
       );
     } else if (loopMode == CLoopMode.all) {
         return IconButton(
-          onPressed: () => setLoopMode(audioProvider, LoopMode.one, CLoopMode.one),
+          onPressed: () => audioProvider.setLoopMode(LoopMode.one, CLoopMode.one),
           iconSize: IconSizes.iconBtnSize,
           color: ThemeColors.primaryColor,
           icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor),
         );
     } else if (loopMode == CLoopMode.one) {
       return IconButton(
-        onPressed: () => setLoopMode(audioProvider, LoopMode.off, CLoopMode.off),
+        onPressed: () => audioProvider.setLoopMode(LoopMode.off, CLoopMode.off),
         iconSize: IconSizes.iconBtnSize,
         color: ThemeColors.primaryColor,
         icon: const Icon(Icons.repeat_one_rounded, color: ThemeColors.primaryColor),
@@ -107,7 +107,7 @@ class _LoopButtonState extends State<LoopButton> {
     return Row(
       children: [
         IconButton(
-          onPressed: () => setLoopMode(audioProvider, LoopMode.all, CLoopMode.all),
+          onPressed: () => audioProvider.setLoopMode(LoopMode.all, CLoopMode.all),
           iconSize: IconSizes.iconBtnSize,
           color: ThemeColors.primaryColor,
           icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor),
@@ -122,23 +122,10 @@ class _LoopButtonState extends State<LoopButton> {
           axis: Axis.horizontal,
           onChanged: (value) { 
             setState(() => audioProvider.songsPerLoop = value );
-            setLoopMode(audioProvider, LoopMode.all, CLoopMode.custom);
+            audioProvider.setLoopMode(LoopMode.all, CLoopMode.custom);
           }
         )
       ]
     );
-  }
-
-  void setLoopMode(AudioProvider audioProvider, LoopMode loopMode, CLoopMode cLoopMode) {
-    audioProvider.audioPlayer.setLoopMode(loopMode);
-    audioProvider.cLoopMode = cLoopMode;
-    
-    if (cLoopMode == CLoopMode.all) {
-      audioProvider.resetPlaylist();
-    }
-
-    if (cLoopMode == CLoopMode.custom) {
-      audioProvider.setCustomLoop();
-    }
   }
 }

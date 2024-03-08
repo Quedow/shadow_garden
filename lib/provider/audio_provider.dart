@@ -30,6 +30,22 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _indexCounter = 0;
+  int _lastIndex = 0;
+
+  AudioProvider() {
+    audioPlayer.currentIndexStream.listen((index) async {
+      if (cLoopMode == CLoopMode.custom  && index != null) {
+        _indexCounter = (index == _lastIndex + 1) ? _indexCounter + 1 : 0;
+        _lastIndex = index;
+        if (_indexCounter == songsPerLoop) {
+          resetLoop(index - songsPerLoop);
+          _indexCounter = 0;
+        }
+      }
+    });
+  }
+
   Future<bool> fetchAudioSongs() async {
     isLoading = true;
     notifyListeners();
@@ -78,46 +94,22 @@ class AudioProvider extends ChangeNotifier {
     );
   }
 
-  void resetPlaylist() async {
-    List<AudioSource> queue = songs.map((song) => AudioSource.uri(
-      Uri.file(song.data),
-      tag: MediaItem(
-        id: song.id.toString(),
-        title: song.title,
-        album: song.album,
-        artist: song.artist
-      ),
-    )).toList();
+  void setLoopMode(LoopMode mode, CLoopMode cMode) {
+    _audioPlayer.setLoopMode(mode);
+    cLoopMode = cMode;
 
-    await playlist.clear();
-    await playlist.addAll(queue);
-  }
-
-  void setCustomLoop() async {
-    if (audioPlayer.audioSource != null) {
-      final int currentId = int.parse(audioPlayer.sequence?[audioPlayer.currentIndex ?? 0].tag.id);
-      final int currentIndex = songs.indexOf(songs.firstWhere((song) => song.id == currentId));
-      
-      int lastIndex = (currentIndex + songsPerLoop > songs.length - 1) 
-        ? songs.length
-        : currentIndex + songsPerLoop;
-
-      List<AudioSource> queue = songs.sublist(currentIndex, lastIndex).map((song) => AudioSource.uri(
-        Uri.file(song.data),
-        tag: MediaItem(
-          id: song.id.toString(),
-          title: song.title,
-          album: song.album,
-          artist: song.artist
-        ),
-      )).toList();
-
-      await playlist.clear();
-      await playlist.addAll(queue);
+    if (cLoopMode == CLoopMode.custom) {
+      _indexCounter = 0;
     }
   }
 
-  void sortSongs(int state) {
+  Future<void> resetLoop(int index) async {
+    await _audioPlayer.stop();
+    await _audioPlayer.seek(Duration.zero, index: index);
+    await _audioPlayer.play();
+  }
+
+  Future<void> sortSongs(int state) async {
     switch(state) {
       case 0:
         songs.sort((a, b) => a.title.compareTo(b.title));
@@ -135,9 +127,6 @@ class AudioProvider extends ChangeNotifier {
         songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
         break;
     }
-
-    // final int currentId = int.parse(audioPlayer.sequence?[audioPlayer.currentIndex ?? 0].tag.id);
-    // final int currentIndex = songs.indexOf(songs.firstWhere((song) => song.id == currentId));
 
     setPlaylist();
     audioPlayer.setAudioSource(_playlist);

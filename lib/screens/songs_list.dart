@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
@@ -42,9 +43,9 @@ class SongsListState extends State<SongsList> {
                 return ListTile(
                   onTap: () => Functions.onTap(_audioPlayer, widget.isPlaying, isCurrentSong, index),
                   onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
-                  leading: Text('${index + 1}', style: Styles.audioLeadingTextStyle),
-                  // leading: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkFit: BoxFit.cover, artworkBorder: BorderRadius.circular(5.0)),
-                  title: TitleText(title: metadata.title, textStyle: Styles.trackHomeTitle(isCurrentSong)),
+                  // leading: Text('${index}', style: Styles.audioLeadingTextStyle),
+                  leading: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkFit: BoxFit.cover, artworkBorder: BorderRadius.circular(5.0)),
+                  title: TitleText(title: "${index + 1} - ${metadata.title}", textStyle: Styles.trackHomeTitle(isCurrentSong)),
                   subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.trackPageSubtitle),
                   trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: widget.isPlaying),
                   iconColor: ThemeColors.primaryColor,
