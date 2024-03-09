@@ -32,7 +32,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/audios/
     - assets/images/
     - assets/icons/
-    - assets/data/audio_songs.json

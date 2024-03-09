@@ -44,7 +44,7 @@ class SongsListState extends State<SongsList> {
                   onTap: () => Functions.onTap(_audioPlayer, widget.isPlaying, isCurrentSong, index),
                   onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
                   // leading: Text('${index}', style: Styles.audioLeadingTextStyle),
-                  leading: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkFit: BoxFit.cover, artworkBorder: BorderRadius.circular(5.0)),
+                  leading: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkFit: BoxFit.cover, artworkBorder: BorderRadius.circular(10.0)),
                   title: TitleText(title: "${index + 1} - ${metadata.title}", textStyle: Styles.trackHomeTitle(isCurrentSong)),
                   subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.trackPageSubtitle),
                   trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: widget.isPlaying),

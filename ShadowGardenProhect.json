@@ -6,7 +6,7 @@
         "id": 1,
         "label": "Home Screen",
         "description": "Page de la liste des songs avec les différents filtres de tri (titre, album, artiste, shuffle, date)",
-        "done": false,
+        "done": true,
         "in_progress": true,
         "priority": 3,
         "block": [4],
@@ -76,7 +76,7 @@
         "id": 8,
         "label": "Playlist vs Song list",
         "description": "Dissocier la playlist et la liste des songs afin d'effectuer des tris sans changer la playlist",
-        "done": false,
+        "done": true,
         "in_progress": true,
         "priority": 4,
         "block": [1],
@@ -86,9 +86,39 @@
         "id": 9,
         "label": "Custom Loop Mode",
         "description": "Un mode permettant de loop un nombre custom de musique",
-        "done": false,
+        "done": true,
         "in_progress": true,
         "priority": 4,
+        "block": [],
+        "block_by": []
+      },
+      {
+        "id": 10,
+        "label": "Scroll Bar",
+        "description": "Une scroll bar interactive avec bulle alphabétique",
+        "done": false,
+        "in_progress": false,
+        "priority": 2,
+        "block": [],
+        "block_by": [1]
+      },
+      {
+        "id": 11,
+        "label": "Search option",
+        "description": "Fonctionnalité de recherche de musiques",
+        "done": false,
+        "in_progress": false,
+        "priority": 1,
+        "block": [],
+        "block_by": []
+      },
+      {
+        "id": 12,
+        "label": "Setting menu",
+        "description": "Définir et implémenter les paramètres modifiables de l'application",
+        "done": false,
+        "in_progress": false,
+        "priority": 1,
         "block": [],
         "block_by": []
       }
