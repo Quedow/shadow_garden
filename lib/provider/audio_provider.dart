@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 
 class AudioProvider extends ChangeNotifier {
+  final SettingsService _settings = SettingsService();
+
   bool isLoading = false;
 
   List<SongModel> _songs = [];
@@ -16,17 +19,19 @@ class AudioProvider extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioPlayer get audioPlayer => _audioPlayer;
 
-  int _songsPerLoop = 3;
+  late int _songsPerLoop;
   int get songsPerLoop => _songsPerLoop;
   set songsPerLoop(int number) {
     _songsPerLoop = number;
+    _settings.setSongsPerLoop(number);
     notifyListeners();
   }
 
-  CLoopMode _cLoopMode = CLoopMode.all;
+  late CLoopMode _cLoopMode;
   CLoopMode get cLoopMode => _cLoopMode;
-  set cLoopMode(CLoopMode mode) {
-    _cLoopMode = mode;
+  set cLoopMode(CLoopMode cMode) {
+    _cLoopMode = cMode;
+    _settings.setCLoopMode(cMode);
     notifyListeners();
   }
 
@@ -34,6 +39,9 @@ class AudioProvider extends ChangeNotifier {
   int _lastIndex = 0;
 
   AudioProvider() {
+    _cLoopMode = _settings.getCLoopMode();
+    _songsPerLoop = _settings.getSongsPerLoop();
+
     audioPlayer.currentIndexStream.listen((index) async {
       if (cLoopMode == CLoopMode.custom  && index != null) {
         _indexCounter = (index == _lastIndex + 1) ? _indexCounter + 1 : 0;

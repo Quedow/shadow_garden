@@ -38,7 +38,7 @@
         "description": "L'application sauvegarde le mode de tri et la dernière musique",
         "done": false,
         "in_progress": false,
-        "priority": 1,
+        "priority": 2,
         "block": [6],
         "block_by": [1]
       },
@@ -108,14 +108,24 @@
         "description": "Fonctionnalité de recherche de musiques",
         "done": false,
         "in_progress": false,
-        "priority": 1,
+        "priority": 2,
         "block": [],
         "block_by": []
       },
       {
         "id": 12,
         "label": "Setting menu",
-        "description": "Définir et implémenter les paramètres modifiables de l'application",
+        "description": "Définir et implémenter (écran) les paramètres modifiables de l'application",
+        "done": false,
+        "in_progress": false,
+        "priority": 1,
+        "block": [],
+        "block_by": []
+      },
+      {
+        "id": 13,
+        "label": "Stats Spotify-like",
+        "description": "Système de statistiques comme sur Spotify",
         "done": false,
         "in_progress": false,
         "priority": 1,

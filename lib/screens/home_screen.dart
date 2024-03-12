@@ -30,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
     Functions.init(_audioProvider);
     _audioPlayer = _audioProvider.audioPlayer;
 
-
     _audioPlayer.playerStateStream.listen((state) {
       setState(() {
         isPlaying = state.playing;

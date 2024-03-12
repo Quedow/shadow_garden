@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shadow_garden/screens/home_screen.dart';
@@ -10,6 +11,9 @@ Future<void> main() async {
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true
   );
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await SettingsService().init();
 
   runApp(
     ChangeNotifierProvider(
