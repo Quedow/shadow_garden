@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:shadow_garden/model/song.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await SettingsService().init();
+  await DatabaseService().init();
 
   runApp(
     ChangeNotifierProvider(
@@ -38,7 +40,7 @@ class MyApp extends StatelessWidget {
           thumbColor: MaterialStateProperty.all(ThemeColors.accentColor),
         )
       ),
-      home: HomeScreen(),
+      home: const HomeScreen(),
       debugShowCheckedModeBanner: false
     );
   }

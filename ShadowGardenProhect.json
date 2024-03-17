@@ -37,7 +37,7 @@
         "label": "Data Save",
         "description": "L'application sauvegarde le mode de tri et la dernière musique",
         "done": false,
-        "in_progress": false,
+        "in_progress": true,
         "priority": 2,
         "block": [6],
         "block_by": [1]
@@ -57,7 +57,7 @@
         "label": "Data Save 2",
         "description": "Sauvegarder différentes données par song (durée d'écoute, nombre d'écoutes...)",
         "done": false,
-        "in_progress": false,
+        "in_progress": true,
         "priority": 1,
         "block": [7],
         "block_by": [4]
@@ -96,8 +96,8 @@
         "id": 10,
         "label": "Scroll Bar",
         "description": "Une scroll bar interactive avec bulle alphabétique",
-        "done": false,
-        "in_progress": false,
+        "done": true,
+        "in_progress": true,
         "priority": 2,
         "block": [],
         "block_by": [1]
