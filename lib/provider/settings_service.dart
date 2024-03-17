@@ -38,4 +38,12 @@ class SettingsService {
   int getSortState() {
     return _preferences!.getInt('sortState') ?? 0;
   }
+
+  Future<void> setCurrentIndex(int index) async {
+    await _preferences!.setInt('currentIndex', index);
+  }
+
+  int getCurrentIndex() {
+    return _preferences!.getInt('currentIndex') ?? 0;
+  }
 }

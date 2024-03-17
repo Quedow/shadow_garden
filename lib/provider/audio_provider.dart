@@ -35,19 +35,32 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  final int _totalState = 5;
+  late int _sortState;
+  int get sortState => _sortState;
+  void setSortState() {
+    _sortState = (_sortState + 1) % _totalState;
+    _settings.setSortState(_sortState);
+    sortSongs(_sortState);
+    notifyListeners();
+  }
+
   int _indexCounter = 0;
   int _lastIndex = 0;
 
   AudioProvider() {
-    _cLoopMode = _settings.getCLoopMode();
-    _songsPerLoop = _settings.getSongsPerLoop();
+    cLoopMode = _settings.getCLoopMode();
+    songsPerLoop = _settings.getSongsPerLoop();
+    _sortState = _settings.getSortState();
 
-    audioPlayer.currentIndexStream.listen((index) async {
-      if (cLoopMode == CLoopMode.custom  && index != null) {
+    _audioPlayer.currentIndexStream.listen((index) async {
+      if (index == null) { return; }
+
+      if (_cLoopMode == CLoopMode.custom) {
         _indexCounter = (index == _lastIndex + 1) ? _indexCounter + 1 : 0;
         _lastIndex = index;
-        if (_indexCounter == songsPerLoop) {
-          resetLoop(index - songsPerLoop);
+        if (_indexCounter == _songsPerLoop) {
+          resetLoop(index - _songsPerLoop);
           _indexCounter = 0;
         }
       }
@@ -77,6 +90,7 @@ class AudioProvider extends ChangeNotifier {
       if(_songs.isEmpty) { return false; }
 
       setPlaylist();
+      sortSongs(_sortState);
 
       return true;
     } catch (e) {
@@ -106,7 +120,7 @@ class AudioProvider extends ChangeNotifier {
     _audioPlayer.setLoopMode(mode);
     cLoopMode = cMode;
 
-    if (cLoopMode == CLoopMode.custom) {
+    if (_cLoopMode == CLoopMode.custom) {
       _indexCounter = 0;
     }
   }
@@ -120,23 +134,22 @@ class AudioProvider extends ChangeNotifier {
   Future<void> sortSongs(int state) async {
     switch(state) {
       case 0:
-        songs.sort((a, b) => a.title.compareTo(b.title));
+        _songs.sort((a, b) => a.title.compareTo(b.title));
         break;
       case 1:
-        songs.sort((a, b) => (a.album ?? '').compareTo(b.album ?? ''));
+        _songs.sort((a, b) => (a.album ?? '').compareTo(b.album ?? ''));
         break;
       case 2:
-        songs.sort((a, b) => (a.artist ?? '').compareTo(b.artist ?? ''));
+        _songs.sort((a, b) => (a.artist ?? '').compareTo(b.artist ?? ''));
         break;
       case 3:
-        songs.shuffle();
+        _songs.shuffle();
         break;
       case 4:
-        songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
+        _songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
         break;
     }
-
     setPlaylist();
-    audioPlayer.setAudioSource(_playlist);
+    _audioPlayer.setAudioSource(_playlist);
   }
 }

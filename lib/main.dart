@@ -4,10 +4,11 @@ import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shadow_garden/screens/home_screen.dart';
+import 'package:shadow_garden/style/style.dart';
 
 Future<void> main() async {
   await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.takeuptake.shadow_garden.channel.audio',
+    androidNotificationChannelId: 'com.quedow.shadow_garden.channel.audio',
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true
   );
@@ -28,7 +29,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        scrollbarTheme: ScrollbarThemeData(
+          thumbColor: MaterialStateProperty.all(ThemeColors.accentColor),
+        )
+      ),
       home: HomeScreen(),
       debugShowCheckedModeBanner: false
     );

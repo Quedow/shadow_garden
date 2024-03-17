@@ -80,23 +80,23 @@ class _LoopButtonState extends State<LoopButton> {
   @override
   Widget build(BuildContext context) {
     AudioProvider audioProvider = Provider.of<AudioProvider>(context);
-    final CLoopMode loopMode = audioProvider.cLoopMode;
+    final CLoopMode cLoopMode = audioProvider.cLoopMode;
 
-    if (loopMode == CLoopMode.all) {
+    if (cLoopMode == CLoopMode.all) {
       return IconButton(
         onPressed: () => audioProvider.setLoopMode(LoopMode.off, CLoopMode.off),
         iconSize: IconSizes.iconBtnSize,
         color: ThemeColors.primaryColor,
         icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor),
       );
-    } else if (loopMode == CLoopMode.off) {
+    } else if (cLoopMode == CLoopMode.off) {
       return IconButton(
         onPressed: () => audioProvider.setLoopMode(LoopMode.one, CLoopMode.one),
         iconSize: IconSizes.iconBtnSize,
         color: ThemeColors.primaryColor,
         icon: Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor.withOpacity(0.5)),
       );
-    } else if (loopMode == CLoopMode.one) {
+    } else if (cLoopMode == CLoopMode.one) {
       return IconButton(
         onPressed: () => audioProvider.setLoopMode(LoopMode.all, CLoopMode.custom),
         iconSize: IconSizes.iconBtnSize,
