@@ -65,7 +65,7 @@ class PlayButton extends StatelessWidget {
   }
 }
 
-enum CLoopMode { all, off, one, custom }
+enum CLoopMode { off, one, all, custom }
 
 class LoopButton extends StatefulWidget {
 
