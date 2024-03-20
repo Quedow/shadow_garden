@@ -48,7 +48,11 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: IconButton(icon: const Icon(Icons.search_rounded), onPressed: () => {}),
         title: const Text('Shadow Garden'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
         centerTitle: true,
-        actions: [IconButton(icon: SortButtonIcon(state: _audioProvider.sortState), onPressed: _audioProvider.setSortState)],
+        actions: [
+          IconButton(onPressed: _audioProvider.clearDatabase, icon: const Icon(Icons.delete_rounded)),
+          IconButton(onPressed: _audioProvider.saveInDatabase, icon: const Icon(Icons.save_alt_rounded)),
+          IconButton(icon: SortButtonIcon(state: _audioProvider.sortState), onPressed: _audioProvider.setSortState)
+        ],
       ),
       backgroundColor: ThemeColors.backgroundOled,
       body: Column(

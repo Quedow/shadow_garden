@@ -9,22 +9,24 @@ class Song {
 
   int songId = -1;
 
-  String title = '';
+  String label = '';
 
   int dateAdded = 0;
 
   int nbOfListens = 0;
 
-  double listeningRate = 1.0;
+  // double listeningRate = 1.0;
 
   double score = 1.0;
 
-  Song(this.songId, this.title, this.dateAdded, this.nbOfListens, this.listeningRate);
+  Song(this.songId, this.label, this.dateAdded, this.nbOfListens);
 }
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
   late final Isar isar;
+
+  final int maxDateAdded = 12;
 
   factory DatabaseService() {
     return _instance;
@@ -41,21 +43,44 @@ class DatabaseService {
     );
   }
 
-  Future<void> insertSong(Song song) async {
+  Future<void> insertOrUpdateSong(Song song) async {
     await isar.writeTxn(() async {
       await isar.songs.put(song);
     });
   }
 
-  Future<void> updateSong(Song song) async {
+  Future<void> updateSongs(List<Song> songs) async {
     await isar.writeTxn(() async {
-      await isar.songs.put(song);
+      for (var song in songs) {
+        Song? songToUpdate = await isar.songs.filter().songIdEqualTo(song.songId).labelEqualTo(song.label).findFirst();
+        if (songToUpdate != null) {
+          songToUpdate.nbOfListens += song.nbOfListens;
+          await isar.songs.put(songToUpdate);
+        } else {
+          await isar.songs.put(song);
+        }
+      }
+
+      List<Song> allSongs = await isar.songs.where().findAll();
+      int totalOfListens = await isar.songs.where().nbOfListensProperty().sum();
+
+      for (var song in allSongs) {
+        song.score = calculateScore(song.nbOfListens, totalOfListens, song.dateAdded);
+        await isar.songs.put(song);
+      }
     });
   }
 
-  Future<void> removeSong(int id) async {
+  double calculateScore(int nbOfListens, int totalOfListens, int dateAdded) {
+    double addedDateScore = 0.6 * (dateAdded > maxDateAdded ? 0 : (-1/maxDateAdded * dateAdded + 1));
+    double nbOfListensScore = 0.4 * (nbOfListens / totalOfListens);
+
+    return  double.parse((addedDateScore + nbOfListensScore).toStringAsFixed(2));
+  }
+
+  Future<void> clearDatabase() async {
     await isar.writeTxn(() async {
-      await isar.songs.delete(id);
+      await isar.songs.clear();
     });
   }
 }

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shadow_garden/model/song.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 
 class AudioProvider extends ChangeNotifier {
   final SettingsService _settings = SettingsService();
+  final DatabaseService _db = DatabaseService();
+  final Map<int, Song> _songsToDb = {};
 
   bool isLoading = false;
 
@@ -65,6 +68,42 @@ class AudioProvider extends ChangeNotifier {
         }
       }
     });
+
+    _audioPlayer.positionDiscontinuityStream.listen((reason) {
+      List<IndexedAudioSource>? sequence = _audioPlayer.sequence;
+      int? index = _audioPlayer.currentIndex;
+
+      if (sequence != null && index != null) {
+        final int currentAudioId = int.parse(sequence[index].tag.id);
+        final SongModel currentSong = _songs.firstWhere((song) => song.id == currentAudioId);
+        _songsToDb.update(currentSong.id, 
+          (song) => updateData(song), 
+          ifAbsent: () => insertSong(currentSong)
+        );
+      }
+    });
+  }
+
+  Song updateData(Song song) {
+    song.nbOfListens++;
+    return song;
+  }
+
+  Song insertSong(SongModel song) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch((song.dateAdded ?? 0) * 1000, isUtc: true);
+    final int months = DateTime.now().difference(date).inDays ~/ 30;
+
+    return Song(song.id, song.title, months, 1);
+  }
+
+  void saveInDatabase() {
+    _db.updateSongs(_songsToDb.values.toList());
+    _songsToDb.clear();
+  }
+
+  void clearDatabase() {
+    _db.clearDatabase();
+    _songsToDb.clear();
   }
 
   Future<bool> fetchAudioSongs() async {
