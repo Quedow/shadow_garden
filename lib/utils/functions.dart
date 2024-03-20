@@ -5,7 +5,7 @@ import 'package:shadow_garden/style/style.dart';
 
 abstract class Functions {
   static Future<void> init(AudioProvider audioProvider) async {
-    await audioProvider.audioPlayer.setLoopMode(LoopMode.all);
+    await audioProvider.audioPlayer.setLoopMode(LoopMode.values[audioProvider.cLoopMode.index <= 2 ? audioProvider.cLoopMode.index : LoopMode.all.index]);
     bool audioSongsFound = await audioProvider.fetchAudioSongs();
     if (audioSongsFound) {
       await audioProvider.audioPlayer.setAudioSource(audioProvider.playlist, initialIndex: 0);
