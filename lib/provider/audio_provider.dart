@@ -167,7 +167,9 @@ class AudioProvider extends ChangeNotifier {
   Future<void> resetLoop(int index) async {
     await _audioPlayer.stop();
     await _audioPlayer.seek(Duration.zero, index: index);
-    await _audioPlayer.play();
+    if (_audioPlayer.playing) {
+      await _audioPlayer.play();
+    }
   }
 
   Future<void> sortSongs(int state) async {
