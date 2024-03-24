@@ -36,4 +36,8 @@ abstract class Styles {
   static TextStyle numberPickerSelect = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.8), fontSize: 24, fontWeight: FontWeight.w300);
   
   static TextStyle numberPicker = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.15));
+
+  static TextStyle settingsTitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.normal, fontSize: 16);
+  
+  static TextStyle settingsDescription = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.7), fontWeight: FontWeight.normal, fontSize: 14);
 }

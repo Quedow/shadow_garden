@@ -19,11 +19,14 @@ class SortButtonIcon extends StatelessWidget {
         icon = Icons.person;
         break;
       case 3:
-        icon = Icons.shuffle_rounded;
-        break;
-      case 4:
         icon = Icons.calendar_today_rounded;
         break;
+      case 4:
+        icon = Icons.smart_toy_rounded;
+        break;
+      // case 5:
+      //   icon = Icons.shuffle_rounded;
+      //   break;
     }
     return Icon(icon);
   }

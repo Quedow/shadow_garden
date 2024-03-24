@@ -182,13 +182,23 @@ class AudioProvider extends ChangeNotifier {
         _songs.sort((a, b) => (a.artist ?? '').compareTo(b.artist ?? ''));
         break;
       case 3:
-        _songs.shuffle();
+        _songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
         break;
       case 4:
-        _songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
+        await smartSort();
+        break;
+      case -1:
+        _songs.shuffle();
         break;
     }
     setPlaylist();
     _audioPlayer.setAudioSource(_playlist);
+  }
+
+  Future<void> smartSort() async {
+    final List<String> ranking = await _db.getRanking();
+    final int size = ranking.length;
+    final Map<String, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
+    _songs.sort((a, b) => (mapRanking[a.title] ?? size).compareTo(mapRanking[b.title] ?? size));
   }
 }

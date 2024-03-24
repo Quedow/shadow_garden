@@ -34,7 +34,7 @@ class SongBanner extends StatelessWidget {
                 if (currentIndex == null) { return const SizedBox.shrink(); }
 
                 final MediaItem currentMetadata = audioPlayer.sequence?[currentIndex].tag;
-                return getSongPage(currentMetadata, screenWidth);
+                return getSongSheet(currentMetadata, screenWidth);
               }
             );
           }
@@ -75,7 +75,7 @@ class SongBanner extends StatelessWidget {
     );
   }
 
-  Container getSongPage(MediaItem metadata, double screenWidth) {
+  Container getSongSheet(MediaItem metadata, double screenWidth) {
     const double padding = 25;
     final double imgWidth = screenWidth - 2*padding;
 

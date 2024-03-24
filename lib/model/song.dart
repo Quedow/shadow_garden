@@ -78,6 +78,11 @@ class DatabaseService {
     return  double.parse((addedDateScore + nbOfListensScore).toStringAsFixed(2));
   }
 
+  Future<List<String>> getRanking() async {
+    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByDateAddedDesc().findAll();
+    return songsRanking.map((song) => song.label).toList();
+  }
+
   Future<void> clearDatabase() async {
     await isar.writeTxn(() async {
       await isar.songs.clear();

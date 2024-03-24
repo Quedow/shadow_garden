@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shadow_garden/screens/songs_list.dart';
+import 'package:shadow_garden/screens/settings_screen.dart';
+import 'package:shadow_garden/screens/songs_screen.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/utils/functions.dart';
-import 'package:shadow_garden/screens/song_banner.dart';
 import 'package:provider/provider.dart';
 import 'package:shadow_garden/widgets/sort_button.dart';
 
@@ -19,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late AudioPlayer _audioPlayer;
   late AudioProvider _audioProvider;
   bool isPlaying = true;
+  int currentScreenIndex = 0;
 
   @override
   void initState() {
@@ -49,35 +50,31 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Shadow Garden'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: _audioProvider.clearDatabase, icon: const Icon(Icons.delete_rounded)),
-          IconButton(onPressed: _audioProvider.saveInDatabase, icon: const Icon(Icons.save_alt_rounded)),
+          IconButton(icon: const Icon(Icons.shuffle_rounded), onPressed: () => _audioProvider.sortSongs(-1)),
           IconButton(icon: SortButtonIcon(state: _audioProvider.sortState), onPressed: _audioProvider.setSortState)
         ],
       ),
       backgroundColor: ThemeColors.backgroundOled,
-      body: Column(
-        children: [
-          SongsList(audioProvider: _audioProvider, isPlaying: isPlaying),
-          SongBanner(audioPlayer: _audioPlayer, isPlaying: isPlaying),
-        ]
-      ),
+      body: [
+        SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying),
+        SettingsScreen(audioProvider: _audioProvider),
+      ].elementAt(currentScreenIndex),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // currentPageIndex,
+        currentIndex: currentScreenIndex,
         type: BottomNavigationBarType.fixed,
         backgroundColor: ThemeColors.backgroundOled,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white.withOpacity(0.6),
+        selectedItemColor: ThemeColors.primaryColor,
+        unselectedItemColor: ThemeColors.primaryColor.withOpacity(0.4),
         selectedFontSize: 14,
         unselectedFontSize: 14,
         onTap: (index) { // Respond to item press.
           setState(() {
-            // currentPageIndex = index;
+            currentScreenIndex = index;
           });
         },
         items: const [
           BottomNavigationBarItem(label: 'Songs', icon: Icon(Icons.music_note_rounded)),
-          BottomNavigationBarItem(label: 'Albums', icon: Icon(Icons.album)),
-          BottomNavigationBarItem(label: 'Playlists', icon: Icon(Icons.playlist_play_rounded))
+          BottomNavigationBarItem(label: 'Settings', icon: Icon(Icons.settings))
         ],
       ),
     );
