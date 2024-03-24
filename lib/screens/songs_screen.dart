@@ -10,8 +10,9 @@ import 'package:shadow_garden/widgets/playing_animation.dart';
 
 class SongsScreen extends StatefulWidget {
   final AudioProvider audioProvider;
+  final bool isPlaying;
 
-  const SongsScreen({Key? key, required this.audioProvider}) : super(key: key);
+  const SongsScreen({Key? key, required this.audioProvider, required this.isPlaying}) : super(key: key);
 
   @override
   SongsScreenState createState() => SongsScreenState();
@@ -19,17 +20,6 @@ class SongsScreen extends StatefulWidget {
 
 class SongsScreenState extends State<SongsScreen> {
   AudioPlayer get _audioPlayer => widget.audioProvider.audioPlayer;
-  bool isPlaying = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _audioPlayer.playerStateStream.listen((state) {
-      setState(() {
-        isPlaying = state.playing;
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +50,12 @@ class SongsScreenState extends State<SongsScreen> {
                       final bool isCurrentSong = _audioPlayer.currentIndex == index;
                   
                       return ListTile(
-                        onTap: () => Functions.onTap(_audioPlayer, isPlaying, isCurrentSong, index),
+                        onTap: () => Functions.onTap(_audioPlayer, widget.isPlaying, isCurrentSong, index),
                         onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
                         leading: Artworks.artworkStyle(int.parse(metadata.id), Artworks.artworkSmallSize),
                         title: TitleText(title: "${index + 1} - ${metadata.title}", textStyle: Styles.songHomeTitle(isCurrentSong)),
                         subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.songSheetSubtitle),
-                        trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: isPlaying),
+                        trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: widget.isPlaying),
                         iconColor: ThemeColors.primaryColor,
                       );
                     }
@@ -75,7 +65,7 @@ class SongsScreenState extends State<SongsScreen> {
             }
           ),
         ),
-        SongBanner(audioPlayer: _audioPlayer, isPlaying: isPlaying)
+        SongBanner(audioPlayer: _audioPlayer, isPlaying: widget.isPlaying)
       ],
     );
   }

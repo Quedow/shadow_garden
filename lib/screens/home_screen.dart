@@ -19,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late AudioPlayer _audioPlayer;
   late AudioProvider _audioProvider;
   int currentScreenIndex = 0;
+  bool isPlaying = true;
 
   @override
   void initState() {
@@ -26,6 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _audioProvider = Provider.of<AudioProvider>(context, listen: false);
     Functions.init(_audioProvider);
     _audioPlayer = _audioProvider.audioPlayer;
+
+    _audioPlayer.playerStateStream.listen((state) {
+      setState(() {
+        isPlaying = state.playing;
+      });
+    });
   }
 
   @override
@@ -43,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ][currentScreenIndex],
       backgroundColor: ThemeColors.backgroundOled,
       body: [
-        SongsScreen(audioProvider: _audioProvider),
+        SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying,),
         SettingsScreen(audioProvider: _audioProvider),
       ].elementAt(currentScreenIndex),
       bottomNavigationBar: BottomNavigationBar(
