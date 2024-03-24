@@ -18,40 +18,30 @@ class SettingsScreenState extends State<SettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Save data", style: Styles.settingsTitle),
-                  Text("Listening data will be saved to improve\nsmart sort (data still local).", style: Styles.settingsDescription)
-                ],
-              ),
-              IconButton(onPressed: widget.audioProvider.saveInDatabase, icon: const Icon(Icons.save_alt_rounded, color: ThemeColors.primaryColor)),
-            ]
-          ),
-        ),
+        settingIconButton("Save data", "Listening data will be saved to improve\nsmart sort (data still local).", Icons.save_alt_rounded, widget.audioProvider.saveInDatabase),
         Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Delete data", style: Styles.settingsTitle),
-                  Text("Listening data will be delete to reset\nsmart sort.", style: Styles.settingsDescription)
-                ],
-              ),
-              IconButton(onPressed: widget.audioProvider.clearDatabase, icon: const Icon(Icons.delete_rounded, color: ThemeColors.primaryColor)),
-            ]
-          ),
-        )
+        settingIconButton("Delete data", "Listening data will be delete to reset\nsmart sort.", Icons.delete_rounded, widget.audioProvider.clearDatabase),
+        Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
       ],
+    );
+  }
+  
+  Padding settingIconButton(String label, String description, IconData icon, void Function() onPressed) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: Styles.settingsTitle),
+              Text(description, style: Styles.settingsDescription)
+            ],
+          ),
+          IconButton(onPressed: onPressed, icon: Icon(icon, color: ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
+        ]
+      ),
     );
   }
 }

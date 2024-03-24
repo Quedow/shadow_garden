@@ -18,7 +18,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late AudioPlayer _audioPlayer;
   late AudioProvider _audioProvider;
-  bool isPlaying = true;
   int currentScreenIndex = 0;
 
   @override
@@ -27,12 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _audioProvider = Provider.of<AudioProvider>(context, listen: false);
     Functions.init(_audioProvider);
     _audioPlayer = _audioProvider.audioPlayer;
-
-    _audioPlayer.playerStateStream.listen((state) {
-      setState(() {
-        isPlaying = state.playing;
-      });
-    });
   }
 
   @override
@@ -44,19 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ThemeColors.backgroundOled, 
-        leading: IconButton(icon: const Icon(Icons.search_rounded), onPressed: () => {}),
-        title: const Text('Shadow Garden'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
-        centerTitle: true,
-        actions: [
-          IconButton(icon: const Icon(Icons.shuffle_rounded), onPressed: () => _audioProvider.sortSongs(-1)),
-          IconButton(icon: SortButtonIcon(state: _audioProvider.sortState), onPressed: _audioProvider.setSortState)
-        ],
-      ),
+      appBar: [
+        homeAppBar(), 
+        settingsAppBar()
+      ][currentScreenIndex],
       backgroundColor: ThemeColors.backgroundOled,
       body: [
-        SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying),
+        SongsScreen(audioProvider: _audioProvider),
         SettingsScreen(audioProvider: _audioProvider),
       ].elementAt(currentScreenIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -67,7 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedItemColor: ThemeColors.primaryColor.withOpacity(0.4),
         selectedFontSize: 14,
         unselectedFontSize: 14,
-        onTap: (index) { // Respond to item press.
+        onTap: (index) {
+          if (currentScreenIndex == index) { return; }
           setState(() {
             currentScreenIndex = index;
           });
@@ -77,6 +65,27 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(label: 'Settings', icon: Icon(Icons.settings))
         ],
       ),
+    );
+  }
+
+  AppBar homeAppBar() {
+    return AppBar(
+      backgroundColor: ThemeColors.backgroundOled, 
+      leading: IconButton(onPressed: () => {}, icon: const Icon(Icons.search_rounded), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
+      title: const Text('Shadow Garden'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
+      centerTitle: true,
+      actions: [
+        IconButton(onPressed: () => _audioProvider.sortSongs(-1), icon: const Icon(Icons.shuffle_rounded), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
+        IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), highlightColor: ThemeColors.primaryColor.withOpacity(0.2))
+      ],
+    );
+  }
+
+  AppBar settingsAppBar() {
+    return AppBar(
+      backgroundColor: ThemeColors.backgroundOled, 
+      title: const Text('Settings'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
+      centerTitle: true
     );
   }
 }

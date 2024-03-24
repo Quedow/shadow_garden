@@ -6,7 +6,6 @@ import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shadow_garden/widgets/audio_progress_bar.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 
 class SongBanner extends StatelessWidget {
   final AudioPlayer audioPlayer;
@@ -34,7 +33,7 @@ class SongBanner extends StatelessWidget {
                 if (currentIndex == null) { return const SizedBox.shrink(); }
 
                 final MediaItem currentMetadata = audioPlayer.sequence?[currentIndex].tag;
-                return getSongSheet(currentMetadata, screenWidth);
+                return songSheet(currentMetadata, screenWidth);
               }
             );
           }
@@ -50,15 +49,15 @@ class SongBanner extends StatelessWidget {
             if (currentIndex == null) { return const SizedBox.shrink(); }
             
             final MediaItem currentMetadata = audioPlayer.sequenceState?.sequence[currentIndex].tag;
-            return getSongBanner(currentMetadata, screenWidth);
+            return songBanner(currentMetadata, screenWidth);
           }
         )
       )
     );
   }
 
-  Container getSongBanner(MediaItem metadata, double screenWidth) {
-    const double imgWidth = 50;
+  Container songBanner(MediaItem metadata, double screenWidth) {
+    final double imgWidth = Artworks.artworkSmallSize;
     const double playBtnWidth = 50;
     final double availableWidth = screenWidth - (imgWidth - playBtnWidth)/2;
 
@@ -67,28 +66,28 @@ class SongBanner extends StatelessWidget {
       color: ThemeColors.backgroundOled,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-        leading: ClipRRect(borderRadius: BorderRadius.circular(10.0), child: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkWidth: imgWidth, artworkHeight: imgWidth, artworkFit: BoxFit.cover)),
-        title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Styles.trackBannerTitle),
+        leading: Artworks.artworkStyle(int.parse(metadata.id), imgWidth),
+        title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Styles.songBannerTitle),
         subtitle: MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: availableWidth, textStyle: Styles.trackBannerSubtitle),
         trailing: SizedBox(width: playBtnWidth, height: playBtnWidth, child: PlayButton(audioPlayer: audioPlayer))
       )
     );
   }
 
-  Container getSongSheet(MediaItem metadata, double screenWidth) {
+  Container songSheet(MediaItem metadata, double screenWidth) {
     const double padding = 25;
     final double imgWidth = screenWidth - 2*padding;
-
+    
     return Container(
       color: ThemeColors.backgroundOled,
       padding: const EdgeInsets.symmetric(horizontal: padding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Container(width: imgWidth, height: imgWidth, decoration: BoxDecoration(color: ThemeColors.secondaryColor,borderRadius: BorderRadius.circular(20.0)), child: QueryArtworkWidget(id: int.parse(metadata.id), type: ArtworkType.AUDIO, artworkBorder: BorderRadius.circular(20.0), artworkWidth: imgWidth, artworkHeight: imgWidth, artworkFit: BoxFit.cover)),
+          Artworks.artworkStyle(int.parse(metadata.id), imgWidth),
           AudioProgressBar(positionDataStream: AudioStreamUtils.getPositionDataStream(audioPlayer), audioPlayer: audioPlayer),
-          MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.trackPageTilte),
-          MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.trackPageSubtitle,),
+          MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.songSheetTilte),
+          MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.songSheetSubtitle,),
           Controls(audioPlayer: audioPlayer)
         ]
       ),

@@ -34,8 +34,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        hoverColor: Colors.transparent,
+        highlightColor: ThemeColors.primaryColor.withOpacity(0.2),
         scrollbarTheme: ScrollbarThemeData(
           thumbColor: MaterialStateProperty.all(ThemeColors.accentColor),
         )
