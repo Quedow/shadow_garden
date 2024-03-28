@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -5,13 +7,12 @@ import 'package:just_audio/just_audio.dart';
 import 'package:shadow_garden/model/song.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/widgets/controls.dart';
+import 'package:shadow_garden/utils/functions.dart';
 
 class AudioProvider extends ChangeNotifier {
   final SettingsService _settings = SettingsService();
   final DatabaseService _db = DatabaseService();
   final Map<int, Song> _songsToDb = {};
-
-  bool isLoading = false;
 
   List<SongModel> _songs = [];
   List<SongModel> get songs => _songs;
@@ -24,15 +25,15 @@ class AudioProvider extends ChangeNotifier {
 
   late int _songsPerLoop;
   int get songsPerLoop => _songsPerLoop;
-  set songsPerLoop(int number) {
+  void setSongsPerLoop(int number) async {
     _songsPerLoop = number;
-    _settings.setSongsPerLoop(number);
+    await _settings.setSongsPerLoop(number);
     notifyListeners();
   }
 
   late CLoopMode _cLoopMode;
   CLoopMode get cLoopMode => _cLoopMode;
-  set cLoopMode(CLoopMode cMode) {
+  void setCLoopMode(CLoopMode cMode) async {
     _cLoopMode = cMode;
     _settings.setCLoopMode(cMode);
     notifyListeners();
@@ -41,10 +42,10 @@ class AudioProvider extends ChangeNotifier {
   final int _totalState = 5;
   late int _sortState;
   int get sortState => _sortState;
-  void setSortState() {
+  void setSortState() async {
     _sortState = (_sortState + 1) % _totalState;
-    _settings.setSortState(_sortState);
-    sortSongs(_sortState);
+    await _settings.setSortState(_sortState);
+    await sortSongs(_sortState);
     notifyListeners();
   }
 
@@ -52,8 +53,8 @@ class AudioProvider extends ChangeNotifier {
   int _lastIndex = 0;
 
   AudioProvider() {
-    cLoopMode = _settings.getCLoopMode();
-    songsPerLoop = _settings.getSongsPerLoop();
+    _cLoopMode = _settings.getCLoopMode();
+    _songsPerLoop = _settings.getSongsPerLoop();
     _sortState = _settings.getSortState();
 
     _audioPlayer.currentIndexStream.listen((index) async {
@@ -63,23 +64,22 @@ class AudioProvider extends ChangeNotifier {
         _indexCounter = (index == _lastIndex + 1) ? _indexCounter + 1 : 0;
         _lastIndex = index;
         if (_indexCounter == _songsPerLoop) {
-          resetLoop(index - _songsPerLoop);
+          await resetLoop(index - _songsPerLoop);
           _indexCounter = 0;
         }
       }
     });
 
-    _audioPlayer.positionDiscontinuityStream.listen((reason) {
-      List<IndexedAudioSource>? sequence = _audioPlayer.sequence;
-      int? index = _audioPlayer.currentIndex;
-
-      if (sequence != null && index != null) {
-        final int currentAudioId = int.parse(sequence[index].tag.id);
-        final SongModel currentSong = _songs.firstWhere((song) => song.id == currentAudioId);
-        _songsToDb.update(currentSong.id, 
-          (song) => updateData(song), 
-          ifAbsent: () => insertSong(currentSong)
-        );
+    _audioPlayer.positionDiscontinuityStream.listen((discontinuity) {
+      if (_audioPlayer.position.inSeconds == 0) {
+        SongModel? currentSong = Functions.getSongModel(_audioPlayer, _songs);
+        if (currentSong != null) {
+          // print("verbose >>> ${currentSong.title} listen count ++");
+          _songsToDb.update(currentSong.id,
+            (song) => updateData(song), 
+            ifAbsent: () => insertSong(currentSong)
+          );
+        }
       }
     });
   }
@@ -96,20 +96,17 @@ class AudioProvider extends ChangeNotifier {
     return Song(song.id, song.title, months, 1);
   }
 
-  void saveInDatabase() {
-    _db.updateSongs(_songsToDb.values.toList());
+  void saveInDatabase() async {
+    await _db.updateSongs(_songsToDb.values.toList());
     _songsToDb.clear();
   }
 
-  void clearDatabase() {
-    _db.clearDatabase();
+  void clearDatabase() async {
+    await _db.clearDatabase();
     _songsToDb.clear();
   }
 
   Future<bool> fetchAudioSongs() async {
-    isLoading = true;
-    notifyListeners();
-
     final OnAudioQuery audioQuery = OnAudioQuery();
 
     // Request permissions
@@ -129,14 +126,11 @@ class AudioProvider extends ChangeNotifier {
       if(_songs.isEmpty) { return false; }
 
       setPlaylist();
-      sortSongs(_sortState);
+      await sortSongs(_sortState);
 
       return true;
     } catch (e) {
       return false;
-    } finally {
-      isLoading = false;
-      notifyListeners();
     }
   }
 
@@ -155,9 +149,10 @@ class AudioProvider extends ChangeNotifier {
     );
   }
 
-  void setLoopMode(LoopMode mode, CLoopMode cMode) {
-    _audioPlayer.setLoopMode(mode);
-    cLoopMode = cMode;
+  void setLoopMode(LoopMode mode, CLoopMode cMode) async {
+    await _audioPlayer.setLoopMode(mode);
+    // cLoopMode = cMode;
+    setCLoopMode(cMode);
 
     if (_cLoopMode == CLoopMode.custom) {
       _indexCounter = 0;
@@ -192,7 +187,7 @@ class AudioProvider extends ChangeNotifier {
         break;
     }
     setPlaylist();
-    _audioPlayer.setAudioSource(_playlist);
+    await _audioPlayer.setAudioSource(_playlist);
   }
 
   Future<void> smartSort() async {
