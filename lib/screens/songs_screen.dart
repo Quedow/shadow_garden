@@ -53,7 +53,7 @@ class SongsScreenState extends State<SongsScreen> {
                         onTap: () => Functions.onTap(_audioPlayer, widget.isPlaying, isCurrentSong, index),
                         onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
                         leading: Artworks.artworkStyle(int.parse(metadata.id), Artworks.artworkSmallSize),
-                        title: TitleText(title: "${index + 1} - ${metadata.title}", textStyle: Styles.songHomeTitle(isCurrentSong)),
+                        title: TitleText(title: "${index + 1} - ${metadata.title} (${widget.audioProvider.debugScores[metadata.title] ?? 'new'})", textStyle: Styles.songHomeTitle(isCurrentSong)), // DEBUG TEST
                         subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.songSheetSubtitle),
                         trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: widget.isPlaying),
                         iconColor: ThemeColors.primaryColor,

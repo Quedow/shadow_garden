@@ -23,6 +23,13 @@ class AudioProvider extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioPlayer get audioPlayer => _audioPlayer;
 
+  late Map<String, double> _debugScores; // DEBUG TEST
+  Map<String, double> get debugScores => _debugScores; // DEBUG TEST
+  void setDebugScores() async { // DEBUG TEST
+    _debugScores = await _db.getScores();
+    notifyListeners();
+  }
+
   late int _songsPerLoop;
   int get songsPerLoop => _songsPerLoop;
   void setSongsPerLoop(int number) async {
@@ -49,56 +56,74 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  int _indexCounter = 0;
-  int _lastIndex = 0;
+  List<int> _lastIndexes = [];
+  Duration _lastPosition = Duration.zero;
 
   AudioProvider() {
     _cLoopMode = _settings.getCLoopMode();
     _songsPerLoop = _settings.getSongsPerLoop();
     _sortState = _settings.getSortState();
 
+    setDebugScores(); // DEBUG TEST
+
     _audioPlayer.currentIndexStream.listen((index) async {
       if (index == null) { return; }
 
       if (_cLoopMode == CLoopMode.custom) {
-        _indexCounter = (index == _lastIndex + 1) ? _indexCounter + 1 : 0;
-        _lastIndex = index;
-        if (_indexCounter == _songsPerLoop) {
-          await resetLoop(index - _songsPerLoop);
-          _indexCounter = 0;
+        if (_lastIndexes.isEmpty || audioPlayer.previousIndex != _lastIndexes.last) {
+          _lastIndexes.clear();
+        }
+        _lastIndexes.add(index);
+
+        if (_lastIndexes.length > _songsPerLoop) {
+          await resetLoop(_lastIndexes.first);
+          _lastIndexes = [_lastIndexes.first];
         }
       }
     });
 
+    _audioPlayer.positionStream.listen((position) {
+      _lastPosition = position;
+    });
+
     _audioPlayer.positionDiscontinuityStream.listen((discontinuity) {
-      if (_audioPlayer.position.inSeconds == 0) {
-        SongModel? currentSong = Functions.getSongModel(_audioPlayer, _songs);
+      if (_audioPlayer.position.inSeconds == 0 && audioPlayer.playerState.playing) {
+        SongModel? currentSong = Functions.getSongModel(_audioPlayer, _songs, discontinuity.previousEvent.currentIndex);
+
         if (currentSong != null) {
-          // print("verbose >>> ${currentSong.title} listen count ++");
+          double listeningRate = 1.0;
+
+          if (discontinuity.reason != PositionDiscontinuityReason.autoAdvance && discontinuity.previousEvent.duration != null) {
+            listeningRate = double.parse((_lastPosition.inMilliseconds / discontinuity.previousEvent.duration!.inMilliseconds).toStringAsFixed(2));
+          }
+
           _songsToDb.update(currentSong.id,
-            (song) => updateData(song), 
-            ifAbsent: () => insertSong(currentSong)
+            (song) => updateData(song, listeningRate), 
+            ifAbsent: () => insertSong(currentSong, listeningRate)
           );
         }
       }
     });
   }
 
-  Song updateData(Song song) {
+  Song updateData(Song song, double listeningRate) {
     song.nbOfListens++;
+    song.listeningRate = listeningRate;
     return song;
   }
 
-  Song insertSong(SongModel song) {
+  Song insertSong(SongModel song, double listeningRate) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch((song.dateAdded ?? 0) * 1000, isUtc: true);
     final int months = DateTime.now().difference(date).inDays ~/ 30;
 
-    return Song(song.id, song.title, months, 1);
+    return Song(song.id, song.title, months, 1, listeningRate);
   }
 
   void saveInDatabase() async {
     await _db.updateSongs(_songsToDb.values.toList());
     _songsToDb.clear();
+
+    setDebugScores(); // DEBUG TEST
   }
 
   void clearDatabase() async {
@@ -151,11 +176,11 @@ class AudioProvider extends ChangeNotifier {
 
   void setLoopMode(LoopMode mode, CLoopMode cMode) async {
     await _audioPlayer.setLoopMode(mode);
-    // cLoopMode = cMode;
     setCLoopMode(cMode);
 
     if (_cLoopMode == CLoopMode.custom) {
-      _indexCounter = 0;
+      _lastIndexes.clear();
+      _lastIndexes.add(_audioPlayer.currentIndex ?? 0);
     }
   }
 

@@ -22,23 +22,33 @@ const SongSchema = CollectionSchema(
       name: r'dateAdded',
       type: IsarType.long,
     ),
-    r'label': PropertySchema(
+    r'favorite': PropertySchema(
       id: 1,
+      name: r'favorite',
+      type: IsarType.bool,
+    ),
+    r'label': PropertySchema(
+      id: 2,
       name: r'label',
       type: IsarType.string,
     ),
+    r'listeningRate': PropertySchema(
+      id: 3,
+      name: r'listeningRate',
+      type: IsarType.double,
+    ),
     r'nbOfListens': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'nbOfListens',
       type: IsarType.long,
     ),
     r'score': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'score',
       type: IsarType.double,
     ),
     r'songId': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'songId',
       type: IsarType.long,
     )
@@ -74,10 +84,12 @@ void _songSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.dateAdded);
-  writer.writeString(offsets[1], object.label);
-  writer.writeLong(offsets[2], object.nbOfListens);
-  writer.writeDouble(offsets[3], object.score);
-  writer.writeLong(offsets[4], object.songId);
+  writer.writeBool(offsets[1], object.favorite);
+  writer.writeString(offsets[2], object.label);
+  writer.writeDouble(offsets[3], object.listeningRate);
+  writer.writeLong(offsets[4], object.nbOfListens);
+  writer.writeDouble(offsets[5], object.score);
+  writer.writeLong(offsets[6], object.songId);
 }
 
 Song _songDeserialize(
@@ -87,13 +99,15 @@ Song _songDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Song(
-    reader.readLong(offsets[4]),
-    reader.readString(offsets[1]),
+    reader.readLong(offsets[6]),
+    reader.readString(offsets[2]),
     reader.readLong(offsets[0]),
-    reader.readLong(offsets[2]),
+    reader.readLong(offsets[4]),
+    reader.readDouble(offsets[3]),
   );
+  object.favorite = reader.readBool(offsets[1]);
   object.id = id;
-  object.score = reader.readDouble(offsets[3]);
+  object.score = reader.readDouble(offsets[5]);
   return object;
 }
 
@@ -107,12 +121,16 @@ P _songDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
       return (reader.readDouble(offset)) as P;
     case 4:
+      return (reader.readLong(offset)) as P;
+    case 5:
+      return (reader.readDouble(offset)) as P;
+    case 6:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -255,6 +273,15 @@ extension SongQueryFilter on QueryBuilder<Song, Song, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> favoriteEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'favorite',
+        value: value,
       ));
     });
   }
@@ -435,6 +462,68 @@ extension SongQueryFilter on QueryBuilder<Song, Song, QFilterCondition> {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'label',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> listeningRateEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'listeningRate',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> listeningRateGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'listeningRate',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> listeningRateLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'listeningRate',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> listeningRateBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'listeningRate',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
       ));
     });
   }
@@ -624,6 +713,18 @@ extension SongQuerySortBy on QueryBuilder<Song, Song, QSortBy> {
     });
   }
 
+  QueryBuilder<Song, Song, QAfterSortBy> sortByFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'favorite', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> sortByFavoriteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'favorite', Sort.desc);
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterSortBy> sortByLabel() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'label', Sort.asc);
@@ -633,6 +734,18 @@ extension SongQuerySortBy on QueryBuilder<Song, Song, QSortBy> {
   QueryBuilder<Song, Song, QAfterSortBy> sortByLabelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'label', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> sortByListeningRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listeningRate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> sortByListeningRateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listeningRate', Sort.desc);
     });
   }
 
@@ -686,6 +799,18 @@ extension SongQuerySortThenBy on QueryBuilder<Song, Song, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Song, Song, QAfterSortBy> thenByFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'favorite', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> thenByFavoriteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'favorite', Sort.desc);
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -707,6 +832,18 @@ extension SongQuerySortThenBy on QueryBuilder<Song, Song, QSortThenBy> {
   QueryBuilder<Song, Song, QAfterSortBy> thenByLabelDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'label', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> thenByListeningRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listeningRate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> thenByListeningRateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'listeningRate', Sort.desc);
     });
   }
 
@@ -754,10 +891,22 @@ extension SongQueryWhereDistinct on QueryBuilder<Song, Song, QDistinct> {
     });
   }
 
+  QueryBuilder<Song, Song, QDistinct> distinctByFavorite() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'favorite');
+    });
+  }
+
   QueryBuilder<Song, Song, QDistinct> distinctByLabel(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'label', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Song, Song, QDistinct> distinctByListeningRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'listeningRate');
     });
   }
 
@@ -793,9 +942,21 @@ extension SongQueryProperty on QueryBuilder<Song, Song, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Song, bool, QQueryOperations> favoriteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'favorite');
+    });
+  }
+
   QueryBuilder<Song, String, QQueryOperations> labelProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'label');
+    });
+  }
+
+  QueryBuilder<Song, double, QQueryOperations> listeningRateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'listeningRate');
     });
   }
 

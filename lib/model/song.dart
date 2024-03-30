@@ -15,11 +15,13 @@ class Song {
 
   int nbOfListens = 0;
 
-  // double listeningRate = 1.0;
+  double listeningRate = 1.0;
 
   double score = 1.0;
 
-  Song(this.songId, this.label, this.dateAdded, this.nbOfListens);
+  bool favorite = false;
+
+  Song(this.songId, this.label, this.dateAdded, this.nbOfListens, this.listeningRate);
 }
 
 class DatabaseService {
@@ -65,22 +67,28 @@ class DatabaseService {
       int totalOfListens = await isar.songs.where().nbOfListensProperty().sum();
 
       for (var song in allSongs) {
-        song.score = calculateScore(song.nbOfListens, totalOfListens, song.dateAdded);
+        song.score = calculateScore(song.nbOfListens, totalOfListens, song.dateAdded, song.listeningRate);
         await isar.songs.put(song);
       }
     });
   }
 
-  double calculateScore(int nbOfListens, int totalOfListens, int dateAdded) {
-    double addedDateScore = 0.6 * (dateAdded > maxDateAdded ? 0 : (-1/maxDateAdded * dateAdded + 1));
-    double nbOfListensScore = 0.4 * (nbOfListens / totalOfListens);
+  double calculateScore(int nbOfListens, int totalOfListens, int dateAdded, double listeningRate) {
+    double addedDateScore = 0.2 * (dateAdded > maxDateAdded ? 0 : (-1/maxDateAdded * dateAdded + 1));
+    double nbOfListensScore = 0.35 * (nbOfListens / totalOfListens);
+    double listenRateScore = 0.45 * listeningRate;
 
-    return  double.parse((addedDateScore + nbOfListensScore).toStringAsFixed(2));
+    return  double.parse((addedDateScore + nbOfListensScore + listenRateScore).toStringAsFixed(2));
   }
 
   Future<List<String>> getRanking() async {
-    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByDateAddedDesc().findAll();
+    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByListeningRateDesc().thenByDateAddedDesc().findAll();
     return songsRanking.map((song) => song.label).toList();
+  }
+
+  Future<Map<String, double>> getScores() async {
+    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByListeningRateDesc().thenByDateAddedDesc().findAll();
+    return {for (var song in songsRanking) song.label: song.score};
   }
 
   Future<void> clearDatabase() async {

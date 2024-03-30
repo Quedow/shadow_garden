@@ -5,6 +5,7 @@ import 'package:shadow_garden/screens/songs_screen.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:provider/provider.dart';
+import 'package:shadow_garden/utils/functions.dart';
 import 'package:shadow_garden/widgets/sort_button.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _audioProvider = Provider.of<AudioProvider>(context, listen: false);
-    _audioProvider.fetchAudioSongs();
+    Functions.init(_audioProvider);
     _audioPlayer = _audioProvider.audioPlayer;
 
     _audioPlayer.playerStateStream.listen((state) {

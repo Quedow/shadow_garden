@@ -120,9 +120,7 @@ class _LoopButtonState extends State<LoopButton> {
           selectedTextStyle: Styles.numberPickerSelect,
           textStyle: Styles.numberPicker,
           axis: Axis.horizontal,
-          onChanged: (value) { 
-            setState(() => audioProvider.setSongsPerLoop(value));
-          }
+          onChanged: (value) => audioProvider.setSongsPerLoop(value)
         )
       ]
     );

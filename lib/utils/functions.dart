@@ -5,6 +5,11 @@ import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
 
 abstract class Functions {
+  static Future<void> init(AudioProvider audioProvider) async {
+    await audioProvider.audioPlayer.setLoopMode(LoopMode.values[audioProvider.cLoopMode.index <= 2 ? audioProvider.cLoopMode.index : LoopMode.all.index]);
+    await audioProvider.fetchAudioSongs();
+  }
+  
   static void onTap(AudioPlayer audioPlayer, bool isPlaying, bool isCurrentItem, int index) {
     if (isCurrentItem) {
       if (isPlaying) {
@@ -26,13 +31,12 @@ abstract class Functions {
     );
   }
 
-  static SongModel? getSongModel(AudioPlayer audioPlayer, List<SongModel> songs) {
+  static SongModel? getSongModel(AudioPlayer audioPlayer, List<SongModel> songs, int? index) {
     final List<IndexedAudioSource>? sequence = audioPlayer.sequence;
-    final int? currentIndex = audioPlayer.currentIndex;
 
-    if (sequence == null || currentIndex == null) { return null; }
+    if (sequence == null || index == null) { return null; }
 
-    final int currentAudioId = int.parse(sequence[currentIndex].tag.id);
+    final int currentAudioId = int.parse(sequence[index].tag.id);
     final SongModel currentSong = songs.firstWhere((song) => song.id == currentAudioId);
     return currentSong;
   }
