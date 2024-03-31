@@ -82,13 +82,12 @@ class DatabaseService {
   }
 
   Future<List<String>> getRanking() async {
-    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByListeningRateDesc().thenByDateAddedDesc().findAll();
+    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByNbOfListensDesc().thenByListeningRateDesc().findAll();
     return songsRanking.map((song) => song.label).toList();
   }
 
-  Future<Map<String, double>> getScores() async {
-    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByListeningRateDesc().thenByDateAddedDesc().findAll();
-    return {for (var song in songsRanking) song.label: song.score};
+  Future<List<Song>> getAllSongs() async {
+    return await isar.songs.where().sortByScoreDesc().thenByNbOfListensDesc().thenByListeningRateDesc().findAll();
   }
 
   Future<void> clearDatabase() async {

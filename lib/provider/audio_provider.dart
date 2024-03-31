@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -23,10 +24,11 @@ class AudioProvider extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioPlayer get audioPlayer => _audioPlayer;
 
-  late Map<String, double> _debugScores; // DEBUG TEST
-  Map<String, double> get debugScores => _debugScores; // DEBUG TEST
-  void setDebugScores() async { // DEBUG TEST
-    _debugScores = await _db.getScores();
+  bool _shuffleActive = false;
+  bool get shuffleActive => _shuffleActive;
+  void switchShuffle() async {
+    _shuffleActive = !_shuffleActive;
+    _shuffleActive ? await sortSongs(-1) : await sortSongs(_sortState);
     notifyListeners();
   }
 
@@ -63,8 +65,6 @@ class AudioProvider extends ChangeNotifier {
     _cLoopMode = _settings.getCLoopMode();
     _songsPerLoop = _settings.getSongsPerLoop();
     _sortState = _settings.getSortState();
-
-    setDebugScores(); // DEBUG TEST
 
     _audioPlayer.currentIndexStream.listen((index) async {
       if (index == null) { return; }
@@ -122,8 +122,6 @@ class AudioProvider extends ChangeNotifier {
   void saveInDatabase() async {
     await _db.updateSongs(_songsToDb.values.toList());
     _songsToDb.clear();
-
-    setDebugScores(); // DEBUG TEST
   }
 
   void clearDatabase() async {

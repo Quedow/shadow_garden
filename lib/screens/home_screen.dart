@@ -3,6 +3,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:shadow_garden/screens/settings_screen.dart';
 import 'package:shadow_garden/screens/songs_screen.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
+import 'package:shadow_garden/screens/statistics_screen.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:provider/provider.dart';
 import 'package:shadow_garden/utils/functions.dart';
@@ -45,12 +46,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: [
-        homeAppBar(), 
-        settingsAppBar()
+        homeAppBar(),
+        customAppBar('Statistics'),
+        customAppBar('Settings')
       ][currentScreenIndex],
       backgroundColor: ThemeColors.backgroundOled,
       body: [
         SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying,),
+        const StatisticsScreen(),
         SettingsScreen(audioProvider: _audioProvider),
       ].elementAt(currentScreenIndex),
       bottomNavigationBar: BottomNavigationBar(
@@ -69,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         items: const [
           BottomNavigationBarItem(label: 'Songs', icon: Icon(Icons.music_note_rounded)),
+          BottomNavigationBarItem(label: 'Statistics', icon: Icon(Icons.bar_chart_rounded)),
           BottomNavigationBarItem(label: 'Settings', icon: Icon(Icons.settings))
         ],
       ),
@@ -82,16 +86,16 @@ class _HomeScreenState extends State<HomeScreen> {
       title: const Text('Shadow Garden'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
       centerTitle: true,
       actions: [
-        IconButton(onPressed: () => _audioProvider.sortSongs(-1), icon: const Icon(Icons.shuffle_rounded), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
+        IconButton(onPressed: _audioProvider.switchShuffle, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
         IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), highlightColor: ThemeColors.primaryColor.withOpacity(0.2))
       ],
     );
   }
 
-  AppBar settingsAppBar() {
+  AppBar customAppBar(String title) {
     return AppBar(
       backgroundColor: ThemeColors.backgroundOled, 
-      title: const Text('Settings'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
+      title: Text(title), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
       centerTitle: true
     );
   }
