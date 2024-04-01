@@ -18,8 +18,6 @@ class SettingsScreenState extends State<SettingsScreen> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        settingIconButton("Save data", "Listening data will be saved to improve\nsmart sort (data still local).", Icons.save_alt_rounded, widget.audioProvider.saveInDatabase),
-        Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
         settingIconButton("Delete data", "Listening data will be delete to reset\nsmart sort.", Icons.delete_rounded, widget.audioProvider.clearDatabase),
         Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
       ],
