@@ -83,9 +83,9 @@ class DatabaseService {
   }
 
   double _calculateScore(int nbOfListens, int totalOfListens, int dateAdded, double listeningRate) {
-    double addedDateScore = 0.2 * (dateAdded > maxDateAdded ? 0 : (-1/maxDateAdded * dateAdded + 1));
-    double nbOfListensScore = 0.35 * (nbOfListens / totalOfListens);
-    double listenRateScore = 0.45 * listeningRate;
+    double addedDateScore = 0.15 * (dateAdded > maxDateAdded ? 0 : (-1/maxDateAdded * dateAdded + 1));
+    double nbOfListensScore = 0.45 * (nbOfListens / totalOfListens);
+    double listenRateScore = 0.40 * listeningRate;
 
     return  double.parse((addedDateScore + nbOfListensScore + listenRateScore).toStringAsFixed(2));
   }

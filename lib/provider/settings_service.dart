@@ -20,7 +20,7 @@ class SettingsService {
   }
 
   CLoopMode getCLoopMode() {
-    return CLoopMode.values[_preferences!.getInt('cLoopMode') ?? 0];
+    return CLoopMode.values[_preferences!.getInt('cLoopMode') ?? 2];
   }
 
   Future<void> setSongsPerLoop(int value) async {
@@ -39,13 +39,13 @@ class SettingsService {
     return _preferences!.getInt('sortState') ?? 0;
   }
 
-  Future<void> setCurrentIndex(int index) async {
-    await _preferences!.setInt('currentIndex', index);
-  }
+  // Future<void> setCurrentIndex(int index) async {
+  //   await _preferences!.setInt('currentIndex', index);
+  // }
 
-  int getCurrentIndex() {
-    return _preferences!.getInt('currentIndex') ?? 0;
-  }
+  // int getCurrentIndex() {
+  //   return _preferences!.getInt('currentIndex') ?? 0;
+  // }
 
   Future<void> clearSettings() async {
     await _preferences!.clear();

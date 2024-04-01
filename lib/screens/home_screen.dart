@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
   AppBar homeAppBar() {
     return AppBar(
       backgroundColor: ThemeColors.backgroundOled, 
-      leading: IconButton(onPressed: () => {}, icon: const Icon(Icons.search_rounded), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
+      // leading: IconButton(onPressed: () => {}, icon: const Icon(Icons.search_rounded), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
       title: const Text('Shadow Garden'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
       centerTitle: true,
       actions: [
