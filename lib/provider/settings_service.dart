@@ -46,4 +46,8 @@ class SettingsService {
   int getCurrentIndex() {
     return _preferences!.getInt('currentIndex') ?? 0;
   }
+
+  Future<void> clearSettings() async {
+    await _preferences!.clear();
+  }
 }

@@ -13,18 +13,18 @@ class StatisticsScreen extends StatefulWidget {
 
 class StatisticsScreenState extends State<StatisticsScreen> {
   final DatabaseService _db = DatabaseService();
-  late Future<List<Song>> futureSongs;
+  late Future<List<Song>> _futureSongs;
 
   @override
   void initState() {
     super.initState();
-    futureSongs = _db.getAllSongs();
+    _futureSongs = _db.getAllSongs();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Song>>(
-      future: futureSongs,
+      future: _futureSongs,
       builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot) {
         const double scrollbarThickness = 10.0;
     

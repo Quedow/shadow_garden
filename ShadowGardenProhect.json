@@ -13,30 +13,10 @@
         "block_by": [8]
       },
       {
-        "id": 2,
-        "label": "Album Screen",
-        "description": "Page de la liste des albums",
-        "done": false,
-        "in_progress": false,
-        "priority": 1,
-        "block": [],
-        "block_by": [5]
-      },
-      {
-        "id": 3,
-        "label": "Playlist Screen",
-        "description": "Page de la liste des playlists + favoris",
-        "done": false,
-        "in_progress": false,
-        "priority": 1,
-        "block": [],
-        "block_by": [5]
-      },
-      {
         "id": 4,
         "label": "Data Save",
         "description": "L'application sauvegarde le mode de tri et la dernière musique",
-        "done": false,
+        "done": true,
         "in_progress": true,
         "priority": 2,
         "block": [6],
@@ -125,9 +105,19 @@
       {
         "id": 13,
         "label": "Stats Spotify-like",
-        "description": "Système de statistiques comme sur Spotify",
+        "description": "Système de statistiques comme sur Spotify (totaux)",
         "done": false,
         "in_progress": false,
+        "priority": 1,
+        "block": [],
+        "block_by": []
+      },
+      {
+        "id": 14,
+        "label": "Stats screen",
+        "description": "Système de statistiques de chaque musique",
+        "done": true,
+        "in_progress": true,
         "priority": 1,
         "block": [],
         "block_by": []
