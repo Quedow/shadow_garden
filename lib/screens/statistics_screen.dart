@@ -45,8 +45,8 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                 final Song song = songs[index];
                 return ListTile(
                   leading: Artworks.artworkStyle(song.songId, Artworks.artworkSmallSize),
-                  title: TitleText(title: "${song.label} (score: ${song.score})", textStyle: Styles.songHomeTitle(false)), // DEBUG TEST
-                  subtitle: Text("${song.nbOfListens} listens - ${song.listeningRate * 100} % listened - ${song.dateAdded} months ago", style: Styles.songSheetSubtitle),
+                  title: TitleText(title: "${song.score} - ${song.label}", textStyle: Styles.songHomeTitle(false)), // DEBUG TEST
+                  subtitle: Text("${song.nbOfListens} listens - ${(song.listeningRate * 100).toStringAsFixed(1)} % listened - ${song.dateAdded} months ago", style: Styles.songSheetSubtitle),
                   iconColor: ThemeColors.primaryColor,
                 );
               },
