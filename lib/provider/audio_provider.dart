@@ -12,7 +12,6 @@ import 'package:shadow_garden/utils/functions.dart';
 class AudioProvider extends ChangeNotifier {
   final SettingsService _settings = SettingsService();
   final DatabaseService _db = DatabaseService();
-  // final Map<int, Song> _songsToDb = {};
 
   List<SongModel> _songs = [];
   List<SongModel> get songs => _songs;
@@ -90,32 +89,15 @@ class AudioProvider extends ChangeNotifier {
         SongModel? currentSong = Functions.getSongModel(_audioPlayer, _songs, discontinuity.previousEvent.currentIndex);
 
         if (currentSong != null) {
-          double listeningRate = 1.0;
+          int duration =  discontinuity.previousEvent.duration != null
+            ? discontinuity.previousEvent.duration!.inSeconds
+            : _lastPosition.inSeconds;
 
-          if (discontinuity.reason != PositionDiscontinuityReason.autoAdvance && discontinuity.previousEvent.duration != null) {
-            listeningRate = double.parse((_lastPosition.inMilliseconds / discontinuity.previousEvent.duration!.inMilliseconds).toStringAsFixed(3));
-          }
-
-          _db.updateSong(Song(currentSong.id, currentSong.title, getMonths(currentSong.dateAdded), 1, listeningRate));
-          // _songsToDb.update(currentSong.id,
-          //   (song) => updateData(song, listeningRate), 
-          //   ifAbsent: () => insertSong(currentSong, listeningRate)
-          // );
+          _db.updateSong(Song(currentSong.id, currentSong.title, duration, getMonths(currentSong.dateAdded), 1, _lastPosition.inSeconds));
         }
       }
     });
   }
-
-  // Song updateData(Song song, double listeningRate) {
-  //   song.nbOfListens++;
-  //   song.listeningRate = (song.listeningRate + listeningRate) / 2;
-  //   return song;
-  // }
-
-  // Song insertSong(SongModel song, double listeningRate) {
-  //   final int months = getMonths(song.dateAdded);
-  //   return Song(song.id, song.title, months, 1, listeningRate);
-  // }
 
   int getMonths(int? dateAdded) {
     DateTime date = DateTime.fromMillisecondsSinceEpoch((dateAdded ?? 0) * 1000, isUtc: true);
@@ -124,7 +106,6 @@ class AudioProvider extends ChangeNotifier {
 
   void clearDatabase() async {
     await _db.clearDatabase();
-    // _songsToDb.clear();
   }
 
   Future<bool> fetchAudioSongs() async {

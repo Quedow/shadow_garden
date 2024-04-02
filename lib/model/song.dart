@@ -9,19 +9,21 @@ class Song {
 
   int songId = -1;
 
-  String label = '';
+  String title = '';
 
-  int dateAdded = 0;
+  int duration = 0;
+
+  int monthsAgo = 0;
 
   int nbOfListens = 0;
 
-  double listeningRate = 1.0;
+  int listeningTime = 0;
 
   double score = 1.0;
 
-  bool favorite = false;
+  // bool favorite = false;
 
-  Song(this.songId, this.label, this.dateAdded, this.nbOfListens, this.listeningRate);
+  Song(this.songId, this.title, this.duration, this.monthsAgo, this.nbOfListens, this.listeningTime);
 }
 
 class DatabaseService {
@@ -52,20 +54,11 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateSongs(List<Song> songs) async {
-    await isar.writeTxn(() async {
-      for (var song in songs) {
-        await _insertOrUpdateSong(song);
-      }
-      await _updateScores();
-    });
-  }
-
   Future<void> _insertOrUpdateSong(Song song) async {
-    Song? songToUpdate = await isar.songs.filter().songIdEqualTo(song.songId).labelEqualTo(song.label).findFirst();
+    Song? songToUpdate = await isar.songs.filter().songIdEqualTo(song.songId).titleEqualTo(song.title).findFirst();
     if (songToUpdate != null) {
+      songToUpdate.listeningTime += song.listeningTime;
       songToUpdate.nbOfListens += song.nbOfListens;
-      songToUpdate.listeningRate = double.parse(((songToUpdate.listeningRate + song.listeningRate)/2).toStringAsFixed(3));
       await isar.songs.put(songToUpdate);
     } else {
       await isar.songs.put(song);
@@ -77,26 +70,26 @@ class DatabaseService {
     int totalOfListens = await isar.songs.where().nbOfListensProperty().sum();
 
     for (var song in allSongs) {
-      song.score = _calculateScore(song.nbOfListens, totalOfListens, song.dateAdded, song.listeningRate);
+      song.score = _calculateScore(song, totalOfListens);
       await isar.songs.put(song);
     }
   }
 
-  double _calculateScore(int nbOfListens, int totalOfListens, int dateAdded, double listeningRate) {
-    double addedDateScore = 0.15 * (dateAdded > maxDateAdded ? 0 : (-1/maxDateAdded * dateAdded + 1));
-    double nbOfListensScore = 0.45 * (nbOfListens / totalOfListens);
-    double listenRateScore = 0.40 * listeningRate;
+  double _calculateScore(Song song, int totalOfListens) {
+    double addedDateScore = 0.10 * (song.monthsAgo > maxDateAdded ? 0 : (-1/maxDateAdded * song.monthsAgo + 1));
+    double nbOfListensScore = 0.55 * (song.nbOfListens / totalOfListens);
+    double listenRateScore = 0.35 * (song.listeningTime / (song.nbOfListens * song.duration));
 
-    return  double.parse((addedDateScore + nbOfListensScore + listenRateScore).toStringAsFixed(2));
+    return  double.parse((addedDateScore + nbOfListensScore + listenRateScore).toStringAsFixed(3));
   }
 
   Future<List<String>> getRanking() async {
-    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByNbOfListensDesc().thenByListeningRateDesc().findAll();
-    return songsRanking.map((song) => song.label).toList();
+    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByMonthsAgo().findAll();
+    return songsRanking.map((song) => song.title).toList();
   }
 
   Future<List<Song>> getAllSongs() async {
-    return await isar.songs.where().sortByScoreDesc().thenByNbOfListensDesc().thenByListeningRateDesc().findAll();
+    return await isar.songs.where().sortByScoreDesc().thenByMonthsAgo().findAll();
   }
 
   Future<void> clearDatabase() async {
