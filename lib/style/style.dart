@@ -39,6 +39,7 @@ abstract class Artworks {
 }
 
 abstract class Styles {
+  // Songs screen
   static TextStyle audioLeadingTextStyle = const TextStyle(color: ThemeColors.primaryColor, fontSize: 18, fontWeight: FontWeight.w500);
 
   static TextStyle songHomeTitle(bool isCurrentSong) {
@@ -49,13 +50,15 @@ abstract class Styles {
     );
   }
 
-  static TextStyle songSheetTilte = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 22);
-  
-  static TextStyle songSheetSubtitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.normal, fontSize: 14);
-
+  // Song banner
   static TextStyle songBannerTitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 18);
 
   static TextStyle trackBannerSubtitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.w500, fontSize: 16);
+
+  // Bottom sheet screen
+  static TextStyle songSheetTilte = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 22);
+  
+  static TextStyle songSheetSubtitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.normal, fontSize: 14);
 
   static TextStyle progressBarTime = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.w500);
 
@@ -63,7 +66,11 @@ abstract class Styles {
   
   static TextStyle numberPicker = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.15));
 
+  // Settings screen
   static TextStyle settingsTitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.normal, fontSize: 16);
   
   static TextStyle settingsDescription = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.7), fontWeight: FontWeight.normal, fontSize: 14);
+
+  // Statistic screen
+  static TextStyle statisticLabel = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.normal, fontSize: 16);
 }

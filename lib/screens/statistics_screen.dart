@@ -13,47 +13,70 @@ class StatisticsScreen extends StatefulWidget {
 
 class StatisticsScreenState extends State<StatisticsScreen> {
   final DatabaseService _db = DatabaseService();
-  late Future<List<Song>> _futureSongs;
+  late Future<Map<String, dynamic>> _dataSongs;
 
   @override
   void initState() {
     super.initState();
-    _futureSongs = _db.getAllSongs();
+    _dataSongs = _db.getDataSongs();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Song>>(
-      future: _futureSongs,
-      builder: (BuildContext context, AsyncSnapshot<List<Song>> snapshot) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _dataSongs,
+      builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
         const double scrollbarThickness = 10.0;
     
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          final List<Song> songs = snapshot.data ?? [];
+          final List<Song> songs = snapshot.data?['songs'] ?? [];
+          final Map<String, int> data = snapshot.data?['data'] ?? {};
     
-          return Scrollbar(
-            thickness: scrollbarThickness,
-            thumbVisibility: true,
-            radius: const Radius.circular(20),
-            interactive: true,
-            child: ListView.builder(
-              padding: const EdgeInsets.only(right: scrollbarThickness),
-              itemCount: songs.length,
-              itemBuilder: (context, index) {
-                final Song song = songs[index];
-                return ListTile(
-                  leading: Artworks.artworkStyle(song.songId, Artworks.artworkSmallSize),
-                  title: TitleText(title: "${song.score} - ${song.title}", textStyle: Styles.songHomeTitle(false)), // DEBUG TEST
-                  subtitle: Text("${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(1)} % listened - ${song.monthsAgo} months ago", style: Styles.songSheetSubtitle),
-                  iconColor: ThemeColors.primaryColor,
-                );
-              },
-            ),
+          return Column(
+            children: [
+              statisticText('Total number of listens', (data['totalNbOfListens'] ?? 0).toString()),
+              statisticText('Total listening time', '${((data['totalListeningTime'] ?? 0) / 60).toStringAsFixed(0)} minutes'),
+              Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
+              Expanded(
+                child: Scrollbar(
+                  thickness: scrollbarThickness,
+                  thumbVisibility: true,
+                  radius: const Radius.circular(20),
+                  interactive: true,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.only(right: scrollbarThickness),
+                    itemCount: songs.length,
+                    itemBuilder: (context, index) {
+                      final Song song = songs[index];
+                      return ListTile(
+                        leading: Artworks.artworkStyle(song.songId, Artworks.artworkSmallSize),
+                        title: TitleText(title: "${song.score} - ${song.title}", textStyle: Styles.songHomeTitle(false)), // DEBUG TEST
+                        subtitle: Text("${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.monthsAgo} mos ago", style: Styles.songSheetSubtitle),
+                        iconColor: ThemeColors.primaryColor,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           );
         }
       },
+    );
+  }
+
+  Padding statisticText(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: Styles.statisticLabel),
+          Text(value, style: Styles.statisticLabel)
+        ],
+      ),
     );
   }
 }

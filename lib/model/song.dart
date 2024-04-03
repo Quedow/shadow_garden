@@ -88,9 +88,15 @@ class DatabaseService {
     return songsRanking.map((song) => song.title).toList();
   }
 
-  Future<List<Song>> getAllSongs() async {
-    return await isar.songs.where().sortByScoreDesc().thenByMonthsAgo().findAll();
-  }
+  Future<Map<String, dynamic>> getDataSongs() async {
+    return {
+      'songs': await isar.songs.where().sortByScoreDesc().thenByMonthsAgo().findAll(),
+      'data': {
+        'totalNbOfListens': await isar.songs.where().nbOfListensProperty().sum(),
+        'totalListeningTime': await isar.songs.where().listeningTimeProperty().sum(),
+      },
+    };
+}
 
   Future<void> clearDatabase() async {
     await isar.writeTxn(() async {
