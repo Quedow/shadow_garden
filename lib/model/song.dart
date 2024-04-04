@@ -67,18 +67,20 @@ class DatabaseService {
 
   Future<void> _updateScores() async {
     List<Song> allSongs = await isar.songs.where().findAll();
-    int totalOfListens = await isar.songs.where().nbOfListensProperty().sum();
 
     for (var song in allSongs) {
-      song.score = _calculateScore(song, totalOfListens);
+      song.score = await _calculateScore(song, allSongs.length);
       await isar.songs.put(song);
     }
   }
 
-  double _calculateScore(Song song, int totalOfListens) {
+  Future<double> _calculateScore(Song song, int totalSongs) async {
+    int belowSongs = await isar.songs.filter().nbOfListensLessThan(song.nbOfListens).count();
+    int equalSongs = await isar.songs.filter().nbOfListensEqualTo(song.nbOfListens).count();
+
     double addedDateScore = 0.10 * (song.monthsAgo > maxDateAdded ? 0 : (-1/maxDateAdded * song.monthsAgo + 1));
-    double nbOfListensScore = 0.55 * (song.nbOfListens / totalOfListens);
-    double listenRateScore = 0.35 * (song.listeningTime / (song.nbOfListens * song.duration));
+    double nbOfListensScore = 0.50 * ((belowSongs + 0.5 * equalSongs) / totalSongs);
+    double listenRateScore = 0.40 * (song.listeningTime / (song.nbOfListens * song.duration));
 
     return  double.parse((addedDateScore + nbOfListensScore + listenRateScore).toStringAsFixed(3));
   }
