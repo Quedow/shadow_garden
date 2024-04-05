@@ -37,7 +37,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
           return Column(
             children: [
               statisticText('Total number of listens', (data['totalNbOfListens'] ?? 0).toString()),
-              statisticText('Total listening time', '${((data['totalListeningTime'] ?? 0) / 60).toStringAsFixed(0)} minutes'),
+              statisticText('Total listening time', '${((data['totalListeningTime'] ?? 0) / 60).toStringAsFixed(0)} min (${((data['totalListeningTime'] ?? 0) / 3600).toStringAsFixed(0)} h)'),
               Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
               Expanded(
                 child: Scrollbar(
