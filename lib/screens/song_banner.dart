@@ -11,7 +11,7 @@ class SongBanner extends StatelessWidget {
   final AudioPlayer audioPlayer;
   final bool isPlaying;
 
-  const SongBanner({Key? key, required this.audioPlayer, required this.isPlaying}) : super(key: key);
+  const SongBanner({super.key, required this.audioPlayer, required this.isPlaying});
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,7 @@ import 'package:shadow_garden/style/style.dart';
 class SettingsScreen extends StatefulWidget {
   final AudioProvider audioProvider;
 
-  const SettingsScreen({Key? key, required this.audioProvider}) : super(key: key);
+  const SettingsScreen({super.key, required this.audioProvider});
 
   @override
   SettingsScreenState createState() => SettingsScreenState();

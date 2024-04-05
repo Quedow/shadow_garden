@@ -10,7 +10,7 @@ import 'package:shadow_garden/utils/functions.dart';
 import 'package:shadow_garden/widgets/sort_button.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

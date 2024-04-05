@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class SortButtonIcon extends StatelessWidget {
   final int state;
 
-  const SortButtonIcon({Key? key, required this.state}) : super(key: key);
+  const SortButtonIcon({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {

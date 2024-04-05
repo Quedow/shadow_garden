@@ -5,7 +5,7 @@ import 'package:shadow_garden/widgets/text_display.dart';
 
 class StatisticsScreen extends StatefulWidget {
 
-  const StatisticsScreen({Key? key}) : super(key: key);
+  const StatisticsScreen({super.key});
 
   @override
   StatisticsScreenState createState() => StatisticsScreenState();

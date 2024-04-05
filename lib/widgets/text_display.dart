@@ -6,7 +6,7 @@ class MarqueeTitle extends StatelessWidget {
   final double availableWidth;
   final TextStyle textStyle;
 
-  const MarqueeTitle({Key? key, required this.title, required this.availableWidth, required this.textStyle}) : super(key: key);
+  const MarqueeTitle({super.key, required this.title, required this.availableWidth, required this.textStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class MarqueeSubtitle extends StatelessWidget {
   final double availableWidth;
   final TextStyle textStyle;
 
-  const MarqueeSubtitle({Key? key, this.album, this.artist, required this.textStyle, required this.availableWidth}) : super(key: key);
+  const MarqueeSubtitle({super.key, this.album, this.artist, required this.textStyle, required this.availableWidth});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class MarqueeText extends StatelessWidget {
   final String title;
   final TextStyle textStyle;
 
-  const MarqueeText({Key? key, required this.title, required this.textStyle}) : super(key: key);
+  const MarqueeText({super.key, required this.title, required this.textStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +67,7 @@ class TitleText extends StatelessWidget {
   final String title;
   final TextStyle textStyle;
 
-  const TitleText({Key? key, required this.title, required this.textStyle}) : super(key: key);
+  const TitleText({super.key, required this.title, required this.textStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,7 @@ class SubtitleText extends StatelessWidget {
   final String? artist;
   final TextStyle textStyle;
 
-  const SubtitleText({Key? key, this.album, this.artist, required this.textStyle}) : super(key: key);
+  const SubtitleText({super.key, this.album, this.artist, required this.textStyle});
 
   @override
   Widget build(BuildContext context) {

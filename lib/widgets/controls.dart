@@ -8,7 +8,7 @@ import 'package:numberpicker/numberpicker.dart';
 class Controls extends StatelessWidget {
   final AudioPlayer audioPlayer;
 
-  const Controls({Key? key, required this.audioPlayer}) : super(key: key);
+  const Controls({super.key, required this.audioPlayer});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class Controls extends StatelessWidget {
 class PlayButton extends StatelessWidget {
   final AudioPlayer audioPlayer;
 
-  const PlayButton({Key? key, required this.audioPlayer}) : super(key: key);
+  const PlayButton({super.key, required this.audioPlayer});
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ enum CLoopMode { off, one, all, custom }
 
 class LoopButton extends StatefulWidget {
 
-  const LoopButton({Key? key}) : super(key: key);
+  const LoopButton({super.key});
 
   @override
   State<LoopButton> createState() => _LoopButtonState();

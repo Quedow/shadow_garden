@@ -12,7 +12,7 @@ class SongsScreen extends StatefulWidget {
   final AudioProvider audioProvider;
   final bool isPlaying;
 
-  const SongsScreen({Key? key, required this.audioProvider, required this.isPlaying}) : super(key: key);
+  const SongsScreen({super.key, required this.audioProvider, required this.isPlaying});
 
   @override
   SongsScreenState createState() => SongsScreenState();
