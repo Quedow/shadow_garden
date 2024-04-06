@@ -96,7 +96,7 @@
         "id": 12,
         "label": "Setting menu",
         "description": "Définir et implémenter (écran) les paramètres modifiables de l'application",
-        "done": false,
+        "done": true,
         "in_progress": true,
         "priority": 1,
         "block": [],
@@ -106,8 +106,8 @@
         "id": 13,
         "label": "Stats Spotify-like",
         "description": "Système de statistiques comme sur Spotify (totaux)",
-        "done": false,
-        "in_progress": false,
+        "done": true,
+        "in_progress": true,
         "priority": 1,
         "block": [],
         "block_by": []
@@ -118,6 +118,40 @@
         "description": "Système de statistiques de chaque musique",
         "done": true,
         "in_progress": true,
+        "priority": 1,
+        "block": [],
+        "block_by": []
+      },
+      {
+        "id": 15,
+        "label": "Corriger les defects observés lors de tests + feedback",
+        "defects": [
+          {
+            "description": "L'application redémarre après un certain temps ce qui coupe la musique",
+            "done": false,
+            "in_progress": false,
+            "priority": 2
+          },
+          {
+            "description": "La barre de progression affichant la durée max sur les widgets background et 0 après avoir mis la musique en pause (depuis un widget) et ouvert la bottom sheet",
+            "done": false,
+            "in_progress": false,
+            "priority": 1
+          },
+          {
+            "description": "Le custom loop lit une petite partie de la musique suivante avant de reboucler",
+            "done": false,
+            "in_progress": false,
+            "priority": 1
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "label": "Retours utilisateurs",
+        "description": "Obtenir des feedbacks pour améliorer l'application",
+        "done": false,
+        "in_progress": false,
         "priority": 1,
         "block": [],
         "block_by": []

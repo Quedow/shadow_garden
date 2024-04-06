@@ -8,13 +8,13 @@ import 'package:shadow_garden/screens/home_screen.dart';
 import 'package:shadow_garden/style/style.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.quedow.shadow_garden.channel.audio',
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true
   );
-
-  WidgetsFlutterBinding.ensureInitialized();
   await SettingsService().init();
   await DatabaseService().init();
 
