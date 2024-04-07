@@ -133,9 +133,15 @@
             "priority": 2
           },
           {
-            "description": "La barre de progression affichant la durée max sur les widgets background et 0 après avoir mis la musique en pause (depuis un widget) et ouvert la bottom sheet",
+            "description": "La barre de progression affichant la durée max sur les widgets background",
             "done": false,
             "in_progress": false,
+            "priority": 1
+          },
+          {
+            "description": "La barre de progression affichant 0 après avoir mis la musique en pause et ouvert la bottom sheet",
+            "done": true,
+            "in_progress": true,
             "priority": 1
           },
           {
@@ -150,6 +156,16 @@
         "id": 16,
         "label": "Retours utilisateurs",
         "description": "Obtenir des feedbacks pour améliorer l'application",
+        "done": false,
+        "in_progress": false,
+        "priority": 1,
+        "block": [],
+        "block_by": []
+      },
+      {
+        "id": 17,
+        "label": "Light Theme",
+        "description": "Ajouter un thème clair + toggle option dans les paramètres",
         "done": false,
         "in_progress": false,
         "priority": 1,

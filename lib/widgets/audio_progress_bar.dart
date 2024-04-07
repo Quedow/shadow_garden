@@ -15,6 +15,8 @@ class AudioProgressBar extends StatelessWidget {
     return StreamBuilder<PositionData>(
       stream: _positionDataStream,
       builder: (context, snapshot) {
+        if (!snapshot.hasData) { return const CircularProgressIndicator(); }
+        
         final positionData = snapshot.data;
         return ProgressBar(
           barHeight: 5.0,
@@ -31,7 +33,7 @@ class AudioProgressBar extends StatelessWidget {
           total: positionData?.duration ?? Duration.zero,
           onSeek: _audioPlayer.seek,
         );
-      },
+      }
     );
   }
 }
