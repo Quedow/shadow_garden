@@ -23,6 +23,8 @@ class SongsScreenState extends State<SongsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const double scrollbarThickness = 10.0;
+    
     return Column(
       children: [
         Expanded(
@@ -30,12 +32,11 @@ class SongsScreenState extends State<SongsScreen> {
             stream: _audioPlayer.sequenceStateStream,
             builder: (context, snapshot) {
               final SequenceState? state = snapshot.data;
-              const double scrollbarThickness = 10.0;
               
-              if (state?.sequence.isEmpty ?? true) {
+              if (state == null || state.sequence.isEmpty) {
                 return const Center(child: Text('No music found...', style: TextStyle(color: ThemeColors.primaryColor)));
               } else {
-                final int playlistLength = state!.sequence.length;
+                final int playlistLength = state.sequence.length;
 
                 return Scrollbar(
                   thickness: scrollbarThickness,
