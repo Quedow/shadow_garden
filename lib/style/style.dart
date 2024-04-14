@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 abstract class ThemeColors {
-  static const primaryColor = Colors.white;
-  static const accentColor = Color(0xFFAAC9FF);
-  static const secondaryColor = Color.fromARGB(255, 29, 37, 48);
+  static const Color primaryColor = Colors.white;
 
-  static const backgroundOled = Color.fromARGB(255, 0, 0, 0);
+  static const Color accentColor = Color(0xFFAAC9FF);
+
+  static const Color secondaryColor = Color.fromARGB(255, 29, 37, 48); 
+
+  static const Color backgroundOled = Color.fromARGB(255, 0, 0, 0);
 }
 
 abstract class IconSizes {

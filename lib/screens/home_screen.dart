@@ -94,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   AppBar customAppBar(String title) {
     return AppBar(
-      backgroundColor: ThemeColors.backgroundOled, 
+      backgroundColor: ThemeColors.backgroundOled,
       title: Text(title), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
       centerTitle: true
     );
