@@ -39,13 +39,13 @@ class SettingsService {
     return _preferences!.getInt('sortState') ?? 0;
   }
 
-  // Future<void> setCurrentIndex(int index) async {
-  //   await _preferences!.setInt('currentIndex', index);
-  // }
+  Future<void> setLastSongId(int id) async {
+    await _preferences!.setInt('lastSongId', id);
+  }
 
-  // int getCurrentIndex() {
-  //   return _preferences!.getInt('currentIndex') ?? 0;
-  // }
+  int getLastSongId() {
+    return _preferences!.getInt('lastSongId') ?? 0;
+  }
 
   Future<void> clearSettings() async {
     await _preferences!.clear();

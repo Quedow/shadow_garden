@@ -40,4 +40,10 @@ abstract class Functions {
     final SongModel currentSong = songs.firstWhere((song) => song.id == currentAudioId);
     return currentSong;
   }
+
+  static int? getSongIndex(List<SongModel> songs, int? songId) {
+    if (songId == null) return null;
+    int index = songs.indexWhere((song) => song.id == songId);
+    return index == -1 ? null : index;
+  }
 }

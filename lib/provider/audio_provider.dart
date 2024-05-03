@@ -38,6 +38,13 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // late int _lastSongId;
+  // int get lastSongId => _lastSongId;
+  // void setLastSongId(int id) async {
+  //   _lastSongId = id;
+  //   await _settings.setLastSongId(id);
+  // }
+
   late CLoopMode _cLoopMode;
   CLoopMode get cLoopMode => _cLoopMode;
   void setCLoopMode(CLoopMode cMode) async {
@@ -63,6 +70,7 @@ class AudioProvider extends ChangeNotifier {
     _cLoopMode = _settings.getCLoopMode();
     _songsPerLoop = _settings.getSongsPerLoop();
     _sortState = _settings.getSortState();
+    // _lastSongId = _settings.getLastSongId();
 
     _audioPlayer.currentIndexStream.listen((index) async {
       if (index == null) { return; }
@@ -196,6 +204,7 @@ class AudioProvider extends ChangeNotifier {
     final List<String> ranking = await _db.getRanking();
     final int size = ranking.length;
     final Map<String, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
-    _songs.sort((a, b) => (mapRanking[a.title] ?? size).compareTo(mapRanking[b.title] ?? size));
+    _songs.sort((a, b) => (mapRanking[a.title] ?? -1).compareTo(mapRanking[b.title] ?? -1)); // Musiques hors bases sont mise au début
+    // _songs.sort((a, b) => (mapRanking[a.title] ?? size).compareTo(mapRanking[b.title] ?? size)); // Musiques hors bases sont à la fin
   }
 }

@@ -52,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ][currentScreenIndex],
       backgroundColor: ThemeColors.backgroundOled,
       body: [
-        SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying,),
+        SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying),
         const StatisticsScreen(),
         SettingsScreen(audioProvider: _audioProvider),
       ].elementAt(currentScreenIndex),
@@ -83,8 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
       backgroundColor: ThemeColors.backgroundOled, 
       // leading: IconButton(onPressed: () => {}, icon: const Icon(Icons.search_rounded), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
-      title: const Text('Shadow Garden'), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
-      centerTitle: true,
+      title: const Text('Shadow Garden'), 
+      foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)), centerTitle: true,
       actions: [
         IconButton(onPressed: _audioProvider.switchShuffle, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
         IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), highlightColor: ThemeColors.primaryColor.withOpacity(0.2))
