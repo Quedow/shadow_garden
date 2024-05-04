@@ -38,13 +38,6 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // late int _lastSongId;
-  // int get lastSongId => _lastSongId;
-  // void setLastSongId(int id) async {
-  //   _lastSongId = id;
-  //   await _settings.setLastSongId(id);
-  // }
-
   late CLoopMode _cLoopMode;
   CLoopMode get cLoopMode => _cLoopMode;
   void setCLoopMode(CLoopMode cMode) async {
@@ -63,6 +56,20 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  late bool _neverListenedFirst;
+  bool get neverListenedFirst => _neverListenedFirst;
+  void setNeverListenedFirst(bool value) async {
+    _neverListenedFirst = value;
+    await _settings.setNeverListenedFirst(value);
+  }
+
+  // late int _lastSongId;
+  // int get lastSongId => _lastSongId;
+  // void setLastSongId(int id) async {
+  //   _lastSongId = id;
+  //   await _settings.setLastSongId(id);
+  // }
+
   List<int> _lastIndexes = [];
   Duration _lastPosition = Duration.zero;
 
@@ -70,6 +77,7 @@ class AudioProvider extends ChangeNotifier {
     _cLoopMode = _settings.getCLoopMode();
     _songsPerLoop = _settings.getSongsPerLoop();
     _sortState = _settings.getSortState();
+    _neverListenedFirst = _settings.getNeverListenedFirst();
     // _lastSongId = _settings.getLastSongId();
 
     _audioPlayer.currentIndexStream.listen((index) async {
@@ -204,7 +212,7 @@ class AudioProvider extends ChangeNotifier {
     final List<String> ranking = await _db.getRanking();
     final int size = ranking.length;
     final Map<String, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
-    _songs.sort((a, b) => (mapRanking[a.title] ?? -1).compareTo(mapRanking[b.title] ?? -1)); // Musiques hors bases sont mise au début
-    // _songs.sort((a, b) => (mapRanking[a.title] ?? size).compareTo(mapRanking[b.title] ?? size)); // Musiques hors bases sont à la fin
+    int sortPosition = neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
+    _songs.sort((a, b) => (mapRanking[a.title] ?? sortPosition).compareTo(mapRanking[b.title] ?? sortPosition));
   }
 }

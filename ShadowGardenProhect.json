@@ -86,8 +86,8 @@
         "id": 11,
         "label": "Search option",
         "description": "Fonctionnalité de recherche de musiques",
-        "done": false,
-        "in_progress": false,
+        "done": true,
+        "in_progress": true,
         "priority": 2,
         "block": [],
         "block_by": []
@@ -149,6 +149,12 @@
             "done": false,
             "in_progress": false,
             "priority": 1
+          },
+          {
+            "description": "Rendu incessant des images au moindre clique ou mouvement",
+            "done": false,
+            "in_progress": false,
+            "priority": 1
           }
         ]
       },
@@ -168,6 +174,16 @@
         "description": "Ajouter un thème clair + toggle option dans les paramètres",
         "done": false,
         "in_progress": false,
+        "priority": 1,
+        "block": [],
+        "block_by": []
+      },
+      {
+        "id": 17,
+        "label": "Dernière musique écouté",
+        "description": "Reprendre sur la dernière musique écoutée + potentiellement auto scroll sur cette musique",
+        "done": false,
+        "in_progress": true,
         "priority": 1,
         "block": [],
         "block_by": []

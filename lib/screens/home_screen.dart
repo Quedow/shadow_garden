@@ -82,9 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
   AppBar homeAppBar() {
     return AppBar(
       backgroundColor: ThemeColors.backgroundOled, 
-      // leading: IconButton(onPressed: () => {}, icon: const Icon(Icons.search_rounded), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
-      title: const Text('Shadow Garden'), 
-      foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)), centerTitle: true,
+      foregroundColor: ThemeColors.primaryColor,
+      title: const Text('Shadow Garden'), centerTitle: true,
+      bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
       actions: [
         IconButton(onPressed: _audioProvider.switchShuffle, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
         IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), highlightColor: ThemeColors.primaryColor.withOpacity(0.2))

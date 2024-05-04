@@ -29,7 +29,6 @@ class SongsScreenState extends State<SongsScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _audioPlayer.dispose();
     super.dispose();
   }
 

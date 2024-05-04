@@ -39,13 +39,21 @@ class SettingsService {
     return _preferences!.getInt('sortState') ?? 0;
   }
 
-  Future<void> setLastSongId(int id) async {
-    await _preferences!.setInt('lastSongId', id);
+  Future<void> setNeverListenedFirst(bool value) async {
+    await _preferences!.setBool('neverListenedFirst', value);
   }
 
-  int getLastSongId() {
-    return _preferences!.getInt('lastSongId') ?? 0;
+  bool getNeverListenedFirst() {
+    return _preferences!.getBool('neverListenedFirst') ?? false;
   }
+
+  // Future<void> setLastSongId(int id) async {
+  //   await _preferences!.setInt('lastSongId', id);
+  // }
+
+  // int getLastSongId() {
+  //   return _preferences!.getInt('lastSongId') ?? 0;
+  // }
 
   Future<void> clearSettings() async {
     await _preferences!.clear();
