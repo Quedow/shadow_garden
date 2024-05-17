@@ -209,10 +209,10 @@ class AudioProvider extends ChangeNotifier {
   }
 
   Future<void> smartSort() async {
-    final List<String> ranking = await _db.getRanking();
+    final List<int> ranking = await _db.getRanking();
     final int size = ranking.length;
-    final Map<String, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
+    final Map<int, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
     int sortPosition = neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
-    _songs.sort((a, b) => (mapRanking[a.title] ?? sortPosition).compareTo(mapRanking[b.title] ?? sortPosition));
+    _songs.sort((a, b) => (mapRanking[a.id] ?? sortPosition).compareTo(mapRanking[b.id] ?? sortPosition));
   }
 }

@@ -47,6 +47,14 @@ class SettingsService {
     return _preferences!.getBool('neverListenedFirst') ?? false;
   }
 
+  Future<void> setNbOfListenWeight (double value) async {
+    await _preferences!.setDouble('nbOfListenWeight', value);
+  }
+
+  double getNbOfListenWeight() {
+    return _preferences!.getDouble('nbOfListenWeight') ?? 0.50;
+  }
+
   // Future<void> setLastSongId(int id) async {
   //   await _preferences!.setInt('lastSongId', id);
   // }

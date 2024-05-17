@@ -47,7 +47,7 @@ class SongsScreenState extends State<SongsScreen> {
             decoration: InputDecoration(
               icon: const Icon(Icons.search_rounded),
               hintText: "Search",
-              hintStyle: TextStyle(color: ThemeColors.primaryColor.withOpacity(0.3)),                
+              hintStyle: TextStyle(color: ThemeColors.primaryColor.withOpacity(0.3)),
               border: InputBorder.none
             ),
           ),
