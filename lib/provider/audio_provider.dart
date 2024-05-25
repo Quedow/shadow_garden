@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shadow_garden/model/song.dart';
+import 'package:shadow_garden/database/song.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shadow_garden/utils/functions.dart';
@@ -109,7 +109,7 @@ class AudioProvider extends ChangeNotifier {
             ? discontinuity.previousEvent.duration!.inSeconds
             : _lastPosition.inSeconds;
 
-          _db.updateSong(Song(currentSong.id, currentSong.title, duration, getMonths(currentSong.dateAdded), 1, _lastPosition.inSeconds));
+          _db.updateSong(Song(currentSong.id, currentSong.title, duration, getMonths(currentSong.dateAdded), 1, _lastPosition.inSeconds, DateTime.now()));
         }
       }
     });
@@ -212,7 +212,7 @@ class AudioProvider extends ChangeNotifier {
     final List<int> ranking = await _db.getRanking();
     final int size = ranking.length;
     final Map<int, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
-    int sortPosition = neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
+    int sortPosition = _neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
     _songs.sort((a, b) => (mapRanking[a.id] ?? sortPosition).compareTo(mapRanking[b.id] ?? sortPosition));
   }
 }

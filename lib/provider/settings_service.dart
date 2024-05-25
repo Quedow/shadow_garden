@@ -52,7 +52,7 @@ class SettingsService {
   }
 
   double getNbOfListenWeight() {
-    return _preferences!.getDouble('nbOfListenWeight') ?? 0.50;
+    return _preferences!.getDouble('nbOfListenWeight') ?? 0.55;
   }
 
   // Future<void> setLastSongId(int id) async {
@@ -62,6 +62,14 @@ class SettingsService {
   // int getLastSongId() {
   //   return _preferences!.getInt('lastSongId') ?? 0;
   // }
+
+  Future<void> setVersion(int version) async {
+    await _preferences!.setInt('version', version);
+  }
+
+  int getVersion() {
+    return _preferences!.getInt('version') ?? 1; // S'il n'y a pas de version c'est qu'il n'y a jamais eu de 1ère migration
+  }
 
   Future<void> clearSettings() async {
     await _preferences!.clear();

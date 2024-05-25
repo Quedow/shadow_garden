@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shadow_garden/model/song.dart';
+import 'package:shadow_garden/database/song.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/style/style.dart';
@@ -36,6 +36,8 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Padding settingNumberInput(String label, String description, double value, void Function(double)? onChanged, [String? leftLabel, String? rightLabel]) {
+    double maxWeight = DatabaseService.mainWeight;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
@@ -47,7 +49,7 @@ class SettingsScreenState extends State<SettingsScreen> {
           Slider(
             value: value,
             activeColor: ThemeColors.darkAccentColor,
-            max: 0.9, divisions: 18, label: (value * 100).round().toString(),
+            max: maxWeight, divisions: (maxWeight / 0.05).round(), label: ((value * 100) / maxWeight).round().toString(),
             onChanged: onChanged
           ),
           if (leftLabel != null && rightLabel != null)

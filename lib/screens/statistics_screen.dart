@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shadow_garden/model/song.dart';
+import 'package:shadow_garden/database/song.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 

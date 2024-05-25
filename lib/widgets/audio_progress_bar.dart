@@ -1,7 +1,7 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shadow_garden/model/position_data.dart';
+import 'package:shadow_garden/utils/position_data.dart';
 import 'package:shadow_garden/style/style.dart';
 
 class AudioProgressBar extends StatelessWidget {

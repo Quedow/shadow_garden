@@ -22,33 +22,38 @@ const SongSchema = CollectionSchema(
       name: r'duration',
       type: IsarType.long,
     ),
-    r'listeningTime': PropertySchema(
+    r'lastListen': PropertySchema(
       id: 1,
+      name: r'lastListen',
+      type: IsarType.dateTime,
+    ),
+    r'listeningTime': PropertySchema(
+      id: 2,
       name: r'listeningTime',
       type: IsarType.long,
     ),
     r'monthsAgo': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'monthsAgo',
       type: IsarType.long,
     ),
     r'nbOfListens': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'nbOfListens',
       type: IsarType.long,
     ),
     r'score': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'score',
       type: IsarType.double,
     ),
     r'songId': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'songId',
       type: IsarType.long,
     ),
     r'title': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'title',
       type: IsarType.string,
     )
@@ -84,12 +89,13 @@ void _songSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.duration);
-  writer.writeLong(offsets[1], object.listeningTime);
-  writer.writeLong(offsets[2], object.monthsAgo);
-  writer.writeLong(offsets[3], object.nbOfListens);
-  writer.writeDouble(offsets[4], object.score);
-  writer.writeLong(offsets[5], object.songId);
-  writer.writeString(offsets[6], object.title);
+  writer.writeDateTime(offsets[1], object.lastListen);
+  writer.writeLong(offsets[2], object.listeningTime);
+  writer.writeLong(offsets[3], object.monthsAgo);
+  writer.writeLong(offsets[4], object.nbOfListens);
+  writer.writeDouble(offsets[5], object.score);
+  writer.writeLong(offsets[6], object.songId);
+  writer.writeString(offsets[7], object.title);
 }
 
 Song _songDeserialize(
@@ -99,15 +105,16 @@ Song _songDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Song(
-    reader.readLong(offsets[5]),
-    reader.readString(offsets[6]),
+    reader.readLong(offsets[6]),
+    reader.readString(offsets[7]),
     reader.readLong(offsets[0]),
-    reader.readLong(offsets[2]),
     reader.readLong(offsets[3]),
-    reader.readLong(offsets[1]),
+    reader.readLong(offsets[4]),
+    reader.readLong(offsets[2]),
+    reader.readDateTime(offsets[1]),
   );
   object.id = id;
-  object.score = reader.readDouble(offsets[4]);
+  object.score = reader.readDouble(offsets[5]);
   return object;
 }
 
@@ -121,16 +128,18 @@ P _songDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
       return (reader.readLong(offset)) as P;
     case 4:
-      return (reader.readDouble(offset)) as P;
-    case 5:
       return (reader.readLong(offset)) as P;
+    case 5:
+      return (reader.readDouble(offset)) as P;
     case 6:
+      return (reader.readLong(offset)) as P;
+    case 7:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -321,6 +330,59 @@ extension SongQueryFilter on QueryBuilder<Song, Song, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> lastListenEqualTo(
+      DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastListen',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> lastListenGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastListen',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> lastListenLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastListen',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> lastListenBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastListen',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -747,6 +809,18 @@ extension SongQuerySortBy on QueryBuilder<Song, Song, QSortBy> {
     });
   }
 
+  QueryBuilder<Song, Song, QAfterSortBy> sortByLastListen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastListen', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> sortByLastListenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastListen', Sort.desc);
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterSortBy> sortByListeningTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'listeningTime', Sort.asc);
@@ -845,6 +919,18 @@ extension SongQuerySortThenBy on QueryBuilder<Song, Song, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Song, Song, QAfterSortBy> thenByLastListen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastListen', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> thenByLastListenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastListen', Sort.desc);
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterSortBy> thenByListeningTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'listeningTime', Sort.asc);
@@ -925,6 +1011,12 @@ extension SongQueryWhereDistinct on QueryBuilder<Song, Song, QDistinct> {
     });
   }
 
+  QueryBuilder<Song, Song, QDistinct> distinctByLastListen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastListen');
+    });
+  }
+
   QueryBuilder<Song, Song, QDistinct> distinctByListeningTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'listeningTime');
@@ -973,6 +1065,12 @@ extension SongQueryProperty on QueryBuilder<Song, Song, QQueryProperty> {
   QueryBuilder<Song, int, QQueryOperations> durationProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'duration');
+    });
+  }
+
+  QueryBuilder<Song, DateTime, QQueryOperations> lastListenProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastListen');
     });
   }
 
