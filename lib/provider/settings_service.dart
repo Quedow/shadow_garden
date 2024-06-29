@@ -55,6 +55,7 @@ class SettingsService {
     return _preferences!.getDouble('nbOfListenWeight') ?? 0.55;
   }
 
+  // Save the last song listened
   // Future<void> setLastSongId(int id) async {
   //   await _preferences!.setInt('lastSongId', id);
   // }
@@ -70,6 +71,17 @@ class SettingsService {
   int getVersion() {
     return _preferences!.getInt('version') ?? 1; // S'il n'y a pas de version c'est qu'il n'y a jamais eu de 1ère migration
   }
+
+  // Save the last playlist
+  // Future<void> setLastPlaylist(List<int> ids) async {
+  //   List<String> lastQueue = ids.map((id) => id.toString()).toList();
+  //   await _preferences!.setStringList('lastPlaylist', lastQueue);
+  // }
+
+  // List<int> getLastPlaylist() {
+  //   List<String> lastQueue = _preferences!.getStringList('lastPlaylist') ?? [];
+  //   return lastQueue.map((id) => int.parse(id)).toList();
+  // }
 
   Future<void> clearSettings() async {
     await _preferences!.clear();

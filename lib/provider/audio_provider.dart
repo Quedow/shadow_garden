@@ -145,6 +145,7 @@ class AudioProvider extends ChangeNotifier {
 
       setPlaylist();
       await sortSongs(_sortState);
+      // await initSortSongs();
 
       return true;
     } catch (e) {
@@ -183,6 +184,20 @@ class AudioProvider extends ChangeNotifier {
     await _audioPlayer.play();
   }
 
+  // Future<void> initSortSongs() async {
+  //   final List<int> ranking = _settings.getLastPlaylist();
+
+  //   if (ranking.isNotEmpty) {
+  //     final Map<int, int> mapRanking = {for (int i = 0; i < ranking.length; i++) ranking[i]: i};
+  //     _songs.sort((a, b) => (mapRanking[a.id] ?? -1).compareTo(mapRanking[b.id] ?? -1));
+
+  //     setPlaylist();
+  //     await _audioPlayer.setAudioSource(_playlist);
+  //   } else {
+  //     sortSongs(_sortState);
+  //   }
+  // }
+
   Future<void> sortSongs(int state) async {
     switch(state) {
       case 0:
@@ -205,6 +220,7 @@ class AudioProvider extends ChangeNotifier {
         break;
     }
     setPlaylist();
+    // await _settings.setLastPlaylist(_songs.map((song) => song.id).toList());
     await _audioPlayer.setAudioSource(_playlist);
   }
 
