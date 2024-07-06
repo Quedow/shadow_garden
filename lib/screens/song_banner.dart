@@ -34,9 +34,9 @@ class SongBanner extends StatelessWidget {
 
                 final MediaItem currentMetadata = audioPlayer.sequence?[currentIndex].tag;
                 return songSheet(currentMetadata, screenWidth);
-              }
+              },
             );
-          }
+          },
         );
       },
       child: Container(
@@ -50,9 +50,9 @@ class SongBanner extends StatelessWidget {
             
             final MediaItem currentMetadata = audioPlayer.sequenceState?.sequence[currentIndex].tag;
             return songBanner(currentMetadata, screenWidth);
-          }
-        )
-      )
+          },
+        ),
+      ),
     );
   }
 
@@ -69,8 +69,8 @@ class SongBanner extends StatelessWidget {
         leading: Artworks.artworkStyle(int.parse(metadata.id), imgWidth),
         title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Styles.songBannerTitle),
         subtitle: MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: availableWidth, textStyle: Styles.trackBannerSubtitle),
-        trailing: SizedBox(width: playBtnWidth, height: playBtnWidth, child: PlayButton(audioPlayer: audioPlayer))
-      )
+        trailing: SizedBox(width: playBtnWidth, height: playBtnWidth, child: PlayButton(audioPlayer: audioPlayer)),
+      ),
     );
   }
 
@@ -88,8 +88,8 @@ class SongBanner extends StatelessWidget {
           AudioProgressBar(positionDataStream: AudioStreamUtils.getPositionDataStream(audioPlayer), audioPlayer: audioPlayer),
           MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.songSheetTilte),
           MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.songSheetSubtitle,),
-          Controls(audioPlayer: audioPlayer)
-        ]
+          Controls(audioPlayer: audioPlayer),
+        ],
       ),
     );
   }

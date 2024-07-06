@@ -11,7 +11,7 @@ class SettingsService {
 
   SettingsService._internal();
 
-  init() async {
+  Future<void> init() async {
     _preferences ??= await SharedPreferences.getInstance();
   }
 
@@ -69,7 +69,7 @@ class SettingsService {
   }
 
   int getVersion() {
-    return _preferences!.getInt('version') ?? 1; // S'il n'y a pas de version c'est qu'il n'y a jamais eu de 1ère migration
+    return _preferences!.getInt('version') ?? 3;
   }
 
   // Save the last playlist

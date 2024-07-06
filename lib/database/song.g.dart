@@ -17,24 +17,24 @@ const SongSchema = CollectionSchema(
   name: r'Song',
   id: -5548886644249537934,
   properties: {
-    r'duration': PropertySchema(
+    r'daysAgo': PropertySchema(
       id: 0,
+      name: r'daysAgo',
+      type: IsarType.long,
+    ),
+    r'duration': PropertySchema(
+      id: 1,
       name: r'duration',
       type: IsarType.long,
     ),
     r'lastListen': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'lastListen',
       type: IsarType.dateTime,
     ),
     r'listeningTime': PropertySchema(
-      id: 2,
-      name: r'listeningTime',
-      type: IsarType.long,
-    ),
-    r'monthsAgo': PropertySchema(
       id: 3,
-      name: r'monthsAgo',
+      name: r'listeningTime',
       type: IsarType.long,
     ),
     r'nbOfListens': PropertySchema(
@@ -88,10 +88,10 @@ void _songSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.duration);
-  writer.writeDateTime(offsets[1], object.lastListen);
-  writer.writeLong(offsets[2], object.listeningTime);
-  writer.writeLong(offsets[3], object.monthsAgo);
+  writer.writeLong(offsets[0], object.daysAgo);
+  writer.writeLong(offsets[1], object.duration);
+  writer.writeDateTime(offsets[2], object.lastListen);
+  writer.writeLong(offsets[3], object.listeningTime);
   writer.writeLong(offsets[4], object.nbOfListens);
   writer.writeDouble(offsets[5], object.score);
   writer.writeLong(offsets[6], object.songId);
@@ -107,11 +107,11 @@ Song _songDeserialize(
   final object = Song(
     reader.readLong(offsets[6]),
     reader.readString(offsets[7]),
+    reader.readLong(offsets[1]),
     reader.readLong(offsets[0]),
-    reader.readLong(offsets[3]),
     reader.readLong(offsets[4]),
-    reader.readLong(offsets[2]),
-    reader.readDateTime(offsets[1]),
+    reader.readLong(offsets[3]),
+    reader.readDateTime(offsets[2]),
   );
   object.id = id;
   object.score = reader.readDouble(offsets[5]);
@@ -128,9 +128,9 @@ P _songDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
-    case 2:
       return (reader.readLong(offset)) as P;
+    case 2:
+      return (reader.readDateTime(offset)) as P;
     case 3:
       return (reader.readLong(offset)) as P;
     case 4:
@@ -234,6 +234,58 @@ extension SongQueryWhere on QueryBuilder<Song, Song, QWhereClause> {
 }
 
 extension SongQueryFilter on QueryBuilder<Song, Song, QFilterCondition> {
+  QueryBuilder<Song, Song, QAfterFilterCondition> daysAgoEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'daysAgo',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> daysAgoGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'daysAgo',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> daysAgoLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'daysAgo',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> daysAgoBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'daysAgo',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterFilterCondition> durationEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -436,58 +488,6 @@ extension SongQueryFilter on QueryBuilder<Song, Song, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'listeningTime',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterFilterCondition> monthsAgoEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'monthsAgo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterFilterCondition> monthsAgoGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'monthsAgo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterFilterCondition> monthsAgoLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'monthsAgo',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterFilterCondition> monthsAgoBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'monthsAgo',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -797,6 +797,18 @@ extension SongQueryObject on QueryBuilder<Song, Song, QFilterCondition> {}
 extension SongQueryLinks on QueryBuilder<Song, Song, QFilterCondition> {}
 
 extension SongQuerySortBy on QueryBuilder<Song, Song, QSortBy> {
+  QueryBuilder<Song, Song, QAfterSortBy> sortByDaysAgo() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'daysAgo', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> sortByDaysAgoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'daysAgo', Sort.desc);
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterSortBy> sortByDuration() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'duration', Sort.asc);
@@ -830,18 +842,6 @@ extension SongQuerySortBy on QueryBuilder<Song, Song, QSortBy> {
   QueryBuilder<Song, Song, QAfterSortBy> sortByListeningTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'listeningTime', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterSortBy> sortByMonthsAgo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'monthsAgo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterSortBy> sortByMonthsAgoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'monthsAgo', Sort.desc);
     });
   }
 
@@ -895,6 +895,18 @@ extension SongQuerySortBy on QueryBuilder<Song, Song, QSortBy> {
 }
 
 extension SongQuerySortThenBy on QueryBuilder<Song, Song, QSortThenBy> {
+  QueryBuilder<Song, Song, QAfterSortBy> thenByDaysAgo() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'daysAgo', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> thenByDaysAgoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'daysAgo', Sort.desc);
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterSortBy> thenByDuration() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'duration', Sort.asc);
@@ -940,18 +952,6 @@ extension SongQuerySortThenBy on QueryBuilder<Song, Song, QSortThenBy> {
   QueryBuilder<Song, Song, QAfterSortBy> thenByListeningTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'listeningTime', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterSortBy> thenByMonthsAgo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'monthsAgo', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterSortBy> thenByMonthsAgoDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'monthsAgo', Sort.desc);
     });
   }
 
@@ -1005,6 +1005,12 @@ extension SongQuerySortThenBy on QueryBuilder<Song, Song, QSortThenBy> {
 }
 
 extension SongQueryWhereDistinct on QueryBuilder<Song, Song, QDistinct> {
+  QueryBuilder<Song, Song, QDistinct> distinctByDaysAgo() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'daysAgo');
+    });
+  }
+
   QueryBuilder<Song, Song, QDistinct> distinctByDuration() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'duration');
@@ -1020,12 +1026,6 @@ extension SongQueryWhereDistinct on QueryBuilder<Song, Song, QDistinct> {
   QueryBuilder<Song, Song, QDistinct> distinctByListeningTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'listeningTime');
-    });
-  }
-
-  QueryBuilder<Song, Song, QDistinct> distinctByMonthsAgo() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'monthsAgo');
     });
   }
 
@@ -1062,6 +1062,12 @@ extension SongQueryProperty on QueryBuilder<Song, Song, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Song, int, QQueryOperations> daysAgoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'daysAgo');
+    });
+  }
+
   QueryBuilder<Song, int, QQueryOperations> durationProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'duration');
@@ -1077,12 +1083,6 @@ extension SongQueryProperty on QueryBuilder<Song, Song, QQueryProperty> {
   QueryBuilder<Song, int, QQueryOperations> listeningTimeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'listeningTime');
-    });
-  }
-
-  QueryBuilder<Song, int, QQueryOperations> monthsAgoProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'monthsAgo');
     });
   }
 

@@ -37,7 +37,7 @@ abstract class Artworks {
       width: imgWidth,
       height: imgWidth,
       decoration: BoxDecoration(color: ThemeColors.secondaryColor, borderRadius: BorderRadius.circular(10.0)),
-      child: Icon(Icons.music_note_rounded, color: ThemeColors.accentColor, size: imgWidth/2)
+      child: Icon(Icons.music_note_rounded, color: ThemeColors.accentColor, size: imgWidth/2),
     );
   }
 }

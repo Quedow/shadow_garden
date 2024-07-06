@@ -1,1 +1,14 @@
 include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    always_declare_return_types: true
+    require_trailing_commas: true
+    prefer_single_quotes: true
+    avoid_print: true
+    prefer_const_constructors: true
+    avoid_unused_constructor_parameters: true
+    unawaited_futures: true
+    use_key_in_widget_constructors: true
+    # prefer_final_locals: true
+    # always_specify_types: true

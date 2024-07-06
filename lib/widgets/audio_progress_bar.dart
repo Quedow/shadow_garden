@@ -33,7 +33,7 @@ class AudioProgressBar extends StatelessWidget {
           total: positionData?.duration ?? Duration.zero,
           onSeek: _audioPlayer.seek,
         );
-      }
+      },
     );
   }
 }

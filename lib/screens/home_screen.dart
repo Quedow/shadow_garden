@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: [
         homeAppBar(),
         customAppBar('Statistics'),
-        customAppBar('Settings')
+        customAppBar('Settings'),
       ][currentScreenIndex],
       backgroundColor: ThemeColors.backgroundOled,
       body: [
@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const [
           BottomNavigationBarItem(label: 'Songs', icon: Icon(Icons.music_note_rounded)),
           BottomNavigationBarItem(label: 'Statistics', icon: Icon(Icons.bar_chart_rounded)),
-          BottomNavigationBarItem(label: 'Settings', icon: Icon(Icons.settings))
+          BottomNavigationBarItem(label: 'Settings', icon: Icon(Icons.settings)),
         ],
       ),
     );
@@ -83,11 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
       backgroundColor: ThemeColors.backgroundOled, 
       foregroundColor: ThemeColors.primaryColor,
-      title: const Text('Shadow Garden'), centerTitle: true,
+      title: const Text('Songs'), centerTitle: true,
       bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
       actions: [
         IconButton(onPressed: _audioProvider.switchShuffle, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
-        IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), highlightColor: ThemeColors.primaryColor.withOpacity(0.2))
+        IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), color: _audioProvider.shuffleActive ? ThemeColors.primaryColor : ThemeColors.accentColor, highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
       ],
     );
   }
@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
       backgroundColor: ThemeColors.backgroundOled,
       title: Text(title), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
-      centerTitle: true
+      centerTitle: true,
     );
   }
 }

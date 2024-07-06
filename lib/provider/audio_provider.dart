@@ -42,7 +42,7 @@ class AudioProvider extends ChangeNotifier {
   CLoopMode get cLoopMode => _cLoopMode;
   void setCLoopMode(CLoopMode cMode) async {
     _cLoopMode = cMode;
-    _settings.setCLoopMode(cMode);
+    await _settings.setCLoopMode(cMode);
     notifyListeners();
   }
 
@@ -50,7 +50,11 @@ class AudioProvider extends ChangeNotifier {
   late int _sortState;
   int get sortState => _sortState;
   void setSortState() async {
-    _sortState = (_sortState + 1) % _totalState;
+    if (_shuffleActive) {
+      _shuffleActive = false;
+    } else {
+      _sortState = (_sortState + 1) % _totalState;
+    }
     await _settings.setSortState(_sortState);
     await sortSongs(_sortState);
     notifyListeners();
@@ -109,15 +113,15 @@ class AudioProvider extends ChangeNotifier {
             ? discontinuity.previousEvent.duration!.inSeconds
             : _lastPosition.inSeconds;
 
-          _db.updateSong(Song(currentSong.id, currentSong.title, duration, getMonths(currentSong.dateAdded), 1, _lastPosition.inSeconds, DateTime.now()));
+          _db.updateSong(Song(currentSong.id, currentSong.title, duration, getDays(currentSong.dateAdded), 1, _lastPosition.inSeconds, DateTime.now()));
         }
       }
     });
   }
 
-  int getMonths(int? dateAdded) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch((dateAdded ?? 0) * 1000, isUtc: true);
-    return DateTime.now().difference(date).inDays ~/ 30;
+  int getDays(int? dateAdded) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch((dateAdded ?? 30) * 1000, isUtc: true);
+    return DateTime.now().difference(date).inDays;
   }
 
   void clearDatabase() async {
@@ -138,7 +142,7 @@ class AudioProvider extends ChangeNotifier {
         orderType: OrderType.ASC_OR_SMALLER,
         sortType: SongSortType.TITLE,
         ignoreCase: true,
-        path: "/storage/emulated/0/Music"
+        path: '/storage/emulated/0/Music',
       );
 
       if(_songs.isEmpty) { return false; }
@@ -146,6 +150,7 @@ class AudioProvider extends ChangeNotifier {
       setPlaylist();
       await sortSongs(_sortState);
       // await initSortSongs();
+      await _updateDaysAgo();
 
       return true;
     } catch (e) {
@@ -161,10 +166,10 @@ class AudioProvider extends ChangeNotifier {
             id: song.id.toString(),
             title: song.title,
             album: song.album,
-            artist: song.artist
+            artist: song.artist,
           ),
         ),
-      ).toList()
+      ).toList(),
     );
   }
 
@@ -230,5 +235,12 @@ class AudioProvider extends ChangeNotifier {
     final Map<int, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
     int sortPosition = _neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
     _songs.sort((a, b) => (mapRanking[a.id] ?? sortPosition).compareTo(mapRanking[b.id] ?? sortPosition));
+  }
+
+  Future<void> _updateDaysAgo() async {
+    final Map<int, int> songsDaysAgo = Map.fromEntries(
+      _songs.map((song) => MapEntry(song.id, getDays(song.dateAdded))),
+    );
+    await _db.updateDaysAgo(songsDaysAgo);
   }
 }

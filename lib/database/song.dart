@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
@@ -14,7 +16,7 @@ class Song {
 
   int duration = 0;
 
-  int monthsAgo = 0;
+  int daysAgo = 0;
 
   int nbOfListens = 0;
 
@@ -24,7 +26,7 @@ class Song {
 
   double score = 1.0;
 
-  Song(this.songId, this.title, this.duration, this.monthsAgo, this.nbOfListens, this.listeningTime, this.lastListen);
+  Song(this.songId, this.title, this.duration, this.daysAgo, this.nbOfListens, this.listeningTime, this.lastListen);
 }
 
 class DatabaseService {
@@ -32,15 +34,15 @@ class DatabaseService {
   late final Isar isar;
 
   final SettingsService _settings = SettingsService();
-  static const mainWeight = 0.90;
-  static const extraWeight = 0.05;
-  final int _maxDateAdded = 12;
+  static const double mainWeight = 0.90;
+  static const double extraWeight = 0.05;
+  final int _maxDateAdded = 30;
   final int _maxLastListen = 168;
   
   late double _lRWeight;
   late double _nOfLWeight;
   double get nOfLWeight => _nOfLWeight;
-  void setNbOfListenWeight (double value) async {
+  void setNbOfListenWeight(double value) async {
     _nOfLWeight = value;
     _lRWeight = double.parse((mainWeight - _nOfLWeight).toStringAsFixed(2));
     await _settings.setNbOfListenWeight(value);
@@ -53,11 +55,11 @@ class DatabaseService {
   DatabaseService._internal();
 
   Future<Isar> init() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final Directory dir = await getApplicationDocumentsDirectory();
     isar = await Isar.open(
       [SongSchema],
       directory: dir.path,
-      inspector: true
+      inspector: true,
     );
     _nOfLWeight = _settings.getNbOfListenWeight();
     _lRWeight = double.parse((mainWeight - _nOfLWeight).toStringAsFixed(2));
@@ -86,9 +88,9 @@ class DatabaseService {
 
   Future<void> _updateScores() async {
     List<Song> allSongs = await isar.songs.where().findAll();
-    final now = DateTime.now();
+    final DateTime now = DateTime.now();
 
-    for (var song in allSongs) {
+    for (Song song in allSongs) {
       song.score = await _calculateScore(song, allSongs.length, now);
       await isar.songs.put(song);
     }
@@ -99,7 +101,7 @@ class DatabaseService {
     int equalSongs = await isar.songs.filter().nbOfListensEqualTo(song.nbOfListens).count();
     int listenHoursAgo = now.difference(song.lastListen).inHours;
 
-    double addedDateScore = extraWeight * (song.monthsAgo > _maxDateAdded ? 0 : (-1/_maxDateAdded * song.monthsAgo + 1));
+    double addedDateScore = extraWeight * (song.daysAgo <= 2 ? 1 : song.daysAgo > _maxDateAdded ? 0 : (-1/_maxDateAdded * song.daysAgo + 1));
     double lastListenScore = extraWeight * (listenHoursAgo > _maxLastListen ? 0 : (-1/_maxLastListen * listenHoursAgo + 1));
     double nbOfListensScore = _nOfLWeight * ((belowSongs + 0.5 * equalSongs) / totalSongs);
     double listenRateScore = _lRWeight * (song.listeningTime / (song.nbOfListens * song.duration));
@@ -107,14 +109,26 @@ class DatabaseService {
     return  double.parse((addedDateScore + lastListenScore + nbOfListensScore + listenRateScore).toStringAsFixed(3));
   }
 
+  Future<void> updateDaysAgo(Map<int, int> songsDaysAgo) async {
+    for (MapEntry<int, int> songDaysAgo in songsDaysAgo.entries) {
+      await isar.writeTxn(() async {
+        Song? songToUpdate = await isar.songs.filter().songIdEqualTo(songDaysAgo.key).findFirst();
+        if (songToUpdate != null) {
+          songToUpdate.daysAgo += songDaysAgo.value;
+          await isar.songs.put(songToUpdate);
+        }
+      });
+    }
+  }
+
   Future<List<int>> getRanking() async {
-    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByMonthsAgo().findAll();
-    return songsRanking.map((song) => song.songId).toList();
+    final List<Song> songsRanking = await isar.songs.where().sortByScoreDesc().thenByDaysAgo().findAll();
+    return songsRanking.map((Song song) => song.songId).toList();
   }
 
   Future<Map<String, dynamic>> getDataSongs() async {
     return {
-      'songs': await isar.songs.where().sortByScoreDesc().thenByMonthsAgo().findAll(),
+      'songs': await isar.songs.where().sortByScoreDesc().thenByDaysAgo().findAll(),
       'data': {
         'totalNbOfListens': await isar.songs.where().nbOfListensProperty().sum(),
         'totalListeningTime': await isar.songs.where().listeningTimeProperty().sum(),
