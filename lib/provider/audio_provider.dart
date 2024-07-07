@@ -24,9 +24,11 @@ class AudioProvider extends ChangeNotifier {
 
   bool _shuffleActive = false;
   bool get shuffleActive => _shuffleActive;
-  void switchShuffle() async {
-    _shuffleActive = !_shuffleActive;
-    _shuffleActive ? await sortSongs(-1) : await sortSongs(_sortState);
+  void setShuffleActive() async {
+    if (!_shuffleActive) {
+      _shuffleActive = true;
+    }
+    await sortSongs(-1);
     notifyListeners();
   }
 

@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
       title: const Text('Songs'), centerTitle: true,
       bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
       actions: [
-        IconButton(onPressed: _audioProvider.switchShuffle, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
+        IconButton(onPressed: _audioProvider.setShuffleActive, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
         IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), color: _audioProvider.shuffleActive ? ThemeColors.primaryColor : ThemeColors.accentColor, highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
       ],
     );
