@@ -47,12 +47,12 @@ class SettingsService {
     return _preferences!.getBool('neverListenedFirst') ?? false;
   }
 
-  Future<void> setNbOfListenWeight (double value) async {
-    await _preferences!.setDouble('nbOfListenWeight', value);
+  Future<void> setPercentileRankWeight (double value) async {
+    await _preferences!.setDouble('percentileRankWeight', value);
   }
 
-  double getNbOfListenWeight() {
-    return _preferences!.getDouble('nbOfListenWeight') ?? 0.55;
+  double getPercentileRankWeight() {
+    return _preferences!.getDouble('percentileRankWeight') ?? 0.45;
   }
 
   // Save the last song listened

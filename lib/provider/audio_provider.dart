@@ -239,7 +239,7 @@ class AudioProvider extends ChangeNotifier {
 
   Future<void> _updateDaysAgo() async {
     final Map<int, int> songsDaysAgo = Map.fromEntries(
-      _songs.map((song) => MapEntry(song.id, getDays(song.dateAdded))),
+      _songs.map((song) => MapEntry(song.id, getDays(song.dateAdded)))
     );
     await _db.updateDaysAgo(songsDaysAgo);
   }

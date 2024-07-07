@@ -25,7 +25,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       children: [
         settingToggle('Smart sort', 'Put musics never listened at the beginning.', widget.audioProvider.neverListenedFirst, _setNeverListenedFirst),
         Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
-        settingNumberInput('Smart sort weight', 'Choose the importance of the number of listens compared to the listening rate for Smart sorting.', _db.nOfLWeight, _setNbOfListenWeight, 'Number of listens', 'Listening rate'),
+        settingNumberInput('Smart sort weight', 'Choose the importance of the number of listens compared to the listening rate for Smart sorting.', _db.pRWeight, _setPercentileRankWeight, 'Number of listens', 'Listening rate'),
         Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
         settingIconButton('Delete preferences', 'Preference settings such as loop mode, \nsort mode or number of song per loop will \nbe reset default values.', Icons.delete_rounded, _settings.clearSettings),
         Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
@@ -65,9 +65,9 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _setNbOfListenWeight(double value) {
+  void _setPercentileRankWeight(double value) {
     setState(() {
-      _db.setNbOfListenWeight(value);
+      _db.setPercentileRankWeight(value);
     });
   }
   

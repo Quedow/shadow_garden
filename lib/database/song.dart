@@ -34,18 +34,17 @@ class DatabaseService {
   late final Isar isar;
 
   final SettingsService _settings = SettingsService();
-  static const double mainWeight = 0.90;
-  static const double extraWeight = 0.05;
+  static const double mainWeight = 0.85;
   final int _maxDateAdded = 30;
   final int _maxLastListen = 168;
   
   late double _lRWeight;
-  late double _nOfLWeight;
-  double get nOfLWeight => _nOfLWeight;
-  void setNbOfListenWeight(double value) async {
-    _nOfLWeight = value;
-    _lRWeight = double.parse((mainWeight - _nOfLWeight).toStringAsFixed(2));
-    await _settings.setNbOfListenWeight(value);
+  late double _pRWeight;
+  double get pRWeight => _pRWeight;
+  void setPercentileRankWeight(double value) async {
+    _pRWeight = value;
+    _lRWeight = double.parse((mainWeight - _pRWeight).toStringAsFixed(2));
+    await _settings.setPercentileRankWeight(value);
   }
 
   factory DatabaseService() {
@@ -61,8 +60,8 @@ class DatabaseService {
       directory: dir.path,
       inspector: true,
     );
-    _nOfLWeight = _settings.getNbOfListenWeight();
-    _lRWeight = double.parse((mainWeight - _nOfLWeight).toStringAsFixed(2));
+    _pRWeight = _settings.getPercentileRankWeight();
+    _lRWeight = double.parse((mainWeight - _pRWeight).toStringAsFixed(2));
 
     return isar;
   }
@@ -101,12 +100,17 @@ class DatabaseService {
     int equalSongs = await isar.songs.filter().nbOfListensEqualTo(song.nbOfListens).count();
     int listenHoursAgo = now.difference(song.lastListen).inHours;
 
-    double addedDateScore = extraWeight * (song.daysAgo <= 2 ? 1 : song.daysAgo > _maxDateAdded ? 0 : (-1/_maxDateAdded * song.daysAgo + 1));
-    double lastListenScore = extraWeight * (listenHoursAgo > _maxLastListen ? 0 : (-1/_maxLastListen * listenHoursAgo + 1));
-    double nbOfListensScore = _nOfLWeight * ((belowSongs + 0.5 * equalSongs) / totalSongs);
-    double listenRateScore = _lRWeight * (song.listeningTime / (song.nbOfListens * song.duration));
+    double addedDateScore = song.daysAgo <= 2 ? 1 : song.daysAgo > _maxDateAdded ? 0 : (-1/_maxDateAdded * song.daysAgo + 1);
+    double lastListenScore = listenHoursAgo > _maxLastListen ? 0 : (-1/_maxLastListen * listenHoursAgo + 1);
+    double listeningRate = song.listeningTime / (song.nbOfListens * song.duration);
+    double percentileRank = (belowSongs + 0.5 * equalSongs) / totalSongs;
 
-    return  double.parse((addedDateScore + lastListenScore + nbOfListensScore + listenRateScore).toStringAsFixed(3));
+    return  double.parse((
+      0.075 * addedDateScore
+      + 0.075 * lastListenScore
+      + _lRWeight * listeningRate
+      + _pRWeight * percentileRank
+    ).toStringAsFixed(3));
   }
 
   Future<void> updateDaysAgo(Map<int, int> songsDaysAgo) async {
@@ -114,7 +118,7 @@ class DatabaseService {
       await isar.writeTxn(() async {
         Song? songToUpdate = await isar.songs.filter().songIdEqualTo(songDaysAgo.key).findFirst();
         if (songToUpdate != null) {
-          songToUpdate.daysAgo += songDaysAgo.value;
+          songToUpdate.daysAgo = songDaysAgo.value;
           await isar.songs.put(songToUpdate);
         }
       });
