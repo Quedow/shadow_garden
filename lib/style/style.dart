@@ -3,13 +3,15 @@ import 'package:on_audio_query/on_audio_query.dart';
 
 abstract class ThemeColors {
   static const Color primaryColor = Colors.white;
+  static const Color primaryColor02 = Color(0x33ffffff);
+  static const Color primaryColor03 = Color(0x4dffffff);
+  static const Color primaryColor04 = Color(0x66ffffff);
+  static const Color primaryColor07 = Color(0xb3ffffff);
 
   static const Color accentColor = Color(0xFFAAC9FF);
-
   static const Color darkAccentColor = Color(0xFF7b93f6);
-
-  static const Color secondaryColor = Color.fromARGB(255, 29, 37, 48); 
-
+  
+  static const Color secondaryColor = Color.fromARGB(255, 29, 37, 48);
   static const Color backgroundOled = Color.fromARGB(255, 0, 0, 0);
 }
 
@@ -43,9 +45,6 @@ abstract class Artworks {
 }
 
 abstract class Styles {
-  // Songs screen
-  static TextStyle audioLeadingTextStyle = const TextStyle(color: ThemeColors.primaryColor, fontSize: 18, fontWeight: FontWeight.w500);
-
   static TextStyle songHomeTitle(bool isCurrentSong) {
     return TextStyle(
       color: isCurrentSong ? ThemeColors.accentColor : ThemeColors.primaryColor,
@@ -54,27 +53,9 @@ abstract class Styles {
     );
   }
 
-  // Song banner
-  static TextStyle songBannerTitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 18);
-
-  static TextStyle trackBannerSubtitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.w500, fontSize: 16);
-
-  // Bottom sheet screen
-  static TextStyle songSheetTilte = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.bold, fontSize: 22);
-  
-  static TextStyle songSheetSubtitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.normal, fontSize: 14);
-
-  static TextStyle progressBarTime = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.w500);
-
-  static TextStyle numberPickerSelect = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.8), fontSize: 24, fontWeight: FontWeight.w300);
-  
-  static TextStyle numberPicker = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.15));
-
-  // Settings screen
-  static TextStyle settingsTitle = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.normal, fontSize: 16);
-  
-  static TextStyle settingsDescription = TextStyle(color: ThemeColors.primaryColor.withOpacity(0.7), fontWeight: FontWeight.normal, fontSize: 14);
-
-  // Statistic screen
-  static TextStyle statisticLabel = const TextStyle(color: ThemeColors.primaryColor, fontWeight: FontWeight.normal, fontSize: 16);
+  static TextStyle titleLarge = const TextStyle(fontSize: 24, fontWeight: FontWeight.w300);
+  static TextStyle titleMedium = const TextStyle(fontSize: 22, fontWeight: FontWeight.w700);
+  static TextStyle subtitleLarge = const TextStyle(fontSize: 18, fontWeight: FontWeight.w700);
+  static TextStyle subtitleMedium = const TextStyle(fontSize: 16, fontWeight: FontWeight.w400);
+  static TextStyle labelLarge = const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
 }

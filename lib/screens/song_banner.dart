@@ -67,8 +67,8 @@ class SongBanner extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
         leading: Artworks.artworkStyle(int.parse(metadata.id), imgWidth),
-        title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Styles.songBannerTitle),
-        subtitle: MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: availableWidth, textStyle: Styles.trackBannerSubtitle),
+        title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Styles.subtitleLarge.copyWith(color: ThemeColors.primaryColor)),
+        subtitle: MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: availableWidth, textStyle: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
         trailing: SizedBox(width: playBtnWidth, height: playBtnWidth, child: PlayButton(audioPlayer: audioPlayer)),
       ),
     );
@@ -86,8 +86,8 @@ class SongBanner extends StatelessWidget {
         children: [
           Artworks.artworkStyle(int.parse(metadata.id), imgWidth),
           AudioProgressBar(positionDataStream: AudioStreamUtils.getPositionDataStream(audioPlayer), audioPlayer: audioPlayer),
-          MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.songSheetTilte),
-          MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.songSheetSubtitle,),
+          MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.titleMedium.copyWith(color: ThemeColors.primaryColor)),
+          MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor)),
           Controls(audioPlayer: audioPlayer),
         ],
       ),

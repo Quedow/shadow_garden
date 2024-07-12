@@ -27,7 +27,7 @@ class AudioProgressBar extends StatelessWidget {
           thumbColor: ThemeColors.accentColor,
           timeLabelLocation: TimeLabelLocation.sides,
           timeLabelType: TimeLabelType.totalTime,
-          timeLabelTextStyle: Styles.progressBarTime,
+          timeLabelTextStyle: Styles.labelLarge.copyWith(fontWeight: FontWeight.w500),
           progress: positionData?.position ?? Duration.zero,
           buffered: positionData?.bufferedPosition ?? Duration.zero,
           total: positionData?.duration ?? Duration.zero,

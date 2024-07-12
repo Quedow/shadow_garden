@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadow_garden/database/song.dart';
+import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 
@@ -36,8 +37,8 @@ class StatisticsScreenState extends State<StatisticsScreen> {
     
           return Column(
             children: [
-              statisticText('Total number of listens', (data['totalNbOfListens'] ?? 0).toString()),
-              statisticText('Total listening time', '${((data['totalListeningTime'] ?? 0) / 60).toStringAsFixed(0)} min (${((data['totalListeningTime'] ?? 0) / 3600).toStringAsFixed(0)} h)'),
+              statisticText(Texts.textTotalListenNb, (data['totalNbOfListens'] ?? 0).toString()),
+              statisticText(Texts.textTotalListenTime, '${((data['totalListeningTime'] ?? 0) / 60).toStringAsFixed(0)} min (${((data['totalListeningTime'] ?? 0) / 3600).toStringAsFixed(0)} h)'),
               Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
               Expanded(
                 child: Scrollbar(
@@ -53,7 +54,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                       return ListTile(
                         leading: Artworks.artworkStyle(song.songId, Artworks.artworkSmallSize),
                         title: TitleText(title: '${song.score} - ${song.title}', textStyle: Styles.songHomeTitle(false)), // DEBUG TEST
-                        subtitle: Text('${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.daysAgo ~/ 30} mos ago', style: Styles.songSheetSubtitle),
+                        subtitle: Text('${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.daysAgo ~/ 30} mos ago', style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor)),
                         iconColor: ThemeColors.primaryColor,
                       );
                     },
@@ -73,8 +74,8 @@ class StatisticsScreenState extends State<StatisticsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: Styles.statisticLabel),
-          Text(value, style: Styles.statisticLabel),
+          Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
+          Text(value, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
         ],
       ),
     );

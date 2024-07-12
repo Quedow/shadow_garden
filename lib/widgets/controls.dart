@@ -94,7 +94,7 @@ class _LoopButtonState extends State<LoopButton> {
         onPressed: () => audioProvider.setLoopMode(LoopMode.one, CLoopMode.one),
         iconSize: IconSizes.iconBtnSize,
         color: ThemeColors.primaryColor,
-        icon: Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor.withOpacity(0.5)),
+        icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor04),
       );
     } else if (cLoopMode == CLoopMode.one) {
       return IconButton(
@@ -117,8 +117,8 @@ class _LoopButtonState extends State<LoopButton> {
           minValue: 2,
           maxValue: 10,
           itemWidth: 40,
-          selectedTextStyle: Styles.numberPickerSelect,
-          textStyle: Styles.numberPicker,
+          selectedTextStyle: Styles.titleLarge.copyWith(color: ThemeColors.primaryColor07),
+          textStyle: const TextStyle(color: ThemeColors.primaryColor02),
           axis: Axis.horizontal,
           onChanged: (value) => audioProvider.setSongsPerLoop(value),
         ),

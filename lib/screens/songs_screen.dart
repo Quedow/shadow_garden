@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shadow_garden/screens/song_banner.dart';
+import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/style.dart';
@@ -50,10 +51,10 @@ class SongsScreenState extends State<SongsScreen> {
             focusNode: _focusNode,
             cursorColor: ThemeColors.accentColor,
             style: const TextStyle(color: ThemeColors.primaryColor),
-            decoration: InputDecoration(
-              icon: const Icon(Icons.search_rounded),
+            decoration: const InputDecoration(
+              icon: Icon(Icons.search_rounded),
               hintText: 'Search',
-              hintStyle: TextStyle(color: ThemeColors.primaryColor.withOpacity(0.3)),
+              hintStyle: TextStyle(color: ThemeColors.primaryColor03),
               border: InputBorder.none,
             ),
           ),
@@ -65,7 +66,7 @@ class SongsScreenState extends State<SongsScreen> {
               final SequenceState? state = snapshot.data;
               
               if (state == null || state.sequence.isEmpty) {
-                return const Center(child: Text('No music found...', style: TextStyle(color: ThemeColors.primaryColor)));
+                return Center(child: Text(Texts.errorNoSongFound, style: const TextStyle(color: ThemeColors.primaryColor)));
               } else {
                 final int playlistLength = state.sequence.length;
 
@@ -88,7 +89,7 @@ class SongsScreenState extends State<SongsScreen> {
                         onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
                         leading: Artworks.artworkStyle(int.parse(metadata.id), Artworks.artworkSmallSize),
                         title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Styles.songHomeTitle(isCurrentSong)),
-                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.songSheetSubtitle),
+                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor)),
                         trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: widget.isPlaying),
                         iconColor: ThemeColors.primaryColor,
                       );

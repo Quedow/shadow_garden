@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shadow_garden/database/song.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
+import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/style/style.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -23,14 +24,14 @@ class SettingsScreenState extends State<SettingsScreen> {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        settingToggle('Smart sort', 'Put musics never listened at the beginning.', widget.audioProvider.neverListenedFirst, _setNeverListenedFirst),
-        Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
-        settingNumberInput('Smart sort weight', 'Choose the importance of the number of listens compared to the listening rate for Smart sorting.', _db.pRWeight, _setPercentileRankWeight, 'Number of listens', 'Listening rate'),
-        Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
-        settingIconButton('Delete preferences', 'Preference settings such as loop mode, \nsort mode or number of song per loop will \nbe reset default values.', Icons.delete_rounded, _settings.clearSettings),
-        Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
-        settingIconButton('Delete data', 'Listening data will be delete to reset\nsmart sort.', Icons.delete_rounded, widget.audioProvider.clearDatabase),
-        Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
+        settingToggle(Texts.textNeverListenFirst, Texts.textNeverListenFirstContent, widget.audioProvider.neverListenedFirst, _setNeverListenedFirst),
+        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        settingNumberInput(Texts.textSortWeight, Texts.textSortWeightContent, _db.pRWeight, _setPercentileRankWeight, Texts.textListenNbWeight, Texts.textListenRateWeight),
+        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        settingIconButton(Texts.textDeletePrefs, Texts.textDeletePrefsContent, Icons.delete_rounded, _settings.clearSettings),
+        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        settingIconButton(Texts.textDeleteData, Texts.textDeleteDataContent, Icons.delete_rounded, widget.audioProvider.clearDatabase),
+        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
       ],
     );
   }
@@ -44,8 +45,8 @@ class SettingsScreenState extends State<SettingsScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: Styles.settingsTitle),
-          Text(description, style: Styles.settingsDescription),
+          Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
+          Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
           Slider(
             value: value,
             activeColor: ThemeColors.darkAccentColor,
@@ -56,8 +57,8 @@ class SettingsScreenState extends State<SettingsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(leftLabel, style: Styles.settingsDescription),
-                Text(rightLabel, style: Styles.settingsDescription),
+                Text(leftLabel, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
+                Text(rightLabel, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
               ],
             ),
         ],
@@ -80,11 +81,11 @@ class SettingsScreenState extends State<SettingsScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: Styles.settingsTitle),
-              Text(description, style: Styles.settingsDescription),
+              Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
+              Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
             ],
           ),
-          IconButton(onPressed: onPressed, icon: Icon(icon, color: ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
+          IconButton(onPressed: onPressed, icon: Icon(icon, color: ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor02),
         ],
       ),
     );
@@ -99,8 +100,8 @@ class SettingsScreenState extends State<SettingsScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: Styles.settingsTitle),
-              Text(description, style: Styles.settingsDescription),
+              Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
+              Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
             ],
           ),
           Switch(

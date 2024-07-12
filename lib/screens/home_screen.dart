@@ -4,6 +4,7 @@ import 'package:shadow_garden/screens/settings_screen.dart';
 import 'package:shadow_garden/screens/songs_screen.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/screens/statistics_screen.dart';
+import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:provider/provider.dart';
 import 'package:shadow_garden/utils/functions.dart';
@@ -47,8 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: [
         homeAppBar(),
-        customAppBar('Statistics'),
-        customAppBar('Settings'),
+        customAppBar(Texts.textStatisticsBar),
+        customAppBar(Texts.textSettingsBar),
       ][currentScreenIndex],
       backgroundColor: ThemeColors.backgroundOled,
       body: [
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         type: BottomNavigationBarType.fixed,
         backgroundColor: ThemeColors.backgroundOled,
         selectedItemColor: ThemeColors.primaryColor,
-        unselectedItemColor: ThemeColors.primaryColor.withOpacity(0.4),
+        unselectedItemColor: ThemeColors.primaryColor04,
         selectedFontSize: 14,
         unselectedFontSize: 14,
         onTap: (index) {
@@ -70,10 +71,10 @@ class _HomeScreenState extends State<HomeScreen> {
             currentScreenIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(label: 'Songs', icon: Icon(Icons.music_note_rounded)),
-          BottomNavigationBarItem(label: 'Statistics', icon: Icon(Icons.bar_chart_rounded)),
-          BottomNavigationBarItem(label: 'Settings', icon: Icon(Icons.settings)),
+        items: [
+          BottomNavigationBarItem(label: Texts.textHomeBar, icon: const Icon(Icons.music_note_rounded)),
+          BottomNavigationBarItem(label: Texts.textStatisticsBar, icon: const Icon(Icons.bar_chart_rounded)),
+          BottomNavigationBarItem(label: Texts.textSettingsBar, icon: const Icon(Icons.settings)),
         ],
       ),
     );
@@ -83,11 +84,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
       backgroundColor: ThemeColors.backgroundOled, 
       foregroundColor: ThemeColors.primaryColor,
-      title: const Text('Songs'), centerTitle: true,
+      title: Text(Texts.textHomeBar), centerTitle: true,
       bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
       actions: [
-        IconButton(onPressed: _audioProvider.setShuffleActive, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
-        IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), color: _audioProvider.shuffleActive ? ThemeColors.primaryColor : ThemeColors.accentColor, highlightColor: ThemeColors.primaryColor.withOpacity(0.2)),
+        IconButton(onPressed: _audioProvider.setShuffleActive, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor02),
+        IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), color: _audioProvider.shuffleActive ? ThemeColors.primaryColor : ThemeColors.accentColor, highlightColor: ThemeColors.primaryColor02),
       ],
     );
   }

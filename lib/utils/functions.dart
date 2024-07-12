@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
+import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/style/style.dart';
 
 abstract class Functions {
@@ -27,7 +28,7 @@ abstract class Functions {
     audioProvider.playlist.move(index, (audioPlayer.currentIndex ?? 0) + 1);
     
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Add to next song'), backgroundColor: ThemeColors.secondaryColor, behavior: SnackBarBehavior.floating, duration: Duration(seconds: 2)),
+      SnackBar(content: Text(Texts.textNextSongSnack), backgroundColor: ThemeColors.secondaryColor, behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
     );
   }
 
