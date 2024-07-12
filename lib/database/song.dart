@@ -34,7 +34,7 @@ class DatabaseService {
   late final Isar isar;
 
   final SettingsService _settings = SettingsService();
-  static const double mainWeight = 0.85;
+  static const double mainWeight = 0.90;
   final int _maxDateAdded = 30;
   final int _maxLastListen = 168;
   
@@ -106,8 +106,8 @@ class DatabaseService {
     double percentileRank = (belowSongs + 0.5 * equalSongs) / totalSongs;
 
     return  double.parse((
-      0.075 * addedDateScore
-      + 0.075 * lastListenScore
+      0.05 * addedDateScore
+      + 0.05 * lastListenScore
       + _lRWeight * listeningRate
       + _pRWeight * percentileRank
     ).toStringAsFixed(3));
