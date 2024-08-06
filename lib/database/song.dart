@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'dart:math';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
@@ -34,17 +35,16 @@ class DatabaseService {
   late final Isar isar;
 
   final SettingsService _settings = SettingsService();
-  static const double mainWeight = 0.90;
   final int _maxDateAdded = 30;
   final int _maxLastListen = 168;
   
-  late double _lRWeight;
-  late double _pRWeight;
-  double get pRWeight => _pRWeight;
-  void setPercentileRankWeight(double value) async {
-    _pRWeight = value;
-    _lRWeight = double.parse((mainWeight - _pRWeight).toStringAsFixed(2));
-    await _settings.setPercentileRankWeight(value);
+  late double _dumbWeight;
+  late double _smartWeight;
+  double get smartWeight => _smartWeight;
+  void setSmartWeight(double value) async {
+    _smartWeight = value;
+    _dumbWeight = double.parse((1.0 - _smartWeight).toStringAsFixed(2));
+    await _settings.setSmartWeight(value);
   }
 
   factory DatabaseService() {
@@ -60,8 +60,8 @@ class DatabaseService {
       directory: dir.path,
       inspector: true,
     );
-    _pRWeight = _settings.getPercentileRankWeight();
-    _lRWeight = double.parse((mainWeight - _pRWeight).toStringAsFixed(2));
+    _smartWeight = _settings.getSmartWeight();
+    _dumbWeight = double.parse((1.0 - _smartWeight).toStringAsFixed(2));
 
     return isar;
   }
@@ -106,10 +106,13 @@ class DatabaseService {
     double percentileRank = (belowSongs + 0.5 * equalSongs) / totalSongs;
 
     return  double.parse((
-      0.05 * addedDateScore
-      + 0.05 * lastListenScore
-      + _lRWeight * listeningRate
-      + _pRWeight * percentileRank
+      _smartWeight * (
+        0.05 * addedDateScore
+        + 0.05 * lastListenScore
+        + 0.4 * listeningRate
+        + 0.5 * percentileRank
+      )
+      + _dumbWeight * Random().nextDouble()
     ).toStringAsFixed(3));
   }
 

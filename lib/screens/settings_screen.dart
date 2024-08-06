@@ -26,7 +26,7 @@ class SettingsScreenState extends State<SettingsScreen> {
       children: [
         settingToggle(Texts.textNeverListenFirst, Texts.textNeverListenFirstContent, widget.audioProvider.neverListenedFirst, _setNeverListenedFirst),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
-        settingNumberInput(Texts.textSortWeight, Texts.textSortWeightContent, _db.pRWeight, _setPercentileRankWeight, Texts.textListenNbWeight, Texts.textListenRateWeight),
+        settingNumberInput(Texts.textSortWeight, Texts.textSortWeightContent, _db.smartWeight, _setSmartWeight, Texts.textSmartWeight, Texts.textDumbWeight),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
         settingIconButton(Texts.textDeletePrefs, Texts.textDeletePrefsContent, Icons.delete_rounded, _settings.clearSettings),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
@@ -37,8 +37,6 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Padding settingNumberInput(String label, String description, double value, void Function(double)? onChanged, [String? leftLabel, String? rightLabel]) {
-    double maxWeight = DatabaseService.mainWeight;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
@@ -50,7 +48,7 @@ class SettingsScreenState extends State<SettingsScreen> {
           Slider(
             value: value,
             activeColor: ThemeColors.darkAccentColor,
-            max: maxWeight, divisions: (maxWeight / 0.05).round(), label: ((value * 100) / maxWeight).round().toString(),
+            max: 1.0, divisions: 20, label: (value * 100).round().toString(),
             onChanged: onChanged,
           ),
           if (leftLabel != null && rightLabel != null)
@@ -66,9 +64,9 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _setPercentileRankWeight(double value) {
+  void _setSmartWeight(double value) {
     setState(() {
-      _db.setPercentileRankWeight(value);
+      _db.setSmartWeight(value);
     });
   }
   

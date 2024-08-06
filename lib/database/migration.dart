@@ -7,7 +7,7 @@ Future<void> performMigrationIfNeeded(Isar isar) async {
   final int currentVersion = settings.getVersion();
   switch(currentVersion) {
     case 1:
-      await migrateV1ToV2(isar, settings.getPercentileRankWeight());
+      await migrateV1ToV2(isar);
       break;
     case 2:
       await migrateV2ToV3(isar);
@@ -23,10 +23,7 @@ Future<void> performMigrationIfNeeded(Isar isar) async {
   await settings.setVersion(3);
 }
 
-Future<void> migrateV1ToV2(Isar isar, double percentileRankWeight) async {
-  final DatabaseService db = DatabaseService();
-  if (percentileRankWeight > DatabaseService.mainWeight) { db.setPercentileRankWeight(DatabaseService.mainWeight); }
-
+Future<void> migrateV1ToV2(Isar isar) async {
   final int songCount = await isar.songs.count();
 
   // Nous paginons à travers les musiques pour éviter de tous les charger en mémoire en même temps
