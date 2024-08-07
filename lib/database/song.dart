@@ -10,22 +10,15 @@ part 'song.g.dart';
 @collection
 class Song {
   Id id = Isar.autoIncrement;
-
   int songId = -1;
-
   String title = '';
-
   int duration = 0;
-
   int daysAgo = 0;
-
   int nbOfListens = 0;
-
   int listeningTime = 0;
-
   DateTime lastListen;
-
   double score = 1.0;
+  double smartScore = 1.0;
 
   Song(this.songId, this.title, this.duration, this.daysAgo, this.nbOfListens, this.listeningTime, this.lastListen);
 }
@@ -90,7 +83,9 @@ class DatabaseService {
     final DateTime now = DateTime.now();
 
     for (Song song in allSongs) {
-      song.score = await _calculateScore(song, allSongs.length, now);
+      final double smartScore = await _calculateScore(song, allSongs.length, now);
+      song.score = smartScore + _dumbWeight * Random().nextDouble();
+      song.smartScore = smartScore;
       await isar.songs.put(song);
     }
   }
@@ -112,7 +107,6 @@ class DatabaseService {
         + 0.4 * listeningRate
         + 0.5 * percentileRank
       )
-      + _dumbWeight * Random().nextDouble()
     ).toStringAsFixed(3));
   }
 

@@ -53,7 +53,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                       final Song song = songs[index];
                       return ListTile(
                         leading: Artworks.artworkStyle(song.songId, Artworks.artworkSmallSize),
-                        title: TitleText(title: '${song.score} - ${song.title}', textStyle: Styles.songHomeTitle(false)), // DEBUG TEST
+                        title: TitleText(title: '${song.smartScore} - ${song.title}', textStyle: Styles.songHomeTitle(false)),
                         subtitle: Text('${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.daysAgo ~/ 30} mos ago', style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor)),
                         iconColor: ThemeColors.primaryColor,
                       );
