@@ -69,7 +69,7 @@ class SettingsService {
   }
 
   int getVersion() {
-    return _preferences!.getInt('version') ?? 3;
+    return _preferences!.getInt('version') ?? 4;
   }
 
   // Save the last playlist
