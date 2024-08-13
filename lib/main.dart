@@ -18,7 +18,7 @@ Future<void> main() async {
   ]);
   
   await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.quedow.shadow_garden.channel.audio',
+    androidNotificationChannelId: 'com.cybertorii.shadow_garden.channel.audio',
     androidNotificationOngoing: true,
     androidShowNotificationBadge: true,
   );
