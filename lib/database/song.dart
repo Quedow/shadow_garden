@@ -83,14 +83,15 @@ class DatabaseService {
     final DateTime now = DateTime.now();
 
     for (Song song in allSongs) {
-      final double smartScore = await _calculateScore(song, allSongs.length, now);
-      song.score = smartScore + _dumbWeight * Random().nextDouble();
+      final double smartScore = await _calculateSmartScore(song, allSongs.length, now);
+      final double dumbScore = song.smartScore <= 0.5 ? _dumbWeight * Random().nextDouble() : 0;
+      song.score = smartScore + dumbScore;
       song.smartScore = smartScore;
       await isar.songs.put(song);
     }
   }
 
-  Future<double> _calculateScore(Song song, int totalSongs, DateTime now) async {
+  Future<double> _calculateSmartScore(Song song, int totalSongs, DateTime now) async {
     int belowSongs = await isar.songs.filter().nbOfListensLessThan(song.nbOfListens).count();
     int equalSongs = await isar.songs.filter().nbOfListensEqualTo(song.nbOfListens).count();
     int listenHoursAgo = now.difference(song.lastListen).inHours;
