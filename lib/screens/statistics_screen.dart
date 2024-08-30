@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shadow_garden/database/song.dart';
+import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
@@ -13,6 +14,7 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class StatisticsScreenState extends State<StatisticsScreen> {
+  final SettingsService _settings = SettingsService();
   final DatabaseService _db = DatabaseService();
   late Future<Map<String, dynamic>> _dataSongs;
 
@@ -37,6 +39,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
     
           return Column(
             children: [
+              statisticText(Texts.textTrackingDate, _settings.getMonitoringDate()),
               statisticText(Texts.textTotalListenNb, (data['totalNbOfListens'] ?? 0).toString()),
               statisticText(Texts.textTotalListenTime, '${((data['totalListeningTime'] ?? 0) / 60).toStringAsFixed(0)} min (${((data['totalListeningTime'] ?? 0) / 3600).toStringAsFixed(0)} h)'),
               Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),

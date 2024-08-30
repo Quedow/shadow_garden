@@ -5,6 +5,7 @@ import 'package:shadow_garden/provider/settings_service.dart';
 Future<void> performMigrationIfNeeded(Isar isar) async {
   final SettingsService settings = SettingsService();
   final int currentVersion = settings.getVersion();
+  settings.getMonitoringDate();
   switch(currentVersion) {
     case 1:
       await migrateV1ToV2(isar);

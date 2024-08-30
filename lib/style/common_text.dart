@@ -5,6 +5,7 @@ abstract class Texts {
 
   static String errorNoSongFound = 'No music found...';
 
+  static String textTrackingDate = 'Monitoring since';
   static String textTotalListenNb = 'Total number of listens';
   static String textTotalListenTime = 'Total listening time';
 

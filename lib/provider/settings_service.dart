@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,6 +73,19 @@ class SettingsService {
     return _preferences!.getInt('version') ?? 4;
   }
 
+  Future<void> setMonitoringDate([String? date]) async {
+    await _preferences!.setString('monitoringDate', date ?? DateFormat('MM/dd/yyyy').format(DateTime.now()));
+  }
+
+  String getMonitoringDate() {
+    String? monitoringDate = _preferences!.getString('monitoringDate');
+    if (monitoringDate == null) {
+      monitoringDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
+      setMonitoringDate(monitoringDate);
+    }
+    return monitoringDate;
+  }
+
   // Save the last playlist
   // Future<void> setLastPlaylist(List<int> ids) async {
   //   List<String> lastQueue = ids.map((id) => id.toString()).toList();
@@ -84,6 +98,8 @@ class SettingsService {
   // }
 
   Future<void> clearSettings() async {
+    String monitoringDateTemp = getMonitoringDate();
     await _preferences!.clear();
+    await setMonitoringDate(monitoringDateTemp);
   }
 }

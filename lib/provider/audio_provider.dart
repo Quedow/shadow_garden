@@ -128,6 +128,7 @@ class AudioProvider extends ChangeNotifier {
 
   void clearDatabase() async {
     await _db.clearDatabase();
+    await _settings.setMonitoringDate();
   }
 
   Future<bool> fetchAudioSongs() async {
