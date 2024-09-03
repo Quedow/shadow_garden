@@ -13,7 +13,7 @@
         "block_by": [8]
       },
       {
-        "id": 4,
+        "id": 2,
         "label": "Data Save",
         "description": "L'application sauvegarde le mode de tri et la dernière musique",
         "done": true,
@@ -23,7 +23,7 @@
         "block_by": [1]
       },
       {
-        "id": 5,
+        "id": 3,
         "label": "Bottom App Bar",
         "description": "Bar de navigation pour naviguer entre différentes pages",
         "done": true,
@@ -33,7 +33,7 @@
         "block_by": []
       },
       {
-        "id": 6,
+        "id": 4,
         "label": "Data Save 2",
         "description": "Sauvegarder différentes données par song (durée d'écoute, nombre d'écoutes...)",
         "done": true,
@@ -43,7 +43,7 @@
         "block_by": [4]
       },
       {
-        "id": 7,
+        "id": 5,
         "label": "Smart Sort",
         "description": "Système de tri intelligent",
         "done": true,
@@ -52,7 +52,7 @@
         "block_by": [6]
       },
       {
-        "id": 8,
+        "id": 6,
         "label": "Playlist vs Song list",
         "description": "Dissocier la playlist et la liste des songs afin d'effectuer des tris sans changer la playlist",
         "done": true,
@@ -61,7 +61,7 @@
         "block": [1]
       },
       {
-        "id": 9,
+        "id": 7,
         "label": "Custom Loop Mode",
         "description": "Un mode permettant de loop un nombre custom de musique",
         "done": true,
@@ -69,7 +69,7 @@
         "priority": 4
       },
       {
-        "id": 10,
+        "id": 8,
         "label": "Scroll Bar",
         "description": "Une scroll bar interactive avec bulle alphabétique",
         "done": true,
@@ -78,7 +78,7 @@
         "block_by": [1]
       },
       {
-        "id": 11,
+        "id": 9,
         "label": "Search option",
         "description": "Fonctionnalité de recherche de musiques",
         "done": true,
@@ -86,7 +86,7 @@
         "priority": 2
       },
       {
-        "id": 12,
+        "id": 10,
         "label": "Setting menu",
         "description": "Définir et implémenter (écran) les paramètres modifiables de l'application",
         "done": true,
@@ -94,7 +94,7 @@
         "priority": 1
       },
       {
-        "id": 13,
+        "id": 11,
         "label": "Stats Spotify-like",
         "description": "Système de statistiques comme sur Spotify (totaux)",
         "done": true,
@@ -102,7 +102,7 @@
         "priority": 1
       },
       {
-        "id": 14,
+        "id": 12,
         "label": "Stats screen",
         "description": "Système de statistiques de chaque musique",
         "done": true,
@@ -110,43 +110,7 @@
         "priority": 1
       },
       {
-        "id": 15,
-        "label": "Correction des defects",
-        "defects": [
-          {
-            "description": "L'application redémarre après un certain temps ce qui coupe la musique",
-            "done": false,
-            "in_progress": false,
-            "priority": 1
-          },
-          {
-            "description": "La barre de progression affichant la durée max sur les widgets background",
-            "done": false,
-            "in_progress": false,
-            "priority": 1
-          },
-          {
-            "description": "La barre de progression affichant 0 après avoir mis la musique en pause et ouvert la bottom sheet",
-            "done": true,
-            "in_progress": true,
-            "priority": 1
-          },
-          {
-            "description": "Le custom loop lit une petite partie de la musique suivante avant de reboucler",
-            "done": false,
-            "in_progress": false,
-            "priority": 3
-          },
-          {
-            "description": "Rendu incessant des images au moindre clique ou mouvement",
-            "done": false,
-            "in_progress": false,
-            "priority": 4
-          }
-        ]
-      },
-      {
-        "id": 16,
+        "id": 13,
         "label": "Retours utilisateurs",
         "description": "Obtenir des feedbacks pour améliorer l'application",
         "done": false,
@@ -154,9 +118,46 @@
         "priority": 2
       },
       {
-        "id": 17,
+        "id": 14,
         "label": "Light Theme",
         "description": "Ajouter un thème clair + toggle option dans les paramètres",
+        "done": false,
+        "in_progress": false,
+        "priority": 4
+      }
+    ],
+    "defects": [
+      {
+        "id": 1,
+        "description": "L'application redémarre après un certain temps ce qui coupe la musique",
+        "done": false,
+        "in_progress": false,
+        "priority": 1
+      },
+      {
+        "id": 2,
+        "description": "La barre de progression affichant la durée max sur les widgets background",
+        "done": false,
+        "in_progress": false,
+        "priority": 1
+      },
+      {
+        "id": 3,
+        "description": "La barre de progression affichant 0 après avoir mis la musique en pause et ouvert la bottom sheet",
+        "done": true,
+        "in_progress": true,
+        "priority": 1
+      },
+      {
+        "id": 4,
+        "description": "Le custom loop lit une petite partie de la musique suivante avant de reboucler",
+        "done": false,
+        "in_progress": false,
+        "priority": 3
+      },
+      {
+        "id": 5,
+        "description": "Rendu incessant des images au moindre clique ou mouvement",
         "done": false,
         "in_progress": false,
         "priority": 4
