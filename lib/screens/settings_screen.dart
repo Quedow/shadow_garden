@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:shadow_garden/database/song.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
@@ -17,26 +18,51 @@ class SettingsScreen extends StatefulWidget {
 class SettingsScreenState extends State<SettingsScreen> {
   final SettingsService _settings = SettingsService();
   final DatabaseService _db = DatabaseService();
+  late List<String> _whitelist;
+
+  @override
+  void initState() {
+    super.initState();
+    _whitelist = _settings.getWhiteList();
+  }
 
   @override
   Widget build(BuildContext context) {    
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return ListView(
       children: [
-        settingToggle(Texts.textNeverListenFirst, Texts.textNeverListenFirstContent, widget.audioProvider.neverListenedFirst, _setNeverListenedFirst),
+        _settingToggle(Texts.textNeverListenFirst, Texts.textNeverListenFirstContent, widget.audioProvider.neverListenedFirst, _setNeverListenedFirst),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
-        settingNumberInput(Texts.textSortWeight, Texts.textSortWeightContent, _db.smartWeight, _setSmartWeight, Texts.textSmartWeight, Texts.textDumbWeight),
+        _settingSlider(Texts.textSortWeight, Texts.textSortWeightContent, _db.smartWeight, _setSmartWeight, Texts.textSmartWeight, Texts.textDumbWeight),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
-        settingIconButton(Texts.textDeletePrefs, Texts.textDeletePrefsContent, Icons.delete_rounded, _settings.clearSettings),
+        _settingIconButton(Texts.textWhitelist, Texts.textWhitelistContent, Icons.folder_rounded, _pickFolder),
+        _settingListView(_whitelist, _removeFolder),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
-        settingIconButton(Texts.textDeleteData, Texts.textDeleteDataContent, Icons.delete_rounded, widget.audioProvider.clearDatabase),
+        _settingIconButton(Texts.textDeletePrefs, Texts.textDeletePrefsContent, Icons.delete_rounded, _settings.clearSettings),
+        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        _settingIconButton(Texts.textDeleteData, Texts.textDeleteDataContent, Icons.delete_rounded, clearDatabase),
+        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        _settingIconButton(Texts.textDeleteGlobalStats, Texts.textDeleteGlobalStatsContent, Icons.delete_rounded, _settings.clearGlobalStats),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
       ],
     );
   }
 
-  Padding settingNumberInput(String label, String description, double value, void Function(double)? onChanged, [String? leftLabel, String? rightLabel]) {
+  ListTile _settingToggle(String label, String description, bool value, void Function(bool)? onChanged) {
+    return ListTile(
+      dense: true,
+      contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+      title: Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
+      subtitle: Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
+      trailing: Switch(
+        value: value,
+        onChanged: onChanged,
+        activeTrackColor: ThemeColors.darkAccentColor,
+        activeColor: ThemeColors.primaryColor,
+      ),
+    );
+  }
+
+  Padding _settingSlider(String label, String description, double value, void Function(double)? onChanged, [String? leftLabel, String? rightLabel]) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Column(
@@ -63,59 +89,65 @@ class SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+  
+  ListTile _settingIconButton(String label, String description, IconData icon, void Function() onPressed) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+      title: Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
+      subtitle: Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
+      trailing: IconButton(onPressed: onPressed, icon: Icon(icon, color: ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor02),
+    );
+  }
+
+  SizedBox _settingListView(List<String> content, void Function(int index) onPressed) {
+    return SizedBox(
+      height: content.length * 50,
+      child: ListView.builder(
+        itemCount: content.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            dense: true,
+            textColor: ThemeColors.primaryColor07,
+            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+            title: Text(content[index], style: Styles.labelLarge),
+            trailing: IconButton(
+              icon: const Icon(Icons.close_rounded, color: ThemeColors.primaryColor04), highlightColor: ThemeColors.primaryColor02, 
+              onPressed: () => onPressed(index),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   void _setSmartWeight(double value) {
     setState(() {
       _db.setSmartWeight(value);
     });
   }
-  
-  Padding settingIconButton(String label, String description, IconData icon, void Function() onPressed) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
-              Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
-            ],
-          ),
-          IconButton(onPressed: onPressed, icon: Icon(icon, color: ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor02),
-        ],
-      ),
-    );
-  }
-  
-  Padding settingToggle(String label, String description, bool value, void Function(bool)? onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
-              Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
-            ],
-          ),
-          Switch(
-            value: value,
-            onChanged: onChanged,
-            activeTrackColor: ThemeColors.darkAccentColor,
-            activeColor: ThemeColors.primaryColor,
-          ),
-        ],
-      ),
-    );
-  }
 
   void _setNeverListenedFirst(bool value) {
     setState(() {
       widget.audioProvider.setNeverListenedFirst(value);
     });
+  }
+
+  Future<void> _pickFolder() async {
+    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+    if (selectedDirectory != null) {
+      setState(() => _whitelist.add(selectedDirectory));
+      await _settings.setWhiteList(_whitelist);
+    }
+  }
+
+  Future<void> _removeFolder(int index) async {
+    setState(() => _whitelist.removeAt(index));
+    await _settings.setWhiteList(_whitelist);
+  }
+
+  void clearDatabase() async {
+    await _db.clearDatabase();
+    await _settings.setMonitoringDate();
   }
 }

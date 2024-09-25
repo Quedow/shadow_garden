@@ -56,23 +56,6 @@ class SettingsService {
     return _preferences!.getDouble('smartWeight') ?? 0.9;
   }
 
-  // Save the last song listened
-  // Future<void> setLastSongId(int id) async {
-  //   await _preferences!.setInt('lastSongId', id);
-  // }
-
-  // int getLastSongId() {
-  //   return _preferences!.getInt('lastSongId') ?? 0;
-  // }
-
-  Future<void> setVersion(int version) async {
-    await _preferences!.setInt('version', version);
-  }
-
-  int getVersion() {
-    return _preferences!.getInt('version') ?? 4;
-  }
-
   Future<void> setMonitoringDate([String? date]) async {
     await _preferences!.setString('monitoringDate', date ?? DateFormat('MM/dd/yyyy').format(DateTime.now()));
   }
@@ -86,20 +69,42 @@ class SettingsService {
     return monitoringDate;
   }
 
-  // Save the last playlist
-  // Future<void> setLastPlaylist(List<int> ids) async {
-  //   List<String> lastQueue = ids.map((id) => id.toString()).toList();
-  //   await _preferences!.setStringList('lastPlaylist', lastQueue);
-  // }
+  Future<void> setWhiteList(List<String> whitelist) async {
+    await _preferences!.setStringList('whitelist', whitelist);
+  }
 
-  // List<int> getLastPlaylist() {
-  //   List<String> lastQueue = _preferences!.getStringList('lastPlaylist') ?? [];
-  //   return lastQueue.map((id) => int.parse(id)).toList();
-  // }
+  List<String> getWhiteList() {
+    return _preferences!.getStringList('whitelist') ?? ['/storage/emulated/0/Music'];
+  }
+
+  Future<void> setGlobalStats(int nbListensDB, int listeningTimeDB) async {
+    List<String> globalStats = getGlobalStats();
+    int nbListens = int.parse(globalStats[0]) + nbListensDB;
+    int listeningTime = int.parse(globalStats[1]) + listeningTimeDB;
+    await _preferences!.setStringList('globalStats', [nbListens.toString(), listeningTime.toString()]);
+  }
+
+  List<String> getGlobalStats() {
+    return _preferences!.getStringList('globalStats') ?? ['0', '0'];
+  }
+
+  Future<void> clearGlobalStats() async {
+    await _preferences!.remove('globalStats');
+  }
+
+  Future<void> setVersion(int version) async {
+    await _preferences!.setInt('version', version);
+  }
+
+  int getVersion() {
+    return _preferences!.getInt('version') ?? 4;
+  }
 
   Future<void> clearSettings() async {
     String monitoringDateTemp = getMonitoringDate();
+    List<String> globalStatTemp = getGlobalStats();
     await _preferences!.clear();
     await setMonitoringDate(monitoringDateTemp);
+    await _preferences!.setStringList('globalStats', globalStatTemp);
   }
 }

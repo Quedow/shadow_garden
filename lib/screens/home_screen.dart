@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: ThemeColors.backgroundOled,
       body: [
         SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying),
-        const StatisticsScreen(),
+        StatisticsScreen(audioProvider: _audioProvider),
         SettingsScreen(audioProvider: _audioProvider),
       ].elementAt(currentScreenIndex),
       bottomNavigationBar: BottomNavigationBar(

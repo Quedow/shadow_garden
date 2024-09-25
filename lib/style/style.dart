@@ -3,16 +3,17 @@ import 'package:on_audio_query/on_audio_query.dart';
 
 abstract class ThemeColors {
   static const Color primaryColor = Colors.white;
-  static const Color primaryColor02 = Color(0x33ffffff);
-  static const Color primaryColor03 = Color(0x4dffffff);
-  static const Color primaryColor04 = Color(0x66ffffff);
-  static const Color primaryColor07 = Color(0xb3ffffff);
+  static const Color primaryColor02 = Color(0x33FFFFFF);
+  static const Color primaryColor03 = Color(0x4DFFFFFF);
+  static const Color primaryColor04 = Color(0x66FFFFFF);
+  static const Color primaryColor07 = Color(0xB3FFFFFF);
 
   static const Color accentColor = Color(0xFFAAC9FF);
-  static const Color darkAccentColor = Color(0xFF7b93f6);
-  
-  static const Color secondaryColor = Color.fromARGB(255, 29, 37, 48);
-  static const Color backgroundOled = Color.fromARGB(255, 0, 0, 0);
+  static const Color darkAccentColor = Color(0xFF7B93F6);
+
+  static const Color errorColor = Color(0xFFFFAAC9);
+  static const Color otherColor = Color(0xFF1D2530);
+  static const Color backgroundOled = Color(0xFF000000);
 }
 
 abstract class IconSizes {
@@ -29,6 +30,7 @@ abstract class Artworks {
       artworkFit: BoxFit.cover,
       artworkWidth: imgWidth,
       artworkHeight: imgWidth,
+      artworkQuality: FilterQuality.medium,
       artworkBorder: BorderRadius.circular(10.0),
       nullArtworkWidget: noArtworkStyle(imgWidth),
     );
@@ -38,8 +40,17 @@ abstract class Artworks {
     return Container(
       width: imgWidth,
       height: imgWidth,
-      decoration: BoxDecoration(color: ThemeColors.secondaryColor, borderRadius: BorderRadius.circular(10.0)),
+      decoration: BoxDecoration(color: ThemeColors.otherColor, borderRadius: BorderRadius.circular(10.0)),
       child: Icon(Icons.music_note_rounded, color: ThemeColors.accentColor, size: imgWidth/2),
+    );
+  }
+
+  static Container errorArtworkStyle(double imgWidth) {
+    return Container(
+      width: imgWidth,
+      height: imgWidth,
+      decoration: BoxDecoration(color: ThemeColors.otherColor, borderRadius: BorderRadius.circular(10.0)),
+      child: Icon(Icons.error_outline_rounded, color: ThemeColors.errorColor, size: imgWidth/2),
     );
   }
 }

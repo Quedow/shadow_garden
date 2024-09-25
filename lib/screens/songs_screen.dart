@@ -66,7 +66,7 @@ class SongsScreenState extends State<SongsScreen> {
               final SequenceState? state = snapshot.data;
               
               if (state == null || state.sequence.isEmpty) {
-                return Center(child: Text(Texts.errorNoSongFound, style: const TextStyle(color: ThemeColors.primaryColor)));
+                return Center(child: Text(Texts.errorNoSongFound, style: Styles.titleLarge.copyWith(color: ThemeColors.primaryColor)));
               } else {
                 final int playlistLength = state.sequence.length;
 

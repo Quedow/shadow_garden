@@ -13,7 +13,7 @@ class AudioProvider extends ChangeNotifier {
   final SettingsService _settings = SettingsService();
   final DatabaseService _db = DatabaseService();
 
-  List<SongModel> _songs = [];
+  final List<SongModel> _songs = [];
   List<SongModel> get songs => _songs;
 
   ConcatenatingAudioSource _playlist = ConcatenatingAudioSource(children: []);
@@ -28,7 +28,7 @@ class AudioProvider extends ChangeNotifier {
     if (!_shuffleActive) {
       _shuffleActive = true;
     }
-    await sortSongs(-1);
+    await _sortSongs(-1);
     notifyListeners();
   }
 
@@ -58,7 +58,7 @@ class AudioProvider extends ChangeNotifier {
       _sortState = (_sortState + 1) % _totalState;
     }
     await _settings.setSortState(_sortState);
-    await sortSongs(_sortState);
+    await _sortSongs(_sortState);
     notifyListeners();
   }
 
@@ -69,13 +69,6 @@ class AudioProvider extends ChangeNotifier {
     await _settings.setNeverListenedFirst(value);
   }
 
-  // late int _lastSongId;
-  // int get lastSongId => _lastSongId;
-  // void setLastSongId(int id) async {
-  //   _lastSongId = id;
-  //   await _settings.setLastSongId(id);
-  // }
-
   List<int> _lastIndexes = [];
   Duration _lastPosition = Duration.zero;
 
@@ -84,7 +77,6 @@ class AudioProvider extends ChangeNotifier {
     _songsPerLoop = _settings.getSongsPerLoop();
     _sortState = _settings.getSortState();
     _neverListenedFirst = _settings.getNeverListenedFirst();
-    // _lastSongId = _settings.getLastSongId();
 
     _audioPlayer.currentIndexStream.listen((index) async {
       if (index == null) { return; }
@@ -96,7 +88,7 @@ class AudioProvider extends ChangeNotifier {
         _lastIndexes.add(index);
 
         if (_lastIndexes.length > _songsPerLoop) {
-          await resetLoop(_lastIndexes.first);
+          await _resetLoop(_lastIndexes.first);
           _lastIndexes = [_lastIndexes.first];
         }
       }
@@ -115,20 +107,10 @@ class AudioProvider extends ChangeNotifier {
             ? discontinuity.previousEvent.duration!.inSeconds
             : _lastPosition.inSeconds;
 
-          _db.updateSong(Song(currentSong.id, currentSong.title, duration, getDays(currentSong.dateAdded), 1, _lastPosition.inSeconds, DateTime.now()));
+          _db.updateSong(Song(currentSong.id, currentSong.title, duration, _getDays(currentSong.dateAdded), 1, _lastPosition.inSeconds, DateTime.now()));
         }
       }
     });
-  }
-
-  int getDays(int? dateAdded) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch((dateAdded ?? 30) * 1000, isUtc: true);
-    return DateTime.now().difference(date).inDays;
-  }
-
-  void clearDatabase() async {
-    await _db.clearDatabase();
-    await _settings.setMonitoringDate();
   }
 
   Future<bool> fetchAudioSongs() async {
@@ -141,29 +123,31 @@ class AudioProvider extends ChangeNotifier {
     }
 
     try {
-      _songs = await audioQuery.querySongs(
-        orderType: OrderType.ASC_OR_SMALLER,
-        sortType: SongSortType.TITLE,
-        ignoreCase: true,
-        path: '/storage/emulated/0/Music',
-      );
+      List<String> paths = _settings.getWhiteList();
+      for (String path in paths) {
+        List<SongModel> songs = await audioQuery.querySongs(
+          orderType: OrderType.ASC_OR_SMALLER,
+          sortType: SongSortType.TITLE,
+          ignoreCase: true,
+          path: path,
+        );
+        _songs.addAll(songs);
+      }
 
-      if(_songs.isEmpty) { return false; }
+      if (_songs.isEmpty) { return false; }
 
-      setPlaylist();
-      await sortSongs(_sortState);
-      // await initSortSongs();
+      _setPlaylist();
+      await _sortSongs(_sortState);
       await _updateDaysAgo();
-
       return true;
     } catch (e) {
       return false;
     }
   }
 
-  void setPlaylist() {
+  void _setPlaylist() {
     _playlist = ConcatenatingAudioSource(
-      children: songs.map((song) => AudioSource.uri(
+      children: _songs.map((song) => AudioSource.uri(
           Uri.file(song.data),
           tag: MediaItem(
             id: song.id.toString(),
@@ -186,27 +170,13 @@ class AudioProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> resetLoop(int index) async {
+  Future<void> _resetLoop(int index) async {
     await _audioPlayer.stop();
     await _audioPlayer.seek(Duration.zero, index: index);
     await _audioPlayer.play();
   }
 
-  // Future<void> initSortSongs() async {
-  //   final List<int> ranking = _settings.getLastPlaylist();
-
-  //   if (ranking.isNotEmpty) {
-  //     final Map<int, int> mapRanking = {for (int i = 0; i < ranking.length; i++) ranking[i]: i};
-  //     _songs.sort((a, b) => (mapRanking[a.id] ?? -1).compareTo(mapRanking[b.id] ?? -1));
-
-  //     setPlaylist();
-  //     await _audioPlayer.setAudioSource(_playlist);
-  //   } else {
-  //     sortSongs(_sortState);
-  //   }
-  // }
-
-  Future<void> sortSongs(int state) async {
+  Future<void> _sortSongs(int state) async {
     switch(state) {
       case 0:
         _songs.sort((a, b) => a.title.compareTo(b.title));
@@ -221,18 +191,17 @@ class AudioProvider extends ChangeNotifier {
         _songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
         break;
       case 4:
-        await smartSort();
+        await _smartSort();
         break;
       case -1:
         _songs.shuffle();
         break;
     }
-    setPlaylist();
-    // await _settings.setLastPlaylist(_songs.map((song) => song.id).toList());
+    _setPlaylist();
     await _audioPlayer.setAudioSource(_playlist);
   }
 
-  Future<void> smartSort() async {
+  Future<void> _smartSort() async {
     final List<int> ranking = await _db.getRanking();
     final int size = ranking.length;
     final Map<int, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
@@ -242,8 +211,13 @@ class AudioProvider extends ChangeNotifier {
 
   Future<void> _updateDaysAgo() async {
     final Map<int, int> songsDaysAgo = Map.fromEntries(
-      _songs.map((song) => MapEntry(song.id, getDays(song.dateAdded)))
+      _songs.map((song) => MapEntry(song.id, _getDays(song.dateAdded)))
     );
     await _db.updateDaysAgo(songsDaysAgo);
+  }
+
+  int _getDays(int? dateAdded) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch((dateAdded ?? 30) * 1000, isUtc: true);
+    return DateTime.now().difference(date).inDays;
   }
 }

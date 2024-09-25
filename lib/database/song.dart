@@ -138,7 +138,21 @@ class DatabaseService {
     };
   }
 
+  Future<bool> clearData(int id) async {
+    late bool success;
+    await isar.writeTxn(() async {
+      success = await isar.songs.delete(id);
+    });
+    return success;
+  }
+
   Future<void> clearDatabase() async {
+    final List<int> globalStats = await Future.wait([
+      isar.songs.where().nbOfListensProperty().sum(),
+      isar.songs.where().listeningTimeProperty().sum(),
+    ]);
+    await _settings.setGlobalStats(globalStats[0], globalStats[1]);
+
     await isar.writeTxn(() async {
       await isar.songs.clear();
     });
