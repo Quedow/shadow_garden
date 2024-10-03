@@ -73,10 +73,7 @@ class AudioProvider extends ChangeNotifier {
   Duration _lastPosition = Duration.zero;
 
   AudioProvider() {
-    _cLoopMode = _settings.getCLoopMode();
-    _songsPerLoop = _settings.getSongsPerLoop();
-    _sortState = _settings.getSortState();
-    _neverListenedFirst = _settings.getNeverListenedFirst();
+    getSettings();
 
     _audioPlayer.currentIndexStream.listen((index) async {
       if (index == null) { return; }
@@ -111,6 +108,13 @@ class AudioProvider extends ChangeNotifier {
         }
       }
     });
+  }
+
+  void getSettings() {
+    _cLoopMode = _settings.getCLoopMode();
+    _songsPerLoop = _settings.getSongsPerLoop();
+    _sortState = _settings.getSortState();
+    _neverListenedFirst = _settings.getNeverListenedFirst(); 
   }
 
   Future<bool> fetchAudioSongs() async {

@@ -31,4 +31,5 @@ abstract class Texts {
   static String textDeleteGlobalStatsContent = 'Total number of listens and total listening time will be reset.';
 
   static String textNextSongSnack = 'Added to next song';
+  static String textDeletionDialog = 'Do you confirm the deletion?';
 }

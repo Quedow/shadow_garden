@@ -5,6 +5,7 @@ import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/style/style.dart';
+import 'package:shadow_garden/widgets/alerts.dart';
 
 class SettingsScreen extends StatefulWidget {
   final AudioProvider audioProvider;
@@ -37,11 +38,11 @@ class SettingsScreenState extends State<SettingsScreen> {
         _settingIconButton(Texts.textWhitelist, Texts.textWhitelistContent, Icons.folder_rounded, _pickFolder),
         _settingListView(_whitelist, _removeFolder),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
-        _settingIconButton(Texts.textDeletePrefs, Texts.textDeletePrefsContent, Icons.delete_rounded, _settings.clearSettings),
+        _settingIconButton(Texts.textDeletePrefs, Texts.textDeletePrefsContent, Icons.delete_rounded, () => Alerts.deletionDialog(context, _clearSettings)),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
-        _settingIconButton(Texts.textDeleteData, Texts.textDeleteDataContent, Icons.delete_rounded, clearDatabase),
+        _settingIconButton(Texts.textDeleteData, Texts.textDeleteDataContent, Icons.delete_rounded, () => Alerts.deletionDialog(context, _clearDatabase)),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
-        _settingIconButton(Texts.textDeleteGlobalStats, Texts.textDeleteGlobalStatsContent, Icons.delete_rounded, _settings.clearGlobalStats),
+        _settingIconButton(Texts.textDeleteGlobalStats, Texts.textDeleteGlobalStatsContent, Icons.delete_rounded, () => Alerts.deletionDialog(context, _settings.clearGlobalStats)),
         const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
       ],
     );
@@ -146,7 +147,15 @@ class SettingsScreenState extends State<SettingsScreen> {
     await _settings.setWhiteList(_whitelist);
   }
 
-  void clearDatabase() async {
+  void _clearSettings() async {
+    await _settings.clearSettings();
+    widget.audioProvider.getSettings();
+    _whitelist = _settings.getWhiteList();
+    _db.setSmartWeight(_settings.getSmartWeight());
+    setState(() {});
+  }
+
+  void _clearDatabase() async {
     await _db.clearDatabase();
     await _settings.setMonitoringDate();
   }

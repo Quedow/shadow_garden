@@ -4,6 +4,7 @@ import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/style/style.dart';
+import 'package:shadow_garden/widgets/alerts.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 
 class StatisticsScreen extends StatefulWidget {
@@ -80,10 +81,10 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                       ),
                       trailing: IconButton(
                         icon: const Icon(Icons.clear_rounded),
-                        onPressed: () async {
+                        onPressed: () => Alerts.deletionDialog(context, () async {
                           bool success = await _db.clearData(song.id);
                           if (success) { setState(() => songs.remove(song)); }
-                        },
+                          }),
                       ),
                     );
                   },
