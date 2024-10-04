@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:shadow_garden/style/style.dart';
 
 class PlayingAnimation extends StatelessWidget {
   final bool isCurrentSong;
@@ -13,7 +12,7 @@ class PlayingAnimation extends StatelessWidget {
     if (isCurrentSong) {
       if (isPlaying) {
         return ColorFiltered(
-          colorFilter: const ColorFilter.mode(ThemeColors.accentColor, BlendMode.srcATop),
+          colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcATop),
           child: Lottie.asset('assets/icons/soundwave.json'),
         );
       } else {

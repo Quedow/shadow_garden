@@ -9,15 +9,14 @@ abstract class Alerts {
       builder: (BuildContext context) {
         return AlertDialog(
           actionsAlignment: MainAxisAlignment.spaceAround,
-          title: Text(Texts.textDeletionDialog, style: Styles.titleLarge.copyWith(color: Colors.white)),
-          backgroundColor: ThemeColors.surfaceColor,
+          title: Text(Texts.textDeletionDialog, style: Styles.headlineSmall),
           actions: [
-            IconButton(icon: const Icon(Icons.cancel_rounded, color: ThemeColors.errorColor),
+            IconButton(icon: Icon(Icons.cancel_rounded, color: Theme.of(context).colorScheme.error),
               onPressed: () async {
                 Navigator.of(context).pop();
               },
             ),
-            IconButton(icon: const Icon(Icons.check_circle_rounded, color: ThemeColors.accentColor),
+            IconButton(icon: Icon(Icons.check_circle_rounded, color: Theme.of(context).colorScheme.primary),
               onPressed: () async {
                 onConfirmation();
                 Navigator.of(context).pop();

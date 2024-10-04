@@ -35,11 +35,11 @@ class StatisticsScreenState extends State<StatisticsScreen> {
       future: _dataSongs,
       builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: ThemeColors.accentColor));
+          return const Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          return Center(child: Text(Texts.errorLoadingStats, style: Styles.titleLarge.copyWith(color: ThemeColors.primaryColor)));
+          return Center(child: Text(Texts.errorLoadingStats, style: Styles.headlineSmall));
         }
 
         final List<Song> songs = snapshot.data!['songs'] ?? [];
@@ -55,7 +55,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
             statisticText(Texts.textTrackingDate, _settings.getMonitoringDate()),
             statisticText(Texts.textTotalListenNb, nbListens.toString()),
             statisticText(Texts.textTotalListenTime, '${(listeningTime / 60).toStringAsFixed(0)} min (${(listeningTime / 3600).toStringAsFixed(0)} h)'),
-            Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor.withOpacity(0.5)),
+            const Divider(height: 1, thickness: 1),
             Expanded(
               child: Scrollbar(
                 thickness: scrollbarThickness,
@@ -71,13 +71,12 @@ class StatisticsScreenState extends State<StatisticsScreen> {
 
                     return ListTile(
                       dense: true,
-                      iconColor: ThemeColors.primaryColor,
                       contentPadding: const EdgeInsets.only(left: 16, top: 4, right: 0, bottom: 4),
-                      leading: stillExists ? Artworks.artworkStyle(song.songId, Artworks.artworkSmallSize) : Artworks.errorArtworkStyle(Artworks.artworkSmallSize),
-                      title: TitleText(title: '${song.smartScore.toStringAsFixed(3)} - ${song.title}', textStyle: Styles.songHomeTitle(false)),
+                      leading: stillExists ? Artworks.artworkStyle(context, song.songId, Artworks.artworkSmallSize) : Artworks.errorArtworkStyle(context, Artworks.artworkSmallSize),
+                      title: TitleText(title: '${song.smartScore.toStringAsFixed(3)} - ${song.title}', textStyle: Styles.songHomeTitle(context, false)),
                       subtitle: Text(
                         '${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.daysAgo ~/ 30} mos ago',
-                        style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor), maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: Styles.labelLarge, maxLines: 1, overflow: TextOverflow.ellipsis,
                       ),
                       trailing: IconButton(
                         icon: const Icon(Icons.clear_rounded),
@@ -103,8 +102,8 @@ class StatisticsScreenState extends State<StatisticsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
-          Text(value, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
+          Text(label, style: Styles.bodyLarge),
+          Text(value, style: Styles.bodyLarge),
         ],
       ),
     );

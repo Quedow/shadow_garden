@@ -21,10 +21,8 @@ class AudioProgressBar extends StatelessWidget {
         return ProgressBar(
           barHeight: 5.0,
           thumbRadius: 7.0,
-          baseBarColor: ThemeColors.surfaceColor,
-          bufferedBarColor: ThemeColors.surfaceColor,
-          progressBarColor: ThemeColors.accentColor,
-          thumbColor: ThemeColors.accentColor,
+          baseBarColor: Theme.of(context).colorScheme.inverseSurface,
+          bufferedBarColor: Theme.of(context).colorScheme.inverseSurface,
           timeLabelLocation: TimeLabelLocation.sides,
           timeLabelType: TimeLabelType.totalTime,
           timeLabelTextStyle: Styles.labelLarge.copyWith(fontWeight: FontWeight.w500),

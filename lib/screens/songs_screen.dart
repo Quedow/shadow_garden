@@ -49,12 +49,10 @@ class SongsScreenState extends State<SongsScreen> {
             onChanged: (value) => searchFor(value),
             onSubmitted: (value) => nextResult(),
             focusNode: _focusNode,
-            cursorColor: ThemeColors.accentColor,
-            style: const TextStyle(color: ThemeColors.primaryColor),
-            decoration: const InputDecoration(
-              icon: Icon(Icons.search_rounded),
+            decoration: InputDecoration(
+              icon: Icon(Icons.search_rounded, color: Theme.of(context).hintColor),
               hintText: 'Search',
-              hintStyle: TextStyle(color: ThemeColors.primaryColor03),
+              hintStyle: Styles.hintText,
               border: InputBorder.none,
             ),
           ),
@@ -66,7 +64,7 @@ class SongsScreenState extends State<SongsScreen> {
               final SequenceState? state = snapshot.data;
               
               if (state == null || state.sequence.isEmpty) {
-                return Center(child: Text(Texts.errorNoSongFound, style: Styles.titleLarge.copyWith(color: ThemeColors.primaryColor)));
+                return Center(child: Text(Texts.errorNoSongFound, style: Styles.headlineSmall));
               } else {
                 final int playlistLength = state.sequence.length;
 
@@ -87,11 +85,10 @@ class SongsScreenState extends State<SongsScreen> {
                       return ListTile(
                         onTap: () => Functions.onTap(_audioPlayer, widget.isPlaying, isCurrentSong, index),
                         onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
-                        leading: Artworks.artworkStyle(int.parse(metadata.id), Artworks.artworkSmallSize),
-                        title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Styles.songHomeTitle(isCurrentSong)),
-                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor)),
+                        leading: Artworks.artworkStyle(context, int.parse(metadata.id), Artworks.artworkSmallSize),
+                        title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Styles.songHomeTitle(context, isCurrentSong)),
+                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.labelLarge),
                         trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: widget.isPlaying),
-                        iconColor: ThemeColors.primaryColor,
                       );
                     },
                   ),

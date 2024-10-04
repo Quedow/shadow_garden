@@ -40,13 +40,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        splashColor: Colors.transparent,
-        highlightColor: ThemeColors.primaryColor02,
-        scrollbarTheme: ScrollbarThemeData(
-          thumbColor: MaterialStateProperty.all(ThemeColors.accentColor),
-        ),
-      ),
+      theme: ThemeColors.themeData,
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
     );

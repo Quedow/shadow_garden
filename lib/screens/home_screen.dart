@@ -5,8 +5,8 @@ import 'package:shadow_garden/screens/songs_screen.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/screens/statistics_screen.dart';
 import 'package:shadow_garden/style/common_text.dart';
-import 'package:shadow_garden/style/style.dart';
 import 'package:provider/provider.dart';
+import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/utils/functions.dart';
 import 'package:shadow_garden/widgets/sort_button.dart';
 
@@ -51,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
         customAppBar(Texts.textStatisticsBar),
         customAppBar(Texts.textSettingsBar),
       ][currentScreenIndex],
-      backgroundColor: ThemeColors.backgroundOled,
       body: [
         SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying),
         StatisticsScreen(audioProvider: _audioProvider),
@@ -60,9 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentScreenIndex,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: ThemeColors.backgroundOled,
-        selectedItemColor: ThemeColors.primaryColor,
-        unselectedItemColor: ThemeColors.primaryColor04,
         selectedFontSize: 14,
         unselectedFontSize: 14,
         onTap: (index) {
@@ -82,22 +78,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   AppBar homeAppBar() {
     return AppBar(
-      backgroundColor: ThemeColors.backgroundOled, 
-      foregroundColor: ThemeColors.primaryColor,
-      title: Text(Texts.textHomeBar), centerTitle: true,
-      bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
+      title: Text(Texts.textHomeBar, style: Styles.appBarTitle),
+      bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: Theme.of(context).colorScheme.secondary, height: 1.0)),
       actions: [
-        IconButton(onPressed: _audioProvider.setShuffleActive, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? ThemeColors.accentColor : ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor02),
-        IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), color: _audioProvider.shuffleActive ? ThemeColors.primaryColor : ThemeColors.accentColor, highlightColor: ThemeColors.primaryColor02),
+        IconButton(onPressed: _audioProvider.setShuffleActive, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary)),
+        IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), color: _audioProvider.shuffleActive ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.primary),
       ],
     );
   }
 
   AppBar customAppBar(String title) {
     return AppBar(
-      backgroundColor: ThemeColors.backgroundOled,
-      title: Text(title), foregroundColor: ThemeColors.primaryColor, bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: ThemeColors.primaryColor, height: 1.0)),
-      centerTitle: true,
+      title: Text(title, style: Styles.appBarTitle),
+      bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: Theme.of(context).colorScheme.secondary, height: 1.0)),
     );
   }
 }

@@ -37,7 +37,6 @@ class MarqueeSubtitle extends StatelessWidget {
       ? '$albumStr - $artistStr' 
       : albumStr.isNotEmpty ? albumStr : artistStr;
 
-    // return Text(subtitle, style: textStyle);
     return MarqueeTitle(title: subtitle, availableWidth: availableWidth, textStyle: textStyle);
   }
 }

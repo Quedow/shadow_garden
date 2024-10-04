@@ -28,7 +28,7 @@ abstract class Functions {
     audioProvider.playlist.move(index, (audioPlayer.currentIndex ?? 0) + 1);
     
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(Texts.textNextSongSnack), backgroundColor: ThemeColors.surfaceColor, behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
+      SnackBar(content: Text(Texts.textNextSongSnack, style: Styles.labelLarge), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
     );
   }
 

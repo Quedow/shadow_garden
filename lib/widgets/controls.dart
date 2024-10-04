@@ -18,14 +18,12 @@ class Controls extends StatelessWidget {
         IconButton(
           onPressed: audioPlayer.seekToPrevious,
           iconSize: IconSizes.iconBtnSize,
-          color: ThemeColors.primaryColor,
           icon: const Icon(Icons.skip_previous_rounded),
         ),
         PlayButton(audioPlayer: audioPlayer),
         IconButton(
           onPressed: audioPlayer.seekToNext,
           iconSize: IconSizes.iconBtnSize,
-          color: ThemeColors.primaryColor,
           icon: const Icon(Icons.skip_next_rounded),
         ),
         const LoopButton(),
@@ -50,14 +48,12 @@ class PlayButton extends StatelessWidget {
           return IconButton(
             onPressed: audioPlayer.play,
             iconSize: IconSizes.iconBtnSize,
-            color: ThemeColors.primaryColor,
             icon: const Icon(Icons.play_arrow_rounded),
           );
         }
         return IconButton(
           onPressed: audioPlayer.pause,
           iconSize: IconSizes.iconBtnSize,
-          color: ThemeColors.primaryColor,
           icon: const Icon(Icons.pause_rounded),
         );
       },
@@ -86,22 +82,19 @@ class _LoopButtonState extends State<LoopButton> {
       return IconButton(
         onPressed: () => audioProvider.setLoopMode(LoopMode.off, CLoopMode.off),
         iconSize: IconSizes.iconBtnSize,
-        color: ThemeColors.primaryColor,
-        icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor),
+        icon: const Icon(Icons.repeat_rounded),
       );
     } else if (cLoopMode == CLoopMode.off) {
       return IconButton(
         onPressed: () => audioProvider.setLoopMode(LoopMode.one, CLoopMode.one),
         iconSize: IconSizes.iconBtnSize,
-        color: ThemeColors.primaryColor,
-        icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor04),
+        icon: Icon(Icons.repeat_rounded, color: Theme.of(context).unselectedWidgetColor),
       );
     } else if (cLoopMode == CLoopMode.one) {
       return IconButton(
         onPressed: () => audioProvider.setLoopMode(LoopMode.all, CLoopMode.custom),
         iconSize: IconSizes.iconBtnSize,
-        color: ThemeColors.primaryColor,
-        icon: const Icon(Icons.repeat_one_rounded, color: ThemeColors.primaryColor),
+        icon: const Icon(Icons.repeat_one_rounded),
       );
     }
     return Row(
@@ -109,16 +102,15 @@ class _LoopButtonState extends State<LoopButton> {
         IconButton(
           onPressed: () => audioProvider.setLoopMode(LoopMode.all, CLoopMode.all),
           iconSize: IconSizes.iconBtnSize,
-          color: ThemeColors.primaryColor,
-          icon: const Icon(Icons.repeat_rounded, color: ThemeColors.primaryColor),
+          icon: const Icon(Icons.repeat_rounded),
         ),
         NumberPicker(
           value: audioProvider.songsPerLoop,
           minValue: 2,
           maxValue: 10,
           itemWidth: 40,
-          selectedTextStyle: Styles.titleLarge.copyWith(color: ThemeColors.primaryColor07),
-          textStyle: const TextStyle(color: ThemeColors.primaryColor02),
+          selectedTextStyle: Styles.headlineSmall.copyWith(color: Theme.of(context).colorScheme.tertiary),
+          textStyle: TextStyle(color: Theme.of(context).hintColor),
           axis: Axis.horizontal,
           onChanged: (value) => audioProvider.setSongsPerLoop(value),
         ),

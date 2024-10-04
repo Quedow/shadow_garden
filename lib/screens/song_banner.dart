@@ -33,14 +33,14 @@ class SongBanner extends StatelessWidget {
                 if (currentIndex == null) { return const SizedBox.shrink(); }
 
                 final MediaItem currentMetadata = audioPlayer.sequence?[currentIndex].tag;
-                return songSheet(currentMetadata, screenWidth);
+                return songSheet(context, currentMetadata, screenWidth);
               },
             );
           },
         );
       },
       child: Container(
-        decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.white, width: 1.0))),
+        decoration: BoxDecoration(border: Border(top: BorderSide(color: Theme.of(context).colorScheme.secondary, width: 1.0))),
         child: StreamBuilder<int?>(
           stream: audioPlayer.currentIndexStream,
           builder: (context, snapshot) {
@@ -49,45 +49,43 @@ class SongBanner extends StatelessWidget {
             if (currentIndex == null) { return const SizedBox.shrink(); }
             
             final MediaItem currentMetadata = audioPlayer.sequenceState?.sequence[currentIndex].tag;
-            return songBanner(currentMetadata, screenWidth);
+            return songBanner(context, currentMetadata, screenWidth);
           },
         ),
       ),
     );
   }
 
-  Container songBanner(MediaItem metadata, double screenWidth) {
+  SizedBox songBanner(BuildContext context, MediaItem metadata, double screenWidth) {
     final double imgWidth = Artworks.artworkSmallSize;
     const double playBtnWidth = 50;
     final double availableWidth = screenWidth - (imgWidth - playBtnWidth)/2;
 
-    return Container(
+    return SizedBox(
       width: screenWidth,
-      color: ThemeColors.backgroundOled,
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
-        leading: Artworks.artworkStyle(int.parse(metadata.id), imgWidth),
-        title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Styles.subtitleLarge.copyWith(color: ThemeColors.primaryColor)),
-        subtitle: MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: availableWidth, textStyle: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
+        leading: Artworks.artworkStyle(context, int.parse(metadata.id), imgWidth),
+        title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Styles.titleMedium),
+        subtitle: MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: availableWidth, textStyle: Styles.bodyLarge),
         trailing: SizedBox(width: playBtnWidth, height: playBtnWidth, child: PlayButton(audioPlayer: audioPlayer)),
       ),
     );
   }
 
-  Container songSheet(MediaItem metadata, double screenWidth) {
+  Container songSheet(BuildContext context, MediaItem metadata, double screenWidth) {
     const double padding = 25;
     final double imgWidth = screenWidth - 2*padding;
     
     return Container(
-      color: ThemeColors.backgroundOled,
       padding: const EdgeInsets.symmetric(horizontal: padding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Artworks.artworkStyle(int.parse(metadata.id), imgWidth),
+          Artworks.artworkStyle(context, int.parse(metadata.id), imgWidth),
           AudioProgressBar(positionDataStream: AudioStreamUtils.getPositionDataStream(audioPlayer), audioPlayer: audioPlayer),
-          MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.titleMedium.copyWith(color: ThemeColors.primaryColor)),
-          MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor)),
+          MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.titleLarge),
+          MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.labelLarge),
           Controls(audioPlayer: audioPlayer),
         ],
       ),

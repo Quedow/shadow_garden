@@ -2,18 +2,64 @@ import 'package:flutter/material.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 abstract class ThemeColors {
-  static const Color primaryColor = Colors.white;
-  static const Color primaryColor02 = Color(0x33FFFFFF);
-  static const Color primaryColor03 = Color(0x4DFFFFFF);
-  static const Color primaryColor04 = Color(0x66FFFFFF);
-  static const Color primaryColor07 = Color(0xB3FFFFFF);
+  static const Color primaryColor = Color(0xFFAAC9FF);
+  static const Color darkPrimaryColor = Color(0xFF7B93F6);
 
-  static const Color accentColor = Color(0xFFAAC9FF);
-  static const Color darkAccentColor = Color(0xFF7B93F6);
+  static ThemeData themeData = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    colorScheme: const ColorScheme.dark(
+      brightness: Brightness.dark,
+      primary: primaryColor,
+      onPrimary: darkPrimaryColor,
+      secondary: Colors.white,
+      onSecondary: Colors.black,
+      tertiary: Color(0xFFBDBDBD),
+      error: Color(0xFFFFAAC9),
+      onError: Colors.white,
+      background: Colors.black,
+      onBackground: Colors.white,
+      surface: Colors.black, // Top bar, card
+      onSurface: Colors.white,
+      surfaceVariant: Color(0xFF757575), // Disable switch background, textfield filled
+      outlineVariant: Color(0xFF757575), // Divider
+      inverseSurface: Color(0xFF1D2530), // Snack bar
+      onInverseSurface: Colors.white,
+      surfaceTint: Colors.black,
+    ),
+    dialogBackgroundColor: const Color(0xFF1D2530),
+    hintColor: const Color(0xFF616161),
+    scaffoldBackgroundColor: Colors.black,
+    splashColor: Colors.transparent,
+    unselectedWidgetColor: const Color(0xFF616161),
+    appBarTheme: const AppBarTheme(centerTitle: true),
+    sliderTheme: const SliderThemeData(
+      activeTickMarkColor: darkPrimaryColor,
+      inactiveTrackColor: Color(0xFFEEEEEE),
+      inactiveTickMarkColor: primaryColor,
+    ),
+    scrollbarTheme: ScrollbarThemeData(
+      thumbColor: MaterialStateProperty.all(primaryColor),
+    ),
+  );
+}
 
-  static const Color errorColor = Color(0xFFFFAAC9);
-  static const Color otherColor = Color(0xFF1D2530);
-  static const Color backgroundOled = Color(0xFF000000);
+abstract class Styles {
+  static TextStyle songHomeTitle(BuildContext context, bool isCurrentSong) {
+    return TextStyle(
+      color: isCurrentSong ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+      fontWeight: isCurrentSong ? FontWeight.bold : FontWeight.normal,
+      fontSize: 18,
+    );
+  }
+
+  static TextStyle headlineSmall = const TextStyle(fontSize: 24, fontWeight: FontWeight.w300);
+  static TextStyle titleLarge = const TextStyle(fontSize: 22, fontWeight: FontWeight.w700);
+  static TextStyle titleMedium = const TextStyle(fontSize: 18, fontWeight: FontWeight.w700);
+  static TextStyle bodyLarge = const TextStyle(fontSize: 16, fontWeight: FontWeight.w400);
+  static TextStyle labelLarge = const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
+  static TextStyle appBarTitle = const TextStyle(fontSize: 22, fontWeight: FontWeight.w400);
+  static TextStyle hintText = const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
 }
 
 abstract class IconSizes {
@@ -23,50 +69,34 @@ abstract class IconSizes {
 abstract class Artworks {
   static double artworkSmallSize = 50;
 
-  static QueryArtworkWidget artworkStyle(int songId, double imgWidth) {
+  static QueryArtworkWidget artworkStyle(BuildContext context, int songId, double imgWidth) {
     return QueryArtworkWidget(
       id: songId,
       type: ArtworkType.AUDIO,
       artworkFit: BoxFit.cover,
       artworkWidth: imgWidth,
       artworkHeight: imgWidth,
-      artworkQuality: FilterQuality.medium,
+      artworkQuality: FilterQuality.low,
       artworkBorder: BorderRadius.circular(10.0),
-      nullArtworkWidget: noArtworkStyle(imgWidth),
+      nullArtworkWidget: noArtworkStyle(context, imgWidth),
     );
   }
 
-  static Container noArtworkStyle(double imgWidth) {
+  static Container noArtworkStyle(BuildContext context, double imgWidth) {
     return Container(
       width: imgWidth,
       height: imgWidth,
-      decoration: BoxDecoration(color: ThemeColors.otherColor, borderRadius: BorderRadius.circular(10.0)),
-      child: Icon(Icons.music_note_rounded, color: ThemeColors.accentColor, size: imgWidth/2),
+      decoration: BoxDecoration(color: Theme.of(context).dialogBackgroundColor, borderRadius: BorderRadius.circular(10.0)),
+      child: Icon(Icons.music_note_rounded, color: Theme.of(context).colorScheme.primary, size: imgWidth/2),
     );
   }
 
-  static Container errorArtworkStyle(double imgWidth) {
+  static Container errorArtworkStyle(BuildContext context, double imgWidth) {
     return Container(
       width: imgWidth,
       height: imgWidth,
-      decoration: BoxDecoration(color: ThemeColors.otherColor, borderRadius: BorderRadius.circular(10.0)),
-      child: Icon(Icons.error_outline_rounded, color: ThemeColors.errorColor, size: imgWidth/2),
+      decoration: BoxDecoration(color: Theme.of(context).dialogBackgroundColor, borderRadius: BorderRadius.circular(10.0)),
+      child: Icon(Icons.error_outline_rounded, color: Theme.of(context).colorScheme.error, size: imgWidth/2),
     );
   }
-}
-
-abstract class Styles {
-  static TextStyle songHomeTitle(bool isCurrentSong) {
-    return TextStyle(
-      color: isCurrentSong ? ThemeColors.accentColor : ThemeColors.primaryColor,
-      fontWeight: isCurrentSong ? FontWeight.bold : FontWeight.normal,
-      fontSize: 18,
-    );
-  }
-
-  static TextStyle titleLarge = const TextStyle(fontSize: 24, fontWeight: FontWeight.w300);
-  static TextStyle titleMedium = const TextStyle(fontSize: 22, fontWeight: FontWeight.w700);
-  static TextStyle subtitleLarge = const TextStyle(fontSize: 18, fontWeight: FontWeight.w700);
-  static TextStyle subtitleMedium = const TextStyle(fontSize: 16, fontWeight: FontWeight.w400);
-  static TextStyle labelLarge = const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
 }

@@ -32,18 +32,18 @@ class SettingsScreenState extends State<SettingsScreen> {
     return ListView(
       children: [
         _settingToggle(Texts.textNeverListenFirst, Texts.textNeverListenFirstContent, widget.audioProvider.neverListenedFirst, _setNeverListenedFirst),
-        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        const Divider(height: 1, thickness: 1),
         _settingSlider(Texts.textSortWeight, Texts.textSortWeightContent, _db.smartWeight, _setSmartWeight, Texts.textSmartWeight, Texts.textDumbWeight),
-        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        const Divider(height: 1, thickness: 1),
         _settingIconButton(Texts.textWhitelist, Texts.textWhitelistContent, Icons.folder_rounded, _pickFolder),
         _settingListView(_whitelist, _removeFolder),
-        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        const Divider(height: 1, thickness: 1),
         _settingIconButton(Texts.textDeletePrefs, Texts.textDeletePrefsContent, Icons.delete_rounded, () => Alerts.deletionDialog(context, _clearSettings)),
-        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        const Divider(height: 1, thickness: 1),
         _settingIconButton(Texts.textDeleteData, Texts.textDeleteDataContent, Icons.delete_rounded, () => Alerts.deletionDialog(context, _clearDatabase)),
-        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        const Divider(height: 1, thickness: 1),
         _settingIconButton(Texts.textDeleteGlobalStats, Texts.textDeleteGlobalStatsContent, Icons.delete_rounded, () => Alerts.deletionDialog(context, _settings.clearGlobalStats)),
-        const Divider(height: 1, thickness: 1, color: ThemeColors.primaryColor04),
+        const Divider(height: 1, thickness: 1),
       ],
     );
   }
@@ -52,13 +52,11 @@ class SettingsScreenState extends State<SettingsScreen> {
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-      title: Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
-      subtitle: Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
+      title: Text(label, style: Styles.bodyLarge),
+      subtitle: Text(description, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeTrackColor: ThemeColors.darkAccentColor,
-        activeColor: ThemeColors.primaryColor,
       ),
     );
   }
@@ -70,11 +68,10 @@ class SettingsScreenState extends State<SettingsScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
-          Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
+          Text(label, style: Styles.bodyLarge),
+          Text(description, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
           Slider(
             value: value,
-            activeColor: ThemeColors.darkAccentColor,
             max: 1.0, divisions: 20, label: (value * 100).round().toString(),
             onChanged: onChanged,
           ),
@@ -82,8 +79,8 @@ class SettingsScreenState extends State<SettingsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(leftLabel, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
-                Text(rightLabel, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
+                Text(leftLabel, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+                Text(rightLabel, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
               ],
             ),
         ],
@@ -94,9 +91,9 @@ class SettingsScreenState extends State<SettingsScreen> {
   ListTile _settingIconButton(String label, String description, IconData icon, void Function() onPressed) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-      title: Text(label, style: Styles.subtitleMedium.copyWith(color: ThemeColors.primaryColor)),
-      subtitle: Text(description, style: Styles.labelLarge.copyWith(color: ThemeColors.primaryColor07)),
-      trailing: IconButton(onPressed: onPressed, icon: Icon(icon, color: ThemeColors.primaryColor), highlightColor: ThemeColors.primaryColor02),
+      title: Text(label, style: Styles.bodyLarge),
+      subtitle: Text(description, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+      trailing: IconButton(onPressed: onPressed, icon: Icon(icon)),
     );
   }
 
@@ -104,15 +101,16 @@ class SettingsScreenState extends State<SettingsScreen> {
     return SizedBox(
       height: content.length * 50,
       child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: content.length,
         itemBuilder: (context, index) {
           return ListTile(
             dense: true,
-            textColor: ThemeColors.primaryColor07,
+            textColor: Theme.of(context).colorScheme.tertiary,
             contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
             title: Text(content[index], style: Styles.labelLarge),
             trailing: IconButton(
-              icon: const Icon(Icons.close_rounded, color: ThemeColors.primaryColor04), highlightColor: ThemeColors.primaryColor02, 
+              icon: Icon(Icons.close_rounded, color: Theme.of(context).unselectedWidgetColor), 
               onPressed: () => onPressed(index),
             ),
           );
