@@ -3,7 +3,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 
 abstract class ThemeColors {
   static const Color primaryColor = Color(0xFFAAC9FF);
-  static const Color darkPrimaryColor = Color(0xFF7B93F6);
+  static const Color darkPrimaryColor = Color(0xFF6A3DE8); // Previous color 7B93F6
 
   static ThemeData themeData = ThemeData(
     useMaterial3: true,
@@ -32,7 +32,10 @@ abstract class ThemeColors {
     scaffoldBackgroundColor: Colors.black,
     splashColor: Colors.transparent,
     unselectedWidgetColor: const Color(0xFF616161),
-    appBarTheme: const AppBarTheme(centerTitle: true),
+    appBarTheme: const AppBarTheme(
+      centerTitle: true,
+      titleTextStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
+    ),
     sliderTheme: const SliderThemeData(
       activeTickMarkColor: darkPrimaryColor,
       inactiveTrackColor: Color(0xFFEEEEEE),
@@ -40,6 +43,13 @@ abstract class ThemeColors {
     ),
     scrollbarTheme: ScrollbarThemeData(
       thumbColor: MaterialStateProperty.all(primaryColor),
+    ),
+    textTheme: const TextTheme(
+      headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
+      titleLarge: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+      titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+      bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+      labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
     ),
   );
 }
@@ -53,12 +63,6 @@ abstract class Styles {
     );
   }
 
-  static TextStyle headlineSmall = const TextStyle(fontSize: 24, fontWeight: FontWeight.w300);
-  static TextStyle titleLarge = const TextStyle(fontSize: 22, fontWeight: FontWeight.w700);
-  static TextStyle titleMedium = const TextStyle(fontSize: 18, fontWeight: FontWeight.w700);
-  static TextStyle bodyLarge = const TextStyle(fontSize: 16, fontWeight: FontWeight.w400);
-  static TextStyle labelLarge = const TextStyle(fontSize: 14, fontWeight: FontWeight.w400);
-  static TextStyle appBarTitle = const TextStyle(fontSize: 22, fontWeight: FontWeight.w400);
   static TextStyle hintText = const TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
 }
 

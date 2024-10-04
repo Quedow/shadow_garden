@@ -66,8 +66,8 @@ class SongBanner extends StatelessWidget {
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
         leading: Artworks.artworkStyle(context, int.parse(metadata.id), imgWidth),
-        title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Styles.titleMedium),
-        subtitle: MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: availableWidth, textStyle: Styles.bodyLarge),
+        title: MarqueeTitle(title: metadata.title, availableWidth: availableWidth, textStyle: Theme.of(context).textTheme.titleMedium!),
+        subtitle: MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: availableWidth, textStyle: Theme.of(context).textTheme.bodyLarge!),
         trailing: SizedBox(width: playBtnWidth, height: playBtnWidth, child: PlayButton(audioPlayer: audioPlayer)),
       ),
     );
@@ -84,8 +84,8 @@ class SongBanner extends StatelessWidget {
         children: [
           Artworks.artworkStyle(context, int.parse(metadata.id), imgWidth),
           AudioProgressBar(positionDataStream: AudioStreamUtils.getPositionDataStream(audioPlayer), audioPlayer: audioPlayer),
-          MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Styles.titleLarge),
-          MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Styles.labelLarge),
+          MarqueeTitle(title: metadata.title, availableWidth: screenWidth, textStyle: Theme.of(context).textTheme.titleLarge!),
+          MarqueeSubtitle(album: metadata.album, artist: metadata.artist, availableWidth: screenWidth, textStyle: Theme.of(context).textTheme.labelLarge!),
           Controls(audioPlayer: audioPlayer),
         ],
       ),

@@ -39,7 +39,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
         }
 
         if (snapshot.hasError) {
-          return Center(child: Text(Texts.errorLoadingStats, style: Styles.headlineSmall));
+          return Center(child: Text(Texts.errorLoadingStats, style: Theme.of(context).textTheme.headlineSmall));
         }
 
         final List<Song> songs = snapshot.data!['songs'] ?? [];
@@ -76,7 +76,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                       title: TitleText(title: '${song.smartScore.toStringAsFixed(3)} - ${song.title}', textStyle: Styles.songHomeTitle(context, false)),
                       subtitle: Text(
                         '${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.daysAgo ~/ 30} mos ago',
-                        style: Styles.labelLarge, maxLines: 1, overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelLarge, maxLines: 1, overflow: TextOverflow.ellipsis,
                       ),
                       trailing: IconButton(
                         icon: const Icon(Icons.clear_rounded),
@@ -102,8 +102,8 @@ class StatisticsScreenState extends State<StatisticsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: Styles.bodyLarge),
-          Text(value, style: Styles.bodyLarge),
+          Text(label, style: Theme.of(context).textTheme.bodyLarge),
+          Text(value, style: Theme.of(context).textTheme.bodyLarge),
         ],
       ),
     );

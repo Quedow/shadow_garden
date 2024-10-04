@@ -3,7 +3,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/style/common_text.dart';
-import 'package:shadow_garden/style/style.dart';
 
 abstract class Functions {
   static Future<void> init(AudioProvider audioProvider) async {
@@ -28,7 +27,7 @@ abstract class Functions {
     audioProvider.playlist.move(index, (audioPlayer.currentIndex ?? 0) + 1);
     
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(Texts.textNextSongSnack, style: Styles.labelLarge), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
+      SnackBar(content: Text(Texts.textNextSongSnack, style: Theme.of(context).textTheme.labelLarge), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
     );
   }
 

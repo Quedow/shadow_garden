@@ -6,7 +6,6 @@ import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/screens/statistics_screen.dart';
 import 'package:shadow_garden/style/common_text.dart';
 import 'package:provider/provider.dart';
-import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/utils/functions.dart';
 import 'package:shadow_garden/widgets/sort_button.dart';
 
@@ -78,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   AppBar homeAppBar() {
     return AppBar(
-      title: Text(Texts.textHomeBar, style: Styles.appBarTitle),
+      title: Text(Texts.textHomeBar),
       bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: Theme.of(context).colorScheme.secondary, height: 1.0)),
       actions: [
         IconButton(onPressed: _audioProvider.setShuffleActive, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary)),
@@ -89,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   AppBar customAppBar(String title) {
     return AppBar(
-      title: Text(title, style: Styles.appBarTitle),
+      title: Text(title),
       bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: Theme.of(context).colorScheme.secondary, height: 1.0)),
     );
   }

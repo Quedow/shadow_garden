@@ -109,7 +109,7 @@ class _LoopButtonState extends State<LoopButton> {
           minValue: 2,
           maxValue: 10,
           itemWidth: 40,
-          selectedTextStyle: Styles.headlineSmall.copyWith(color: Theme.of(context).colorScheme.tertiary),
+          selectedTextStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Theme.of(context).colorScheme.tertiary),
           textStyle: TextStyle(color: Theme.of(context).hintColor),
           axis: Axis.horizontal,
           onChanged: (value) => audioProvider.setSongsPerLoop(value),

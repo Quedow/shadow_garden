@@ -4,7 +4,6 @@ import 'package:shadow_garden/database/song.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/style/common_text.dart';
-import 'package:shadow_garden/style/style.dart';
 import 'package:shadow_garden/widgets/alerts.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -52,8 +51,8 @@ class SettingsScreenState extends State<SettingsScreen> {
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-      title: Text(label, style: Styles.bodyLarge),
-      subtitle: Text(description, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+      title: Text(label, style: Theme.of(context).textTheme.bodyLarge),
+      subtitle: Text(description, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
       trailing: Switch(
         value: value,
         onChanged: onChanged,
@@ -68,8 +67,8 @@ class SettingsScreenState extends State<SettingsScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: Styles.bodyLarge),
-          Text(description, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+          Text(label, style: Theme.of(context).textTheme.bodyLarge),
+          Text(description, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
           Slider(
             value: value,
             max: 1.0, divisions: 20, label: (value * 100).round().toString(),
@@ -79,8 +78,8 @@ class SettingsScreenState extends State<SettingsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(leftLabel, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
-                Text(rightLabel, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+                Text(leftLabel, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+                Text(rightLabel, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
               ],
             ),
         ],
@@ -91,8 +90,8 @@ class SettingsScreenState extends State<SettingsScreen> {
   ListTile _settingIconButton(String label, String description, IconData icon, void Function() onPressed) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-      title: Text(label, style: Styles.bodyLarge),
-      subtitle: Text(description, style: Styles.labelLarge.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+      title: Text(label, style: Theme.of(context).textTheme.bodyLarge),
+      subtitle: Text(description, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
       trailing: IconButton(onPressed: onPressed, icon: Icon(icon)),
     );
   }
@@ -108,7 +107,7 @@ class SettingsScreenState extends State<SettingsScreen> {
             dense: true,
             textColor: Theme.of(context).colorScheme.tertiary,
             contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-            title: Text(content[index], style: Styles.labelLarge),
+            title: Text(content[index], style: Theme.of(context).textTheme.labelLarge),
             trailing: IconButton(
               icon: Icon(Icons.close_rounded, color: Theme.of(context).unselectedWidgetColor), 
               onPressed: () => onPressed(index),

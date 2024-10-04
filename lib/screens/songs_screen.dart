@@ -64,7 +64,7 @@ class SongsScreenState extends State<SongsScreen> {
               final SequenceState? state = snapshot.data;
               
               if (state == null || state.sequence.isEmpty) {
-                return Center(child: Text(Texts.errorNoSongFound, style: Styles.headlineSmall));
+                return Center(child: Text(Texts.errorNoSongFound, style: Theme.of(context).textTheme.headlineSmall));
               } else {
                 final int playlistLength = state.sequence.length;
 
@@ -87,7 +87,7 @@ class SongsScreenState extends State<SongsScreen> {
                         onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
                         leading: Artworks.artworkStyle(context, int.parse(metadata.id), Artworks.artworkSmallSize),
                         title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Styles.songHomeTitle(context, isCurrentSong)),
-                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Styles.labelLarge),
+                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Theme.of(context).textTheme.labelLarge!),
                         trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: widget.isPlaying),
                       );
                     },
