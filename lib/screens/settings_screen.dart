@@ -131,7 +131,7 @@ class SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _pickFolder() async {
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    final String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
     if (selectedDirectory != null) {
       setState(() => _whitelist.add(selectedDirectory));

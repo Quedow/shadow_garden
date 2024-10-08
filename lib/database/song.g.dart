@@ -27,29 +27,29 @@ const SongSchema = CollectionSchema(
       name: r'duration',
       type: IsarType.long,
     ),
-    r'lastListen': PropertySchema(
+    r'key': PropertySchema(
       id: 2,
+      name: r'key',
+      type: IsarType.long,
+    ),
+    r'lastListen': PropertySchema(
+      id: 3,
       name: r'lastListen',
       type: IsarType.dateTime,
     ),
     r'listeningTime': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'listeningTime',
       type: IsarType.long,
     ),
     r'nbOfListens': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'nbOfListens',
       type: IsarType.long,
     ),
     r'score': PropertySchema(
-      id: 5,
-      name: r'score',
-      type: IsarType.double,
-    ),
-    r'smartScore': PropertySchema(
       id: 6,
-      name: r'smartScore',
+      name: r'score',
       type: IsarType.double,
     ),
     r'songId': PropertySchema(
@@ -68,7 +68,21 @@ const SongSchema = CollectionSchema(
   deserialize: _songDeserialize,
   deserializeProp: _songDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'score': IndexSchema(
+      id: -359542572601593437,
+      name: r'score',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'score',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _songGetId,
@@ -95,11 +109,11 @@ void _songSerialize(
 ) {
   writer.writeLong(offsets[0], object.daysAgo);
   writer.writeLong(offsets[1], object.duration);
-  writer.writeDateTime(offsets[2], object.lastListen);
-  writer.writeLong(offsets[3], object.listeningTime);
-  writer.writeLong(offsets[4], object.nbOfListens);
-  writer.writeDouble(offsets[5], object.score);
-  writer.writeDouble(offsets[6], object.smartScore);
+  writer.writeLong(offsets[2], object.key);
+  writer.writeDateTime(offsets[3], object.lastListen);
+  writer.writeLong(offsets[4], object.listeningTime);
+  writer.writeLong(offsets[5], object.nbOfListens);
+  writer.writeDouble(offsets[6], object.score);
   writer.writeLong(offsets[7], object.songId);
   writer.writeString(offsets[8], object.title);
 }
@@ -111,17 +125,17 @@ Song _songDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Song(
-    reader.readLong(offsets[7]),
+    reader.readLong(offsets[2]),
     reader.readString(offsets[8]),
     reader.readLong(offsets[1]),
     reader.readLong(offsets[0]),
     reader.readLong(offsets[4]),
-    reader.readLong(offsets[3]),
-    reader.readDateTime(offsets[2]),
+    reader.readDateTime(offsets[3]),
   );
   object.id = id;
-  object.score = reader.readDouble(offsets[5]);
-  object.smartScore = reader.readDouble(offsets[6]);
+  object.nbOfListens = reader.readLong(offsets[5]);
+  object.score = reader.readDouble(offsets[6]);
+  object.songId = reader.readLong(offsets[7]);
   return object;
 }
 
@@ -137,13 +151,13 @@ P _songDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readDateTime(offset)) as P;
-    case 3:
       return (reader.readLong(offset)) as P;
+    case 3:
+      return (reader.readDateTime(offset)) as P;
     case 4:
       return (reader.readLong(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 6:
       return (reader.readDouble(offset)) as P;
     case 7:
@@ -171,6 +185,14 @@ extension SongQueryWhereSort on QueryBuilder<Song, Song, QWhere> {
   QueryBuilder<Song, Song, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterWhere> anyScore() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'score'),
+      );
     });
   }
 }
@@ -236,6 +258,94 @@ extension SongQueryWhere on QueryBuilder<Song, Song, QWhereClause> {
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterWhereClause> scoreEqualTo(double score) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'score',
+        value: [score],
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterWhereClause> scoreNotEqualTo(double score) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'score',
+              lower: [],
+              upper: [score],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'score',
+              lower: [score],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'score',
+              lower: [score],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'score',
+              lower: [],
+              upper: [score],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterWhereClause> scoreGreaterThan(
+    double score, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'score',
+        lower: [score],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterWhereClause> scoreLessThan(
+    double score, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'score',
+        lower: [],
+        upper: [score],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterWhereClause> scoreBetween(
+    double lowerScore,
+    double upperScore, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'score',
+        lower: [lowerScore],
+        includeLower: includeLower,
+        upper: [upperScore],
         includeUpper: includeUpper,
       ));
     });
@@ -391,6 +501,58 @@ extension SongQueryFilter on QueryBuilder<Song, Song, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> keyEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'key',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> keyGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'key',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> keyLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'key',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterFilterCondition> keyBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'key',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -620,68 +782,6 @@ extension SongQueryFilter on QueryBuilder<Song, Song, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Song, Song, QAfterFilterCondition> smartScoreEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'smartScore',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterFilterCondition> smartScoreGreaterThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'smartScore',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterFilterCondition> smartScoreLessThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'smartScore',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterFilterCondition> smartScoreBetween(
-    double lower,
-    double upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'smartScore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
   QueryBuilder<Song, Song, QAfterFilterCondition> songIdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -892,6 +992,18 @@ extension SongQuerySortBy on QueryBuilder<Song, Song, QSortBy> {
     });
   }
 
+  QueryBuilder<Song, Song, QAfterSortBy> sortByKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'key', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> sortByKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'key', Sort.desc);
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterSortBy> sortByLastListen() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastListen', Sort.asc);
@@ -937,18 +1049,6 @@ extension SongQuerySortBy on QueryBuilder<Song, Song, QSortBy> {
   QueryBuilder<Song, Song, QAfterSortBy> sortByScoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'score', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterSortBy> sortBySmartScore() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'smartScore', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterSortBy> sortBySmartScoreDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'smartScore', Sort.desc);
     });
   }
 
@@ -1014,6 +1114,18 @@ extension SongQuerySortThenBy on QueryBuilder<Song, Song, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Song, Song, QAfterSortBy> thenByKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'key', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Song, Song, QAfterSortBy> thenByKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'key', Sort.desc);
+    });
+  }
+
   QueryBuilder<Song, Song, QAfterSortBy> thenByLastListen() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastListen', Sort.asc);
@@ -1062,18 +1174,6 @@ extension SongQuerySortThenBy on QueryBuilder<Song, Song, QSortThenBy> {
     });
   }
 
-  QueryBuilder<Song, Song, QAfterSortBy> thenBySmartScore() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'smartScore', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Song, Song, QAfterSortBy> thenBySmartScoreDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'smartScore', Sort.desc);
-    });
-  }
-
   QueryBuilder<Song, Song, QAfterSortBy> thenBySongId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'songId', Sort.asc);
@@ -1112,6 +1212,12 @@ extension SongQueryWhereDistinct on QueryBuilder<Song, Song, QDistinct> {
     });
   }
 
+  QueryBuilder<Song, Song, QDistinct> distinctByKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'key');
+    });
+  }
+
   QueryBuilder<Song, Song, QDistinct> distinctByLastListen() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastListen');
@@ -1133,12 +1239,6 @@ extension SongQueryWhereDistinct on QueryBuilder<Song, Song, QDistinct> {
   QueryBuilder<Song, Song, QDistinct> distinctByScore() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'score');
-    });
-  }
-
-  QueryBuilder<Song, Song, QDistinct> distinctBySmartScore() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'smartScore');
     });
   }
 
@@ -1175,6 +1275,12 @@ extension SongQueryProperty on QueryBuilder<Song, Song, QQueryProperty> {
     });
   }
 
+  QueryBuilder<Song, int, QQueryOperations> keyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'key');
+    });
+  }
+
   QueryBuilder<Song, DateTime, QQueryOperations> lastListenProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastListen');
@@ -1196,12 +1302,6 @@ extension SongQueryProperty on QueryBuilder<Song, Song, QQueryProperty> {
   QueryBuilder<Song, double, QQueryOperations> scoreProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'score');
-    });
-  }
-
-  QueryBuilder<Song, double, QQueryOperations> smartScoreProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'smartScore');
     });
   }
 

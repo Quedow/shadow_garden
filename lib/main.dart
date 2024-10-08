@@ -23,7 +23,7 @@ Future<void> main() async {
     androidShowNotificationBadge: true,
   );
   await SettingsService().init();
-  Isar isar = await DatabaseService().init();
+  final Isar isar = await DatabaseService().init();
   await performMigrationIfNeeded(isar);
 
   runApp(

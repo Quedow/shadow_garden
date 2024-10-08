@@ -78,9 +78,9 @@ class SettingsService {
   }
 
   Future<void> setGlobalStats(int nbListensDB, int listeningTimeDB) async {
-    List<String> globalStats = getGlobalStats();
-    int nbListens = int.parse(globalStats[0]) + nbListensDB;
-    int listeningTime = int.parse(globalStats[1]) + listeningTimeDB;
+    final List<String> globalStats = getGlobalStats();
+    final int nbListens = int.parse(globalStats[0]) + nbListensDB;
+    final int listeningTime = int.parse(globalStats[1]) + listeningTimeDB;
     await _preferences!.setStringList('globalStats', [nbListens.toString(), listeningTime.toString()]);
   }
 
@@ -97,12 +97,12 @@ class SettingsService {
   }
 
   int getVersion() {
-    return _preferences!.getInt('version') ?? 4;
+    return _preferences!.getInt('version') ?? 5;
   }
 
   Future<void> clearSettings() async {
-    String monitoringDateTemp = getMonitoringDate();
-    List<String> globalStatTemp = getGlobalStats();
+    final String monitoringDateTemp = getMonitoringDate();
+    final List<String> globalStatTemp = getGlobalStats();
     await _preferences!.clear();
     await setMonitoringDate(monitoringDateTemp);
     await _preferences!.setStringList('globalStats', globalStatTemp);

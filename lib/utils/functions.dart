@@ -41,9 +41,19 @@ abstract class Functions {
     return currentSong;
   }
 
-  static int? getSongIndex(List<SongModel> songs, int? songId) {
-    if (songId == null) return null;
-    int index = songs.indexWhere((song) => song.id == songId);
-    return index == -1 ? null : index;
+  static int fastHash(String? album, String title, String? artist) {
+    String string = '${album ?? ''}$title${artist ?? ''}';
+    int hash = 0xcbf29ce484222325;
+
+    int i = 0;
+    while (i < string.length) {
+      final int codeUnit = string.codeUnitAt(i++);
+      hash ^= codeUnit >> 8;
+      hash *= 0x100000001b3;
+      hash ^= codeUnit & 0xFF;
+      hash *= 0x100000001b3;
+    }
+
+    return hash;
   }
 }

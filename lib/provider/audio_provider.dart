@@ -104,7 +104,9 @@ class AudioProvider extends ChangeNotifier {
             ? discontinuity.previousEvent.duration!.inSeconds
             : _lastPosition.inSeconds;
 
-          _db.updateSong(Song(currentSong.id, currentSong.title, duration, _getDays(currentSong.dateAdded), 1, _lastPosition.inSeconds, DateTime.now()));
+          final int key = Functions.fastHash(currentSong.album, currentSong.title, currentSong.artist);
+
+          _db.updateSong(Song(key, currentSong.title, duration, _getDays(currentSong.dateAdded), _lastPosition.inSeconds, DateTime.now()));
         }
       }
     });
@@ -208,20 +210,25 @@ class AudioProvider extends ChangeNotifier {
   Future<void> _smartSort() async {
     final List<int> ranking = await _db.getRanking();
     final int size = ranking.length;
-    final Map<int, int> mapRanking = {for (int i = 0; i < size; i++) ranking[i]: i};
-    int sortPosition = _neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
-    _songs.sort((a, b) => (mapRanking[a.id] ?? sortPosition).compareTo(mapRanking[b.id] ?? sortPosition));
+    final Map<int, int> keyToRank = {for (int i = 0; i < size; i++) ranking[i]: i};
+    final int sortPosition = _neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
+    
+    _songs.sort((a, b) {
+      final int keyA = Functions.fastHash(a.album, a.title, a.artist);
+      final int keyB = Functions.fastHash(b.album, b.title, b.artist);
+      return (keyToRank[keyA] ?? sortPosition).compareTo(keyToRank[keyB] ?? sortPosition);
+    });
   }
 
   Future<void> _updateDaysAgo() async {
-    final Map<int, int> songsDaysAgo = Map.fromEntries(
+    final Map<int, int> idToDaysAgo = Map.fromEntries(
       _songs.map((song) => MapEntry(song.id, _getDays(song.dateAdded)))
     );
-    await _db.updateDaysAgo(songsDaysAgo);
+    await _db.updateDaysAgo(idToDaysAgo);
   }
 
   int _getDays(int? dateAdded) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch((dateAdded ?? 30) * 1000, isUtc: true);
+    final DateTime date = DateTime.fromMillisecondsSinceEpoch((dateAdded ?? 30) * 1000, isUtc: true);
     return DateTime.now().difference(date).inDays;
   }
 }

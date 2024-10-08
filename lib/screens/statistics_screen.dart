@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shadow_garden/database/song.dart';
 import 'package:shadow_garden/provider/audio_provider.dart';
 import 'package:shadow_garden/provider/settings_service.dart';
 import 'package:shadow_garden/style/common_text.dart';
 import 'package:shadow_garden/style/style.dart';
+import 'package:shadow_garden/utils/functions.dart';
 import 'package:shadow_garden/widgets/alerts.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 
@@ -46,9 +48,12 @@ class StatisticsScreenState extends State<StatisticsScreen> {
         final Map<String, int> data = snapshot.data!['data'] ?? {};
         final List<String> globalStats = _settings.getGlobalStats();
         
-        int nbListens = _calculateNbOfListens(globalStats, data);
-        int listeningTime = _calculateListeningTime(globalStats, data);
-        Set<int> songIds = widget.audioProvider.songs.map((song) => song.id).toSet();
+        final int nbListens = _calculateNbOfListens(globalStats, data);
+        final int listeningTime = _calculateListeningTime(globalStats, data);
+        
+        final Map<int, int> keyToSongId = {};
+        final List<SongModel> songModels = widget.audioProvider.songs;
+        for (final song in songModels) { keyToSongId[Functions.fastHash(song.album, song.title, song.artist)] = song.id; }
 
         return Column(
           children: [
@@ -67,13 +72,13 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                   itemCount: songs.length,
                   itemBuilder: (context, index) {
                     final Song song = songs[index];
-                    bool stillExists = songIds.contains(song.songId);
+                    final int? songId = keyToSongId[song.key];
 
                     return ListTile(
                       dense: true,
                       contentPadding: const EdgeInsets.only(left: 16, top: 4, right: 0, bottom: 4),
-                      leading: stillExists ? Artworks.artworkStyle(context, song.songId, Artworks.artworkSmallSize) : Artworks.errorArtworkStyle(context, Artworks.artworkSmallSize),
-                      title: TitleText(title: '${song.smartScore.toStringAsFixed(3)} - ${song.title}', textStyle: Styles.songHomeTitle(context, false)),
+                      leading: songId != null ? Artworks.artworkStyle(context, songId, Artworks.artworkSmallSize) : Artworks.errorArtworkStyle(context, Artworks.artworkSmallSize),
+                      title: TitleText(title: '${song.score.toStringAsFixed(3)} - ${song.title}', textStyle: Styles.songHomeTitle(context, false)),
                       subtitle: Text(
                         '${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.daysAgo ~/ 30} mos ago',
                         style: Theme.of(context).textTheme.labelLarge, maxLines: 1, overflow: TextOverflow.ellipsis,
