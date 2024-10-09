@@ -34,7 +34,7 @@ class MarqueeSubtitle extends StatelessWidget {
     String artistStr = artist ?? '';
 
     String subtitle = albumStr.isNotEmpty && artistStr.isNotEmpty 
-      ? '$albumStr • $artistStr' 
+      ? '$albumStr - $artistStr' 
       : albumStr.isNotEmpty ? albumStr : artistStr;
 
     return MarqueeTitle(title: subtitle, availableWidth: availableWidth, textStyle: textStyle);
@@ -87,7 +87,7 @@ class SubtitleText extends StatelessWidget {
     String artistStr = artist ?? '';
 
     String subtitle = albumStr.isNotEmpty && artistStr.isNotEmpty 
-      ? '$albumStr • $artistStr' 
+      ? '$albumStr - $artistStr' 
       : albumStr.isNotEmpty ? albumStr : artistStr;
 
     return Text(subtitle, style: textStyle, maxLines: 1, overflow: TextOverflow.ellipsis);

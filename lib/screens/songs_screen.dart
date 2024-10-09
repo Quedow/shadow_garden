@@ -27,8 +27,8 @@ class SongsScreenState extends State<SongsScreen> {
 
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
-  List<int> songIndexes = [];
-  int currentIndex = 0;
+  List<int> _songIndexes = [];
+  int _currentIndex = 0;
 
   @override
   void dispose() {
@@ -42,18 +42,22 @@ class SongsScreenState extends State<SongsScreen> {
 
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: TextField(
+        ListTile(
+          dense: true,
+          contentPadding: const EdgeInsets.only(left: 20, right: 10),
+          leading: Icon(Icons.search_rounded, color: Theme.of(context).hintColor),
+          title: TextField(
             onChanged: (value) => searchFor(value),
             onSubmitted: (value) => nextResult(),
             focusNode: _focusNode,
             decoration: InputDecoration(
-              icon: Icon(Icons.search_rounded, color: Theme.of(context).hintColor),
-              hintText: 'Search',
-              hintStyle: Styles.hintText,
-              border: InputBorder.none,
+              isDense: true, contentPadding: EdgeInsets.zero, border: InputBorder.none,
+              hintText: 'Search', hintStyle: Styles.hintText,
             ),
+          ),
+          trailing: IconButton(
+            icon: Icon(Icons.my_location_rounded, color: Theme.of(context).hintColor),
+            onPressed: () => scrollToIndex(_audioPlayer.currentIndex ?? 0),
           ),
         ),
         Expanded(
@@ -103,10 +107,10 @@ class SongsScreenState extends State<SongsScreen> {
 
   void searchFor(String query) {    
     if (query.isEmpty) { 
-      songIndexes.clear();
+      _songIndexes.clear();
     } else {
       String lowerCaseQuery = query.toLowerCase();
-      songIndexes = widget.audioProvider.songs.asMap().entries.where(
+      _songIndexes = widget.audioProvider.songs.asMap().entries.where(
         (entry) {
           SongModel song = entry.value;
           return (song.title.toLowerCase().contains(lowerCaseQuery)) ||
@@ -115,17 +119,17 @@ class SongsScreenState extends State<SongsScreen> {
         },
       ).map((entry) => entry.key).toList();
 
-      if (songIndexes.isNotEmpty) {
-        currentIndex = 0;
-        scrollToIndex(songIndexes[currentIndex]);
+      if (_songIndexes.isNotEmpty) {
+        _currentIndex = 0;
+        scrollToIndex(_songIndexes[_currentIndex]);
       }
     }
   }
 
   void nextResult() {
-    if (songIndexes.isNotEmpty) {
-      currentIndex = (currentIndex + 1) % songIndexes.length;
-      scrollToIndex(songIndexes[currentIndex]);
+    if (_songIndexes.isNotEmpty) {
+      _currentIndex = (_currentIndex + 1) % _songIndexes.length;
+      scrollToIndex(_songIndexes[_currentIndex]);
       _focusNode.requestFocus();
     }
   }
