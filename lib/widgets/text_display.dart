@@ -13,9 +13,9 @@ class MarqueeTitle extends StatelessWidget {
     final double titleWidth = (textStyle.fontSize ?? 18) * title.length;
 
     if (titleWidth > availableWidth) {
-      return SizedBox(height: 25, child: MarqueeText(title: title, textStyle: textStyle));
+      return SizedBox(height: 28, child: MarqueeText(title: title, textStyle: textStyle));
     } else {
-      return SizedBox(height: 25, child: Text(title, style: textStyle));
+      return SizedBox(height: 28, child: Text(title, style: textStyle));
     }
   }
 }
@@ -34,7 +34,7 @@ class MarqueeSubtitle extends StatelessWidget {
     String artistStr = artist ?? '';
 
     String subtitle = albumStr.isNotEmpty && artistStr.isNotEmpty 
-      ? '$albumStr - $artistStr' 
+      ? '$albumStr • $artistStr' 
       : albumStr.isNotEmpty ? albumStr : artistStr;
 
     return MarqueeTitle(title: subtitle, availableWidth: availableWidth, textStyle: textStyle);
@@ -87,7 +87,7 @@ class SubtitleText extends StatelessWidget {
     String artistStr = artist ?? '';
 
     String subtitle = albumStr.isNotEmpty && artistStr.isNotEmpty 
-      ? '$albumStr - $artistStr' 
+      ? '$albumStr • $artistStr' 
       : albumStr.isNotEmpty ? albumStr : artistStr;
 
     return Text(subtitle, style: textStyle, maxLines: 1, overflow: TextOverflow.ellipsis);

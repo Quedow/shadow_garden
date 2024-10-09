@@ -80,7 +80,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                       leading: songId != null ? Artworks.artworkStyle(context, songId, Artworks.artworkSmallSize) : Artworks.errorArtworkStyle(context, Artworks.artworkSmallSize),
                       title: TitleText(title: '${song.score.toStringAsFixed(3)} - ${song.title}', textStyle: Styles.songHomeTitle(context, false)),
                       subtitle: Text(
-                        '${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.daysAgo ~/ 30} mos ago',
+                        '${song.nbOfListens} listens • ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened • ${song.daysAgo ~/ 30} mos ago',
                         style: Theme.of(context).textTheme.labelLarge, maxLines: 1, overflow: TextOverflow.ellipsis,
                       ),
                       trailing: IconButton(

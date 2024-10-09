@@ -27,7 +27,6 @@ class SongsScreenState extends State<SongsScreen> {
 
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
-  int songIndex = 0;
   List<int> songIndexes = [];
   int currentIndex = 0;
 
@@ -81,7 +80,7 @@ class SongsScreenState extends State<SongsScreen> {
                     itemBuilder: (context, index) {
                       final MediaItem metadata = state.sequence[index].tag;
                       final bool isCurrentSong = _audioPlayer.currentIndex == index;
-
+                      
                       return ListTile(
                         onTap: () => Functions.onTap(_audioPlayer, widget.isPlaying, isCurrentSong, index),
                         onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),

@@ -7,17 +7,18 @@ import 'package:shadow_garden/utils/functions.dart';
 Future<void> performMigrationIfNeeded(Isar isar) async {
   final SettingsService settings = SettingsService();
   final int currentVersion = settings.getVersion();
+  final List<String> paths = settings.getWhiteList();
   settings.getMonitoringDate();
   switch(currentVersion) {
     case 1:
       await migrateV1ToV2(isar);
-      break;
-    case 2:
+      continue second;
+    second: case 2:
       await migrateV2ToV3(isar);
-      return;
-    case 4:
-      await migrateV4ToV5(isar, settings.getWhiteList());
-      return;
+      continue third;
+    third: case 3 || 4:
+      await migrateV4ToV5(isar, paths);
+      break;
     case 5:
       // Si la version est déjà à 5, il n'est pas nécessaire de migrer.
       return;
