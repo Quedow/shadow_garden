@@ -52,7 +52,7 @@ class SongsScreenState extends State<SongsScreen> {
             focusNode: _focusNode,
             decoration: InputDecoration(
               isDense: true, contentPadding: EdgeInsets.zero, border: InputBorder.none,
-              hintText: 'Search', hintStyle: Styles.hintText,
+              hintText: 'Search', hintStyle: Styles.hintText.copyWith(color: Theme.of(context).hintColor),
             ),
           ),
           trailing: IconButton(

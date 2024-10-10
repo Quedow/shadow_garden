@@ -17,11 +17,9 @@ abstract class ThemeColors {
       tertiary: Color(0xFFBDBDBD),
       error: Color(0xFFFFAAC9),
       onError: Colors.white,
-      background: Colors.black,
-      onBackground: Colors.white,
-      surface: Colors.black, // Top bar, card
+      surface: Colors.black, // Top bar, card, background
       onSurface: Colors.white,
-      surfaceVariant: Color(0xFF757575), // Disable switch background, textfield filled
+      surfaceContainerHighest: Color(0xFF757575), // Disable switch background, textfield filled
       outlineVariant: Color(0xFF757575), // Divider
       inverseSurface: Color(0xFF1D2530), // Snack bar
       onInverseSurface: Colors.white,
@@ -42,7 +40,7 @@ abstract class ThemeColors {
       inactiveTickMarkColor: primaryColor,
     ),
     scrollbarTheme: ScrollbarThemeData(
-      thumbColor: MaterialStateProperty.all(primaryColor),
+      thumbColor: WidgetStateProperty.all(primaryColor),
     ),
     textTheme: const TextTheme(
       headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
