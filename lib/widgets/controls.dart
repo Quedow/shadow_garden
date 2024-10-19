@@ -107,7 +107,7 @@ class _LoopButtonState extends State<LoopButton> {
         NumberPicker(
           value: audioProvider.songsPerLoop,
           minValue: 2,
-          maxValue: 10,
+          maxValue: 20,
           itemWidth: 40,
           selectedTextStyle: Theme.of(context).textTheme.headlineSmall!.copyWith(color: Theme.of(context).colorScheme.tertiary),
           textStyle: TextStyle(color: Theme.of(context).hintColor),
