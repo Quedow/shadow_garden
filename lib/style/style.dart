@@ -19,7 +19,7 @@ abstract class ThemeColors {
       onError: Colors.white,
       surface: Colors.black, // Top bar, card, background
       onSurface: Colors.white,
-      surfaceContainerHighest: Color(0xFF757575), // Disable switch background, textfield filled
+      surfaceVariant: Color(0xFF757575), // Disable switch background, textfield filled
       outlineVariant: Color(0xFF757575), // Divider
       inverseSurface: Color(0xFF1D2530), // Snack bar
       onInverseSurface: Colors.white,
@@ -40,7 +40,7 @@ abstract class ThemeColors {
       inactiveTickMarkColor: primaryColor,
     ),
     scrollbarTheme: ScrollbarThemeData(
-      thumbColor: WidgetStateProperty.all(primaryColor),
+      thumbColor: MaterialStateProperty.all(primaryColor),
     ),
     textTheme: const TextTheme(
       headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
