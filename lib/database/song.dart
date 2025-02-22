@@ -20,7 +20,7 @@ class Song {
   DateTime lastListen;
 
   // Not required in constructor
-  int songId = -1;
+  int songId = -1; // Useless since migration 4 to 5
   int nbOfListens = 1;
 
   @Index()
