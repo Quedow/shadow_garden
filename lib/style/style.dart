@@ -34,6 +34,9 @@ abstract class ThemeColors {
       centerTitle: true,
       titleTextStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
     ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.black,
+    ),
     sliderTheme: const SliderThemeData(
       activeTickMarkColor: darkPrimaryColor,
       inactiveTrackColor: Color(0xFFEEEEEE),
