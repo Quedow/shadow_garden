@@ -24,7 +24,10 @@ abstract class Functions {
   }
 
   static void onLongPress(AudioProvider audioProvider, AudioPlayer audioPlayer, BuildContext context, int index) {
-    audioProvider.playlist.move(index, (audioPlayer.currentIndex ?? 0) + 1);
+    int currentIndex = audioPlayer.currentIndex ?? 0;
+    int newIndex = index > currentIndex ? currentIndex + 1 : currentIndex;
+      
+    audioProvider.playlist.move(index, newIndex);
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(Texts.textNextSongSnack, style: Theme.of(context).textTheme.labelLarge), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
