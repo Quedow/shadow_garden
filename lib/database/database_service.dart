@@ -3,31 +3,9 @@ import 'dart:io';
 import 'dart:math';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:shadow_garden/provider/settings_service.dart';
-
-part 'song.g.dart';
-
-@collection
-class Song {
-  Id id = Isar.autoIncrement;
-
-  // Required in constructor
-  int key;
-  String title;
-  int duration;
-  int daysAgo;
-  int listeningTime;
-  DateTime lastListen;
-
-  // Not required in constructor
-  int songId = -1; // Useless since migration 4 to 5
-  int nbOfListens = 1;
-
-  @Index()
-  double score = 1.0;
-
-  Song(this.key, this.title, this.duration, this.daysAgo, this.listeningTime, this.lastListen);
-}
+import 'package:shadow_garden/models/report.dart';
+import 'package:shadow_garden/models/song.dart';
+import 'package:shadow_garden/providers/settings_service.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -57,7 +35,7 @@ class DatabaseService {
     isar = await Isar.open(
       [SongSchema],
       directory: dir.path,
-      inspector: false, // set to false for build
+      inspector: true, // set to false for build
     );
     _smartWeight = _settings.getSmartWeight();
     _dumbWeight = double.parse((1.0 - _smartWeight).toStringAsFixed(2));
@@ -133,14 +111,14 @@ class DatabaseService {
     return songsRanking.map((Song song) => song.key).toList();
   }
 
-  Future<Map<String, dynamic>> getDataSongs() async {
-    return {
-      'songs': await isar.songs.where(sort: Sort.desc).anyScore().findAll(),
-      'data': {
-        'totalNbOfListens': await isar.songs.where().nbOfListensProperty().sum(),
-        'totalListeningTime': await isar.songs.where().listeningTimeProperty().sum(),
-      },
-    };
+  Future<Report> getReport() async {
+    return Report(
+      songs: await isar.songs.where(sort: Sort.desc).anyScore().findAll(),
+      statistics: Statistics(
+        totalNbOfListens: await isar.songs.where().nbOfListensProperty().sum(),
+        totalListeningTime: await isar.songs.where().listeningTimeProperty().sum(),
+      ),
+    );
   }
 
   Future<bool> clearData(int id) async {

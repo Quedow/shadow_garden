@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shadow_garden/database/song.dart';
-import 'package:shadow_garden/provider/settings_service.dart';
+import 'package:shadow_garden/database/database_service.dart';
+import 'package:shadow_garden/models/report.dart';
+import 'package:shadow_garden/models/song.dart';
+import 'package:shadow_garden/providers/settings_service.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shadow_garden/utils/functions.dart';
 
@@ -69,13 +71,21 @@ class AudioProvider extends ChangeNotifier {
     await _settings.setNeverListenedFirst(value);
   }
 
+  Report _report = Report(songs: [], statistics: Statistics(totalNbOfListens: 0, totalListeningTime: 0));
+  Report get report => _report;
+
+  Future<void> fetchReport() async {
+    _report = await _db.getReport();
+    notifyListeners();
+  }
+
   List<int> _lastIndexes = [];
   Duration _lastPosition = Duration.zero;
 
   AudioProvider() {
     getSettings();
 
-    _audioPlayer.currentIndexStream.listen((index) async {
+    _audioPlayer.currentIndexStream.listen((int? index) async {
       if (index == null) { return; }
 
       if (_cLoopMode == CLoopMode.custom) {
@@ -91,11 +101,11 @@ class AudioProvider extends ChangeNotifier {
       }
     });
 
-    _audioPlayer.positionStream.listen((position) {
+    _audioPlayer.positionStream.listen((Duration position) {
       _lastPosition = position;
     });
 
-    _audioPlayer.positionDiscontinuityStream.listen((discontinuity) {
+    _audioPlayer.positionDiscontinuityStream.listen((PositionDiscontinuity discontinuity) {
       if (_audioPlayer.position.inSeconds == 0 && audioPlayer.playerState.playing) {
         SongModel? currentSong = Functions.getSongModel(_audioPlayer, _songs, discontinuity.previousEvent.currentIndex);
 
@@ -142,7 +152,6 @@ class AudioProvider extends ChangeNotifier {
 
       if (_songs.isEmpty) { return false; }
 
-      _setPlaylist();
       await _sortSongs(_sortState);
       await _updateDaysAgo();
       return true;

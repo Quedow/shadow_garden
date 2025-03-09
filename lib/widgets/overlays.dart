@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shadow_garden/style/common_text.dart';
+import 'package:shadow_garden/utils/common_text.dart';
 
-abstract class Alerts {
+abstract class Dialogs {
   static Future<void> deletionDialog(BuildContext context, void Function() onConfirmation) async {
     await showDialog(
       context: context,

@@ -1,7 +1,7 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shadow_garden/utils/position_data.dart';
+import 'package:shadow_garden/models/position_data.dart';
 
 class AudioProgressBar extends StatelessWidget {
   final Stream<PositionData> _positionDataStream;
@@ -24,7 +24,7 @@ class AudioProgressBar extends StatelessWidget {
           bufferedBarColor: Theme.of(context).colorScheme.inverseSurface,
           timeLabelLocation: TimeLabelLocation.sides,
           timeLabelType: TimeLabelType.totalTime,
-          timeLabelTextStyle: Theme.of(context).textTheme.labelLarge!.copyWith(fontWeight: FontWeight.w500),
+          timeLabelTextStyle: Theme.of(context).textTheme.labelMedium!.copyWith(fontWeight: FontWeight.w500),
           progress: positionData?.position ?? Duration.zero,
           buffered: positionData?.bufferedPosition ?? Duration.zero,
           total: positionData?.duration ?? Duration.zero,

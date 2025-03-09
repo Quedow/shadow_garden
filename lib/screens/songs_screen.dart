@@ -4,19 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:shadow_garden/screens/song_banner.dart';
-import 'package:shadow_garden/style/common_text.dart';
+import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/widgets/artworks.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
-import 'package:shadow_garden/provider/audio_provider.dart';
-import 'package:shadow_garden/style/style.dart';
+import 'package:shadow_garden/providers/audio_provider.dart';
+import 'package:shadow_garden/utils/styles.dart';
 import 'package:shadow_garden/utils/functions.dart';
 import 'package:shadow_garden/widgets/playing_animation.dart';
 
 class SongsScreen extends StatefulWidget {
   final AudioProvider audioProvider;
-  final bool isPlaying;
 
-  const SongsScreen({super.key, required this.audioProvider, required this.isPlaying});
+  const SongsScreen({super.key, required this.audioProvider});
 
   @override
   SongsScreenState createState() => SongsScreenState();
@@ -38,8 +37,6 @@ class SongsScreenState extends State<SongsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const double scrollbarThickness = 10.0;
-
     return Column(
       children: [
         ListTile(
@@ -52,7 +49,7 @@ class SongsScreenState extends State<SongsScreen> {
             focusNode: _focusNode,
             decoration: InputDecoration(
               isDense: true, contentPadding: EdgeInsets.zero, border: InputBorder.none,
-              hintText: 'Search', hintStyle: Styles.hintText.copyWith(color: Theme.of(context).hintColor),
+              hintText: 'Search', hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).hintColor),
             ),
           ),
           trailing: IconButton(
@@ -73,25 +70,25 @@ class SongsScreenState extends State<SongsScreen> {
 
                 return Scrollbar(
                   controller: _scrollController,
-                  thickness: scrollbarThickness,
+                  thickness: DesignSystem.scrollbarThickness,
                   thumbVisibility: true,
                   radius: const Radius.circular(20),
                   interactive: true,
                   child: ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.only(right: scrollbarThickness),
+                    padding: const EdgeInsets.only(right: DesignSystem.scrollbarThickness),
                     itemCount: playlistLength,
                     itemBuilder: (context, index) {
                       final MediaItem metadata = state.sequence[index].tag;
                       final bool isCurrentSong = _audioPlayer.currentIndex == index;
                       
                       return ListTile(
-                        onTap: () => Functions.onTap(_audioPlayer, widget.isPlaying, isCurrentSong, index),
+                        onTap: () => Functions.onTap(_audioPlayer, isCurrentSong, index),
                         onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
-                        leading: Artworks.artworkStyle(context, int.parse(metadata.id), Artworks.artworkSmallSize),
-                        title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Styles.songHomeTitle(context, isCurrentSong)),
-                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Theme.of(context).textTheme.labelLarge!),
-                        trailing: PlayingAnimation(isCurrentSong: isCurrentSong, isPlaying: widget.isPlaying),
+                        leading: SongArtwork(songId: int.parse(metadata.id), imgWidth: DesignSystem.artworkSmallSize),
+                        title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: isCurrentSong ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary)),
+                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+                        trailing: PlayingAnimation(audioPlayer: _audioPlayer, isCurrentSong: isCurrentSong),
                       );
                     },
                   ),
@@ -100,7 +97,6 @@ class SongsScreenState extends State<SongsScreen> {
             },
           ),
         ),
-        SongBanner(audioPlayer: _audioPlayer, isPlaying: widget.isPlaying),
       ],
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:shadow_garden/provider/audio_provider.dart';
-import 'package:shadow_garden/style/common_text.dart';
+import 'package:shadow_garden/providers/audio_provider.dart';
+import 'package:shadow_garden/utils/common_text.dart';
 
 abstract class Functions {
   static Future<void> init(AudioProvider audioProvider) async {
@@ -10,8 +10,10 @@ abstract class Functions {
     await audioProvider.fetchAudioSongs();
   }
   
-  static void onTap(AudioPlayer audioPlayer, bool isPlaying, bool isCurrentItem, int index) {
-    if (isCurrentItem) {
+  static void onTap(AudioPlayer audioPlayer, bool isCurrentSong, int index) {
+    final bool isPlaying = audioPlayer.playerState.playing;
+    
+    if (isCurrentSong) {
       if (isPlaying) {
         audioPlayer.pause();
       } else {
@@ -25,12 +27,14 @@ abstract class Functions {
 
   static void onLongPress(AudioProvider audioProvider, AudioPlayer audioPlayer, BuildContext context, int index) {
     int currentIndex = audioPlayer.currentIndex ?? 0;
-    int newIndex = index > currentIndex ? currentIndex + 1 : currentIndex;
+    int targetIndex = index > currentIndex ? currentIndex + 1 : currentIndex;
+
+    if (index == currentIndex || index == currentIndex + 1) return;
       
-    audioProvider.playlist.move(index, newIndex);
+    audioProvider.playlist.move(index, targetIndex);
     
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(Texts.textNextSongSnack, style: Theme.of(context).textTheme.labelLarge), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
+      SnackBar(content: Text(Texts.textNextSongSnack, style: Theme.of(context).textTheme.labelMedium), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 1)),
     );
   }
 
@@ -56,7 +60,15 @@ abstract class Functions {
       hash ^= codeUnit & 0xFF;
       hash *= 0x100000001b3;
     }
-
     return hash;
+  }
+
+  static double getTextHeight(String text, TextStyle? style, double maxWidth, {double verticalOffset = 0}) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: maxWidth);
+    return textPainter.size.height + verticalOffset;
   }
 }

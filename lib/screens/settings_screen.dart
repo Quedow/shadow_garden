@@ -1,11 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:shadow_garden/database/song.dart';
-import 'package:shadow_garden/pages/statistics_page.dart';
-import 'package:shadow_garden/provider/audio_provider.dart';
-import 'package:shadow_garden/provider/settings_service.dart';
-import 'package:shadow_garden/style/common_text.dart';
-import 'package:shadow_garden/widgets/alerts.dart';
+import 'package:shadow_garden/database/database_service.dart';
+import 'package:shadow_garden/providers/audio_provider.dart';
+import 'package:shadow_garden/providers/settings_service.dart';
+import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/widgets/overlays.dart';
 import 'package:shadow_garden/widgets/settings_components.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -34,15 +33,12 @@ class SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {    
     return ListView(
       children: [
-        SettingButtonTile(label: 'Statistics', icon: Icons.bar_chart_rounded, onPressed: () => _openStatistics(_audioProvider)),
-        const Divider(height: 1, thickness: 1),
         SettingToggleTile(
           label: Texts.textNeverListenFirst,
           description: Texts.textNeverListenFirstContent,
           value :_audioProvider.neverListenedFirst, 
           onChanged: _setNeverListenedFirst,
         ),
-        const Divider(height: 1, thickness: 1),
         SettingSliderTile(
           label: Texts.textSortWeight,
           description: Texts.textSortWeightContent,
@@ -51,7 +47,6 @@ class SettingsScreenState extends State<SettingsScreen> {
           leftLabel: Texts.textSmartWeight,
           rightLabel: Texts.textDumbWeight,
         ),
-        const Divider(height: 1, thickness: 1),
         SettingIconButtonTile(
           label: Texts.textWhitelist,
           description: Texts.textWhitelistContent,
@@ -59,34 +54,26 @@ class SettingsScreenState extends State<SettingsScreen> {
           onPressed: _pickFolder,
         ),
         SettingListView(items: _whitelist, onPressed: _removeFolder),
-        const Divider(height: 1, thickness: 1),
         SettingIconButtonTile(
           label: Texts.textDeletePrefs,
           description: Texts.textDeletePrefsContent,
           icon: Icons.delete_rounded,
-          onPressed: () => Alerts.deletionDialog(context, _clearSettings),
+          onPressed: () => Dialogs.deletionDialog(context, _clearSettings),
         ),
-        const Divider(height: 1, thickness: 1),
         SettingIconButtonTile(
           label: Texts.textDeleteData,
           description: Texts.textDeleteDataContent,
           icon: Icons.delete_rounded,
-          onPressed: () => Alerts.deletionDialog(context, _clearDatabase),
+          onPressed: () => Dialogs.deletionDialog(context, _clearDatabase),
         ),
-        const Divider(height: 1, thickness: 1),
         SettingIconButtonTile(
           label: Texts.textDeleteGlobalStats,
           description: Texts.textDeleteGlobalStatsContent,
           icon: Icons.delete_rounded,
-          onPressed: () => Alerts.deletionDialog(context, _settings.clearGlobalStats),
+          onPressed: () => Dialogs.deletionDialog(context, _settings.clearGlobalStats),
         ),
-        const Divider(height: 1, thickness: 1),
       ],
     );
-  }
-
-  void _openStatistics(AudioProvider audioProvider) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => StatisticsPage(audioProvider: audioProvider)));
   }
 
   void _setSmartWeight(double value) {

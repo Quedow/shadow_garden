@@ -1,5 +1,5 @@
 import 'package:just_audio/just_audio.dart';
-import 'package:shadow_garden/utils/position_data.dart';
+import 'package:shadow_garden/models/position_data.dart';
 import 'package:rxdart/rxdart.dart';
 
 abstract class AudioStreamUtils {

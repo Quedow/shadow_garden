@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:shadow_garden/screens/settings_screen.dart';
+import 'package:shadow_garden/widgets/interactive_banner.dart';
 import 'package:shadow_garden/screens/songs_screen.dart';
-import 'package:shadow_garden/provider/audio_provider.dart';
+import 'package:shadow_garden/providers/audio_provider.dart';
 import 'package:shadow_garden/screens/statistics_screen.dart';
-import 'package:shadow_garden/style/common_text.dart';
+import 'package:shadow_garden/utils/common_text.dart';
 import 'package:provider/provider.dart';
 import 'package:shadow_garden/utils/functions.dart';
-import 'package:shadow_garden/widgets/sort_button.dart';
+import 'package:shadow_garden/widgets/custom_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,12 +28,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _audioProvider = Provider.of<AudioProvider>(context, listen: false);
     Functions.init(_audioProvider);
     _audioPlayer = _audioProvider.audioPlayer;
-
-    _audioPlayer.playerStateStream.listen((state) {
-      setState(() {
-        isPlaying = state.playing;
-      });
-    });
   }
 
   @override
@@ -46,15 +40,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: [
-        homeAppBar(),
-        customAppBar(Texts.textStatisticsBar),
-        customAppBar(Texts.textSettingsBar),
+        CustomAppBar(appBarType: AppBarType.home, audioProvider: _audioProvider, title: Texts.textHomeBar),
+        CustomAppBar(appBarType: AppBarType.setting, audioProvider: _audioProvider, title: Texts.textStatisticsBar),
       ][currentScreenIndex],
-      body: [
-        SongsScreen(audioProvider: _audioProvider, isPlaying: isPlaying),
-        StatisticsScreen(audioProvider: _audioProvider),
-        SettingsScreen(audioProvider: _audioProvider),
-      ].elementAt(currentScreenIndex),
+      body: Column(
+        children: [
+          Expanded(
+            child: IndexedStack(
+              index: currentScreenIndex,
+              children: [
+                SongsScreen(audioProvider: _audioProvider),
+                StatisticsScreen(audioProvider: _audioProvider),
+              ],
+            ),
+          ),
+          InteractiveBanner(audioPlayer: _audioPlayer),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentScreenIndex,
         type: BottomNavigationBarType.fixed,
@@ -69,27 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
         items: [
           BottomNavigationBarItem(label: Texts.textHomeBar, icon: const Icon(Icons.music_note_rounded)),
           BottomNavigationBarItem(label: Texts.textStatisticsBar, icon: const Icon(Icons.bar_chart_rounded)),
-          BottomNavigationBarItem(label: Texts.textSettingsBar, icon: const Icon(Icons.settings)),
         ],
       ),
-    );
-  }
-
-  AppBar homeAppBar() {
-    return AppBar(
-      title: Text(Texts.textHomeBar),
-      bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: Theme.of(context).colorScheme.secondary, height: 1.0)),
-      actions: [
-        IconButton(onPressed: _audioProvider.setShuffleActive, icon: Icon(Icons.shuffle_rounded, color: _audioProvider.shuffleActive ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary)),
-        IconButton(onPressed: _audioProvider.setSortState, icon: SortButtonIcon(state: _audioProvider.sortState), color: _audioProvider.shuffleActive ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.primary),
-      ],
-    );
-  }
-
-  AppBar customAppBar(String title) {
-    return AppBar(
-      title: Text(title),
-      bottom: PreferredSize(preferredSize: Size.zero, child: Container(color: Theme.of(context).colorScheme.secondary, height: 1.0)),
     );
   }
 }

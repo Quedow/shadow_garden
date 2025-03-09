@@ -14,7 +14,7 @@ class SettingToggleTile extends StatelessWidget {
       dense: true,
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
       title: Text(label, style: Theme.of(context).textTheme.bodyLarge),
-      subtitle: Text(description, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+      subtitle: Text(description, style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
       trailing: Switch(
         value: value,
         onChanged: onChanged,
@@ -42,7 +42,7 @@ class SettingSliderTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label, style: Theme.of(context).textTheme.bodyLarge),
-          Text(description, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+          Text(description, style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
           Slider(
             value: value,
             max: 1.0, divisions: 20, label: (value * 100).round().toString(),
@@ -52,8 +52,8 @@ class SettingSliderTile extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(leftLabel!, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
-                Text(rightLabel!, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+                Text(leftLabel!, style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+                Text(rightLabel!, style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
               ],
             ),
         ],
@@ -93,7 +93,7 @@ class SettingIconButtonTile extends StatelessWidget {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
       title: Text(label, style: Theme.of(context).textTheme.bodyLarge),
-      subtitle: Text(description, style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+      subtitle: Text(description, style: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
       trailing: IconButton(onPressed: onPressed, icon: Icon(icon)),
     );
   }
@@ -117,7 +117,7 @@ class SettingListView extends StatelessWidget {
             dense: true,
             textColor: Theme.of(context).colorScheme.tertiary,
             contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-            title: Text(items[index], style: Theme.of(context).textTheme.labelLarge),
+            title: Text(items[index], style: Theme.of(context).textTheme.labelMedium),
             trailing: IconButton(
               icon: Icon(Icons.close_rounded, color: Theme.of(context).unselectedWidgetColor), 
               onPressed: () => onPressed(index),
