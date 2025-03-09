@@ -35,7 +35,7 @@ class DatabaseService {
     isar = await Isar.open(
       [SongSchema],
       directory: dir.path,
-      inspector: true, // set to false for build
+      inspector: false, // set to false for build
     );
     _smartWeight = _settings.getSmartWeight();
     _dumbWeight = double.parse((1.0 - _smartWeight).toStringAsFixed(2));
