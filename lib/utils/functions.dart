@@ -4,8 +4,9 @@ import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
 import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/widgets/overlays.dart';
 
-abstract class Functions {
+class Functions {
   static Future<void> init(AudioProvider audioProvider) async {
     await audioProvider.audioPlayer.setLoopMode(LoopMode.values[audioProvider.cLoopMode.index <= 2 ? audioProvider.cLoopMode.index : LoopMode.all.index]);
     await audioProvider.fetchAudioSongs();
@@ -35,7 +36,7 @@ abstract class Functions {
     audioProvider.playlist.move(index, targetIndex);
     
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(Texts.textNextSongSnack, style: Theme.of(context).textTheme.labelMedium), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 1)),
+      Snack.floating(context, Texts.textNextSongSnack, 1000),
     );
   }
 

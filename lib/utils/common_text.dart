@@ -1,4 +1,4 @@
-abstract class Texts {
+class Texts {
   static String textHomeBar = 'Songs';
   static String textStatisticsBar = 'Statistics';
   static String textSettingsBar = 'Settings';

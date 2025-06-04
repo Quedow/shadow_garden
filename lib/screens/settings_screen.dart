@@ -135,23 +135,21 @@ class SettingsScreenState extends State<SettingsScreen> {
     ))?.paths.first;
     if (path == null) return;
     final String result = await _db.importData(path);
-    _showSnackBar(result);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      Snack.floating(context, result, 2000),
+    );
   }
 
   Future<void> _exportData() async {
     final String? path = await FilePicker.platform.getDirectoryPath();
     if (path == null) return;
     final String result = await _db.exportData(path);
-    _showSnackBar(result);
-  }
-
-  void _showSnackBar(String content) {
+    
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(content),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(milliseconds: 2000),
-      ),
+      Snack.floating(context, result, 2000),
     );
   }
 }

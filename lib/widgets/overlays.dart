@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shadow_garden/utils/common_text.dart';
 
-abstract class Dialogs {
+class Dialogs {
   static Future<void> deletionDialog(BuildContext context, void Function() onConfirmation) async {
     await showDialog(
       context: context,
@@ -24,6 +24,21 @@ abstract class Dialogs {
           ],
         );
       },
+    );
+  }
+}
+
+class Snack {
+  static SnackBar floating(BuildContext context, String content, int duration){
+    return SnackBar(
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(content, maxLines: 1, style: Theme.of(context).textTheme.labelMedium, overflow: TextOverflow.ellipsis),
+        ],
+      ),
+      behavior: SnackBarBehavior.floating,
+      duration: Duration(milliseconds: duration),
     );
   }
 }
