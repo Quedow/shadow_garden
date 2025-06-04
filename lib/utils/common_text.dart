@@ -30,6 +30,17 @@ abstract class Texts {
   static String textDeleteGlobalStats = 'Delete global statistics';
   static String textDeleteGlobalStatsContent = 'Total number of listens and total listening time will be reset.';
 
+  static String textExport = 'Export data';
+  static String textExportContent = 'Export songs statistics.';
+  static String textImport = 'Import data';
+  static String textImportContent = 'Import songs statistics from a backup. Current data will be permanently deleted (Reload recommended).';
+  
+  static String errorBackupNotFoundSnack = 'No backup found';
+  static String textSuccessImportSnack = 'Data imported successfully';
+  static String textSuccessExportSnack = 'Data exported successfully';
+  static String errorImportSnack = 'An error occurred during importation';
+  static String errorExportSnack = 'An error occurred during exportation';
+
   static String textNextSongSnack = 'Added to next song';
   static String textDeletionDialog = 'Do you confirm the deletion?';
 }

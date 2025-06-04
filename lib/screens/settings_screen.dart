@@ -72,6 +72,18 @@ class SettingsScreenState extends State<SettingsScreen> {
           icon: Icons.delete_rounded,
           onPressed: () => Dialogs.deletionDialog(context, _settings.clearGlobalStats),
         ),
+        SettingIconButtonTile(
+          label: Texts.textImport,
+          description: Texts.textImportContent,
+          icon: Icons.download_rounded,
+          onPressed: _importData,
+        ),
+        SettingIconButtonTile(
+          label: Texts.textExport,
+          description: Texts.textExportContent,
+          icon: Icons.upload_rounded,
+          onPressed: _exportData,
+        ),
       ],
     );
   }
@@ -113,5 +125,33 @@ class SettingsScreenState extends State<SettingsScreen> {
   void _clearDatabase() async {
     await _db.clearDatabase();
     await _settings.setMonitoringDate();
+  }
+
+  Future<void> _importData() async {
+    final String? path = (await FilePicker.platform.pickFiles(
+      allowMultiple: false,
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    ))?.paths.first;
+    if (path == null) return;
+    final String result = await _db.importData(path);
+    _showSnackBar(result);
+  }
+
+  Future<void> _exportData() async {
+    final String? path = await FilePicker.platform.getDirectoryPath();
+    if (path == null) return;
+    final String result = await _db.exportData(path);
+    _showSnackBar(result);
+  }
+
+  void _showSnackBar(String content) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(content),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(milliseconds: 2000),
+      ),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
@@ -70,5 +71,9 @@ abstract class Functions {
       textDirection: TextDirection.ltr,
     )..layout(minWidth: 0, maxWidth: maxWidth);
     return textPainter.size.height + verticalOffset;
+  }
+
+  static String getBackupDate() {
+    return DateFormat('dd-MM-yyyy_HH-mm-ss').format(DateTime.now());
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'dart:math';
 import 'package:isar/isar.dart';
@@ -6,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shadow_garden/models/report.dart';
 import 'package:shadow_garden/models/song.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
+import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/utils/functions.dart';
 
 class DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
@@ -129,15 +132,60 @@ class DatabaseService {
     return success;
   }
 
-  Future<void> clearDatabase() async {
-    final List<int> globalStats = await Future.wait([
-      isar.songs.where().nbOfListensProperty().sum(),
-      isar.songs.where().listeningTimeProperty().sum(),
-    ]);
-    await _settings.setGlobalStats(globalStats[0], globalStats[1]);
+  Future<void> clearDatabase([bool keepStats = true]) async {
+    if (keepStats) {
+      final List<int> globalStats = await Future.wait([
+        isar.songs.where().nbOfListensProperty().sum(),
+        isar.songs.where().listeningTimeProperty().sum(),
+      ]);
+      await _settings.setGlobalStats(globalStats[0], globalStats[1]);
+    } else {
+      await _settings.clearGlobalStats();
+    }
 
     await isar.writeTxn(() async {
       await isar.songs.clear();
     });
+  }
+
+  Future<String> importData(String path) async {
+    try {
+      final File file = File(path);
+      if (!await file.exists()) return Texts.errorBackupNotFoundSnack;
+
+      final String raw = await file.readAsString();
+      final Map<String, dynamic> jsonData = jsonDecode(raw);
+
+      final List<Song> songs = (jsonData['songs'] as List).map((s) => Song.fromJson(s)).toList();
+      final List<int> globalStats = (jsonData['globalStats'] as List).map((g) => g as int).toList();
+
+      await clearDatabase(false);
+
+      await isar.writeTxn(() async {
+        await isar.songs.putAll(songs);
+      });
+      await _settings.setGlobalStats(globalStats[0], globalStats[1]);
+      return Texts.textSuccessImportSnack;
+    } catch (e) {
+      return Texts.errorImportSnack;
+    }
+  }
+
+  Future<String> exportData(String path) async {
+    try {
+      final File file = File('$path/shadow_garden_backup_${Functions.getBackupDate()}.json');
+
+      final List<Song> songs = await isar.songs.where().findAll();
+      final List<String> globalStats = _settings.getGlobalStats();
+
+      final Map<String, dynamic> data = {
+        'songs': songs.map((s) => s.toJson()).toList(),
+        'globalStats': [int.parse(globalStats[0]), int.parse(globalStats[1])],
+      };
+      await file.writeAsString(jsonEncode(data));
+      return Texts.textSuccessExportSnack;
+    } catch (e) {
+      return Texts.errorExportSnack;
+    }
   }
 }
