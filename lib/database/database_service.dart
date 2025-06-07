@@ -39,7 +39,7 @@ class DatabaseService extends _$DatabaseService {
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
-      name: 'skuld_db',
+      name: 'shadow_garden_db',
       native: const DriftNativeOptions(
         // By default, `driftDatabase` from `package:drift_flutter` stores the
         // database files in `getApplicationDocumentsDirectory()`.
