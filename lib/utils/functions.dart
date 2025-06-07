@@ -41,9 +41,9 @@ class Functions {
   }
 
   static SongModel? getSongModel(AudioPlayer audioPlayer, List<SongModel> songs, int? index) {
-    final List<IndexedAudioSource>? sequence = audioPlayer.sequence;
+    final List<IndexedAudioSource> sequence = audioPlayer.sequence;
 
-    if (sequence == null || index == null) { return null; }
+    if (index == null) { return null; }
 
     final int currentAudioId = int.parse(sequence[index].tag.id);
     final SongModel currentSong = songs.firstWhere((song) => song.id == currentAudioId);

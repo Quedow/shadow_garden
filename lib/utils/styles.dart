@@ -20,19 +20,20 @@ abstract class ThemeColors {
       onError: Colors.white,
       surface: Colors.black, // Top bar, card, background
       onSurface: Colors.white,
-      surfaceVariant: Color(0xFF757575), // Disable switch background, textfield filled
+      surfaceContainerHighest : Color(0xFF757575), // Disable switch background, textfield filled
       outlineVariant: Color(0xFF757575), // Divider
       inverseSurface: darkBlueGrey, // Snack bar
       onInverseSurface: Colors.white,
       surfaceTint: Colors.black,
-      background: Colors.black,
     ),
-    dialogBackgroundColor: darkBlueGrey,
     hintColor: const Color(0xFF616161),
     scaffoldBackgroundColor: Colors.black,
     splashColor: Colors.transparent,
     splashFactory: NoSplash.splashFactory,
     unselectedWidgetColor: const Color(0xFF616161),
+    dialogTheme: const DialogThemeData(
+      backgroundColor: darkBlueGrey,
+    ),
     appBarTheme: const AppBarTheme(
       centerTitle: true,
       titleTextStyle: TextStyle(fontSize: 22, fontWeight: FontWeight.w400),
@@ -46,7 +47,7 @@ abstract class ThemeColors {
       inactiveTickMarkColor: primaryColor,
     ),
     scrollbarTheme: ScrollbarThemeData(
-      thumbColor: MaterialStateProperty.all(primaryColor),
+      thumbColor: WidgetStateProperty.all(primaryColor),
     ),
     textTheme: const TextTheme(
       headlineSmall: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),

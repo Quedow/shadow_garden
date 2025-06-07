@@ -33,7 +33,7 @@ class BlankArtwork extends StatelessWidget {
     return Container(
       width: imgWidth,
       height: imgWidth,
-      decoration: BoxDecoration(color: Theme.of(context).dialogBackgroundColor, borderRadius: BorderRadius.circular(10.0)),
+      decoration: BoxDecoration(color: Theme.of(context).dialogTheme.backgroundColor, borderRadius: BorderRadius.circular(10.0)),
       child: Icon(Icons.music_note_rounded, color: Theme.of(context).colorScheme.primary, size: imgWidth/2),
     );
   }
@@ -49,7 +49,7 @@ class ErrorArtwork extends StatelessWidget {
     return Container(
       width: imgWidth,
       height: imgWidth,
-      decoration: BoxDecoration(color: Theme.of(context).dialogBackgroundColor, borderRadius: BorderRadius.circular(10.0)),
+      decoration: BoxDecoration(color: Theme.of(context).dialogTheme.backgroundColor, borderRadius: BorderRadius.circular(10.0)),
       child: Icon(Icons.error_outline_rounded, color: Theme.of(context).colorScheme.error, size: imgWidth/2),
     );
   }
