@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:just_audio/just_audio.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:on_audio_query_forked/on_audio_query.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
 import 'package:shadow_garden/utils/common_text.dart';
 import 'package:shadow_garden/widgets/overlays.dart';
@@ -33,7 +33,7 @@ class Functions {
 
     if (index == currentIndex || index == currentIndex + 1) return;
       
-    audioProvider.playlist.move(index, targetIndex);
+    audioPlayer.moveAudioSource(index, targetIndex);
     
     ScaffoldMessenger.of(context).showSnackBar(
       Snack.floating(context, Texts.textNextSongSnack, 1000),

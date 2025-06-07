@@ -32,7 +32,7 @@ class InteractiveBanner extends StatelessWidget {
 
                 if (currentIndex == null) { return const SizedBox.shrink(); }
 
-                final MediaItem currentMetadata = audioPlayer.sequence?[currentIndex].tag;
+                final MediaItem currentMetadata = audioPlayer.sequence[currentIndex].tag;
                 return SongSheet(audioPlayer: audioPlayer, metadata: currentMetadata, screenWidth: screenWidth);
               },
             );
@@ -68,7 +68,7 @@ class SongBanner extends StatelessWidget {
 
           if (currentIndex == null) { return const SizedBox.shrink(); }
           
-          final MediaItem currentMetadata = audioPlayer.sequenceState?.sequence[currentIndex].tag;
+          final MediaItem currentMetadata = audioPlayer.sequenceState.sequence[currentIndex].tag;
           return SizedBox(
             width: screenWidth,
             child: ListTile(

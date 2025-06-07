@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:on_audio_query/on_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:on_audio_query_forked/on_audio_query.dart';
 import 'package:shadow_garden/database/database_service.dart';
 import 'package:shadow_garden/models/report.dart';
-import 'package:shadow_garden/models/song.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shadow_garden/utils/functions.dart';
@@ -18,8 +18,8 @@ class AudioProvider extends ChangeNotifier {
   final List<SongModel> _songs = [];
   List<SongModel> get songs => _songs;
 
-  ConcatenatingAudioSource _playlist = ConcatenatingAudioSource(children: []);
-  ConcatenatingAudioSource get playlist => _playlist;
+  List<AudioSource> _playlist =[];
+  List<AudioSource> get playlist => _playlist;
 
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioPlayer get audioPlayer => _audioPlayer;
@@ -116,7 +116,14 @@ class AudioProvider extends ChangeNotifier {
 
           final int key = Functions.fastHash(currentSong.album, currentSong.title, currentSong.artist);
 
-          _db.updateSong(Song(key, currentSong.title, duration, _getDays(currentSong.dateAdded), _lastPosition.inSeconds, DateTime.now()));
+          _db.updateSong(SongsCompanion(
+            key: Value(key),
+            title: Value(currentSong.title),
+            duration: Value(duration),
+            daysAgo: Value(_getDays(currentSong.dateAdded)),
+            listeningTime: Value(_lastPosition.inSeconds),
+            lastListen: Value(DateTime.now()),
+          ));
         }
       }
     });
@@ -161,18 +168,16 @@ class AudioProvider extends ChangeNotifier {
   }
 
   void _setPlaylist() {
-    _playlist = ConcatenatingAudioSource(
-      children: _songs.map((song) => AudioSource.uri(
-          Uri.file(song.data),
-          tag: MediaItem(
-            id: song.id.toString(),
-            title: song.title,
-            album: song.album,
-            artist: song.artist,
-          ),
-        ),
-      ).toList(),
-    );
+    _playlist = _songs.map((song) => AudioSource.uri(
+      Uri.file(song.data),
+      tag: MediaItem(
+        id: song.id.toString(),
+        title: song.title,
+        album: song.album,
+        artist: song.artist,
+      ),
+    ),
+  ).toList();
   }
 
   void setLoopMode(LoopMode mode, CLoopMode cMode) async {
@@ -213,7 +218,7 @@ class AudioProvider extends ChangeNotifier {
         break;
     }
     _setPlaylist();
-    await _audioPlayer.setAudioSource(_playlist);
+    await _audioPlayer.setAudioSources(_playlist);
   }
 
   Future<void> _smartSort() async {

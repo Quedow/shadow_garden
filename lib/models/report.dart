@@ -1,4 +1,4 @@
-import 'package:shadow_garden/models/song.dart';
+import 'package:shadow_garden/database/database_service.dart';
 
 class Report {
   final List<Song> songs;

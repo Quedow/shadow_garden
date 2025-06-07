@@ -1,18 +1,21 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:convert';
 
-import 'dart:math';
-import 'package:isar/isar.dart';
+import 'package:drift/drift.dart';
+import 'package:drift_flutter/drift_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shadow_garden/models/report.dart';
-import 'package:shadow_garden/models/song.dart';
+import 'package:shadow_garden/models/songs.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
 import 'package:shadow_garden/utils/common_text.dart';
 import 'package:shadow_garden/utils/functions.dart';
 
-class DatabaseService {
+part 'database_service.g.dart';
+
+@DriftDatabase(tables: [Songs])
+class DatabaseService extends _$DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
-  late final Isar isar;
 
   final SettingsService _settings = SettingsService();
   final int _maxDateAdded = 30;
@@ -27,59 +30,76 @@ class DatabaseService {
     await _settings.setSmartWeight(value);
   }
 
-  factory DatabaseService() {
-    return _instance;
+  factory DatabaseService() => _instance;
+
+  DatabaseService._internal() : super(_openConnection());
+
+  @override
+  int get schemaVersion => 1;
+
+  static QueryExecutor _openConnection() {
+    return driftDatabase(
+      name: 'skuld_db',
+      native: const DriftNativeOptions(
+        // By default, `driftDatabase` from `package:drift_flutter` stores the
+        // database files in `getApplicationDocumentsDirectory()`.
+        databaseDirectory: getApplicationSupportDirectory,
+      ),
+      // If you need web support, see https://drift.simonbinder.eu/platforms/web/
+    );
   }
 
-  DatabaseService._internal();
-
-  Future<Isar> init() async {
-    final Directory dir = await getApplicationDocumentsDirectory();
-    isar = await Isar.open(
-      [SongSchema],
-      directory: dir.path,
-      inspector: false, // set to false for build
-    );
+  void init() {
     _smartWeight = _settings.getSmartWeight();
     _dumbWeight = double.parse((1.0 - _smartWeight).toStringAsFixed(2));
-
-    return isar;
   }
 
-  Future<void> updateSong(Song song) async {
-    await isar.writeTxn(() async {
-      await _insertOrUpdateSong(song);
-      await _updateScores();
-    });
+  Future<void> updateSong(SongsCompanion song) async {
+    await _insertOrUpdateSong(song);
+    await _updateScores();
   }
 
-  Future<void> _insertOrUpdateSong(Song song) async {
-    final Song? songToUpdate = await isar.songs.filter().keyEqualTo(song.key).findFirst();
+
+  Future<Song?> _getSong(int key) {
+    return managers.songs.filter((s) => s.key.equals(key)).getSingleOrNull();
+  }
+
+  Future<void> _insertOrUpdateSong(SongsCompanion song) async {
+    final Song? songToUpdate = song.key.present
+      ? await _getSong(song.key.value)
+      : null;
+
     if (songToUpdate != null) {
-      songToUpdate.listeningTime += song.listeningTime;
-      songToUpdate.nbOfListens += 1;
-      songToUpdate.lastListen = song.lastListen;
-      await isar.songs.put(songToUpdate);
+      await managers.songs.filter((s) => s.key.equals(song.key.value)).update(
+        (s) => s(
+          listeningTime: Value(songToUpdate.listeningTime + song.listeningTime.value),
+          nbOfListens: Value(songToUpdate.nbOfListens + 1),
+          lastListen: Value(song.lastListen.value),
+        )
+      );
     } else {
-      await isar.songs.put(song);
+      await managers.songs.create((_) => song);
     }
   }
 
   Future<void> _updateScores() async {
-    final List<Song> allSongs = await isar.songs.where().findAll();
+    final List<Song> allSongs = await managers.songs.get();
     final DateTime now = DateTime.now();
 
     for (Song song in allSongs) {
       final double smartScore = await _calculateSmartScore(song, allSongs.length, now);
       final double dumbScore = smartScore <= 0.5 ? _dumbWeight * Random().nextDouble() : 0;
-      song.score = smartScore + dumbScore;
-      await isar.songs.put(song);
+      await managers.songs.filter((s) => s.id.equals(song.id)).update(
+        (s) => s(
+          score: Value(smartScore + dumbScore),
+        )
+      );
     }
   }
 
   Future<double> _calculateSmartScore(Song song, int totalSongs, DateTime now) async {
-    final int belowSongs = await isar.songs.filter().nbOfListensLessThan(song.nbOfListens).count();
-    final int equalSongs = await isar.songs.filter().nbOfListensEqualTo(song.nbOfListens).count();
+    final int belowSongs = await managers.songs.filter((s) => s.nbOfListens.isSmallerThan(song.nbOfListens)).count();
+    final int equalSongs = await managers.songs.filter((s) => s.nbOfListens.equals(song.nbOfListens)).count();
     final int listenHoursAgo = now.difference(song.lastListen).inHours;
 
     final double addedDateScore = song.daysAgo <= 2 ? 1 : song.daysAgo > _maxDateAdded ? 0 : (-1/_maxDateAdded * song.daysAgo + 1);
@@ -99,53 +119,58 @@ class DatabaseService {
 
   Future<void> updateDaysAgo(Map<int, int> idToDaysAgo) async {
     for (MapEntry<int, int> entry in idToDaysAgo.entries) {
-      await isar.writeTxn(() async {
-        Song? songToUpdate = await isar.songs.filter().idEqualTo(entry.key).findFirst();
-        if (songToUpdate != null) {
-          songToUpdate.daysAgo = entry.value;
-          await isar.songs.put(songToUpdate);
-        }
-      });
+      final bool exists = await managers.songs.filter((s) => s.id.equals(entry.key)).exists();
+      if (exists) {
+        await managers.songs.filter((s) => s.id.equals(entry.key)).update(
+          (s) => s(
+            daysAgo: Value(entry.value),
+          )
+        );
+      }
     }
   }
 
   Future<List<int>> getRanking() async {
-    final List<Song> songsRanking = await isar.songs.where(sort: Sort.desc).anyScore().findAll();
+    final List<Song> songsRanking = await managers.songs.orderBy((s) => s.score.desc()).get();
     return songsRanking.map((Song song) => song.key).toList();
   }
 
+  Future<Statistics> _getGlobalStats() async {
+    final Expression<int> nbOfListensSum = songs.nbOfListens.sum();
+    final Expression<int> totalListeningTimeSum = songs.listeningTime.sum();
+    final query = selectOnly(songs)..addColumns([nbOfListensSum, totalListeningTimeSum]);
+    final result = await query.getSingle();
+
+    return Statistics(
+      totalNbOfListens: result.read(nbOfListensSum) ?? 0,
+      totalListeningTime: result.read(totalListeningTimeSum) ?? 0
+    );
+  }
+
   Future<Report> getReport() async {
+    final Statistics globalStats = await _getGlobalStats();
+
     return Report(
-      songs: await isar.songs.where(sort: Sort.desc).anyScore().findAll(),
+      songs: await managers.songs.orderBy((s) => s.score.desc()).get(),
       statistics: Statistics(
-        totalNbOfListens: await isar.songs.where().nbOfListensProperty().sum(),
-        totalListeningTime: await isar.songs.where().listeningTimeProperty().sum(),
+        totalNbOfListens: globalStats.totalNbOfListens,
+        totalListeningTime: globalStats.totalListeningTime,
       ),
     );
   }
 
   Future<bool> clearData(int id) async {
-    late bool success;
-    await isar.writeTxn(() async {
-      success = await isar.songs.delete(id);
-    });
-    return success;
+    return await managers.songs.filter((s) => s.id.equals(id)).delete() > 0;
   }
 
   Future<void> clearDatabase([bool keepStats = true]) async {
     if (keepStats) {
-      final List<int> globalStats = await Future.wait([
-        isar.songs.where().nbOfListensProperty().sum(),
-        isar.songs.where().listeningTimeProperty().sum(),
-      ]);
-      await _settings.setGlobalStats(globalStats[0], globalStats[1]);
+      final Statistics globalStats = await _getGlobalStats();
+      await _settings.setGlobalStats(globalStats.totalNbOfListens, globalStats.totalListeningTime);
     } else {
       await _settings.clearGlobalStats();
     }
-
-    await isar.writeTxn(() async {
-      await isar.songs.clear();
-    });
+    await managers.songs.delete();
   }
 
   Future<String> importData(String path) async {
@@ -161,9 +186,7 @@ class DatabaseService {
 
       await clearDatabase(false);
 
-      await isar.writeTxn(() async {
-        await isar.songs.putAll(songs);
-      });
+      await managers.songs.bulkCreate((_) => songs);
       await _settings.setGlobalStats(globalStats[0], globalStats[1]);
       return Texts.textSuccessImportSnack;
     } catch (e) {
@@ -175,7 +198,7 @@ class DatabaseService {
     try {
       final File file = File('$path/shadow_garden_backup_${Functions.getBackupDate()}.json');
 
-      final List<Song> songs = await isar.songs.where().findAll();
+      final List<Song> songs = await managers.songs.get();
       final List<String> globalStats = _settings.getGlobalStats();
 
       final Map<String, dynamic> data = {

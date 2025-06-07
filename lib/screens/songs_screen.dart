@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:on_audio_query_forked/on_audio_query.dart';
 import 'package:shadow_garden/utils/common_text.dart';
 import 'package:shadow_garden/widgets/artworks.dart';
 import 'package:shadow_garden/widgets/text_display.dart';

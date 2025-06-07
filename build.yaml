@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          # mutable_classes: true
+          case_from_dart_to_sql: preserve

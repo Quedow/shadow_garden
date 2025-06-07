@@ -18,7 +18,7 @@ class PlayingAnimation extends StatelessWidget {
           if (isPlaying) {
             return ColorFiltered(
               colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.primary, BlendMode.srcATop),
-              child: Lottie.asset('assets/icons/soundwave.json'),
+              child: Lottie.asset('assets/visualizers/soundwave.json'),
             );
           } else {
             return const Icon(Icons.play_arrow_rounded);

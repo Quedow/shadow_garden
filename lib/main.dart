@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:isar/isar.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:shadow_garden/database/database_service.dart';
 import 'package:shadow_garden/database/migration.dart';
@@ -23,8 +22,9 @@ Future<void> main() async {
     androidShowNotificationBadge: true,
   );
   await SettingsService().init();
-  final Isar isar = await DatabaseService().init();
-  await performMigrationIfNeeded(isar);
+  DatabaseService db = DatabaseService();
+  db.init();
+  await performMigrationIfNeeded(db);
 
   runApp(
     ChangeNotifierProvider(
