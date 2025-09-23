@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-abstract class ThemeColors {
+class ThemeColors {
   static const Color primaryColor = Color(0xFFAAC9FF);
   static const Color darkPrimaryColor = Color(0xFF6A3DE8); // Previous color 7B93F6
   static const Color darkBlueGrey = Color(0xFF1D2530);
@@ -71,7 +71,7 @@ abstract class ThemeColors {
   );
 }
 
-abstract class DesignSystem {
+class DesignSystem {
   static const double scrollbarThickness = 6.0;
   static const double iconBtnSize = 35;
   static const double artworkSmallSize = 50;

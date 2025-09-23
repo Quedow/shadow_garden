@@ -22,6 +22,7 @@ class SongsScreen extends StatefulWidget {
 }
 
 class SongsScreenState extends State<SongsScreen> {
+  AudioProvider get _audioProvider => widget.audioProvider;
   AudioPlayer get _audioPlayer => widget.audioProvider.audioPlayer;
 
   final ScrollController _scrollController = ScrollController();
@@ -83,8 +84,8 @@ class SongsScreenState extends State<SongsScreen> {
                       final bool isCurrentSong = _audioPlayer.currentIndex == index;
                       
                       return ListTile(
-                        onTap: () => Functions.onTap(_audioPlayer, isCurrentSong, index),
-                        onLongPress: () => Functions.onLongPress(widget.audioProvider, _audioPlayer, context, index),
+                        onTap: () => Functions.onTap(_audioProvider, _audioPlayer, isCurrentSong, index),
+                        onLongPress: () => Functions.onLongPress(_audioPlayer, context, index),
                         leading: SongArtwork(songId: int.parse(metadata.id), imgWidth: DesignSystem.artworkSmallSize),
                         title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: isCurrentSong ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary)),
                         subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),

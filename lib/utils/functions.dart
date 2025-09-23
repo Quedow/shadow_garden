@@ -12,7 +12,7 @@ class Functions {
     await audioProvider.fetchAudioSongs();
   }
   
-  static void onTap(AudioPlayer audioPlayer, bool isCurrentSong, int index) {
+  static void onTap(AudioProvider audioProvider, AudioPlayer audioPlayer, bool isCurrentSong, int index) {
     final bool isPlaying = audioPlayer.playerState.playing;
     
     if (isCurrentSong) {
@@ -24,10 +24,11 @@ class Functions {
     } else {
       audioPlayer.seek(Duration.zero, index: index);
       audioPlayer.play();
+      audioProvider.resetLoop();
     }
   }
 
-  static void onLongPress(AudioProvider audioProvider, AudioPlayer audioPlayer, BuildContext context, int index) {
+  static void onLongPress(AudioPlayer audioPlayer, BuildContext context, int index) {
     int currentIndex = audioPlayer.currentIndex ?? 0;
     int targetIndex = index > currentIndex ? currentIndex + 1 : currentIndex;
 

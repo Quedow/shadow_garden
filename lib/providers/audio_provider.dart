@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:drift/drift.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query_forked/on_audio_query.dart';
@@ -79,25 +79,35 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<int> _lastIndexes = [];
+  Set<int> _cLoopIndexes = {0};
+  bool _restLoopFlag = false;
   Duration _lastPosition = Duration.zero;
 
   AudioProvider() {
     getSettings();
 
     _audioPlayer.currentIndexStream.listen((int? index) async {
-      if (index == null) { return; }
+      if (_cLoopMode != CLoopMode.custom) return;
+      if (index == null || index == _cLoopIndexes.lastOrNull) return;
 
-      if (_cLoopMode == CLoopMode.custom) {
-        if (_lastIndexes.isEmpty || audioPlayer.previousIndex != _lastIndexes.last) {
-          _lastIndexes.clear();
-        }
-        _lastIndexes.add(index);
+      final int first = _cLoopIndexes.first;
+      if (_restLoopFlag) {
+        _cLoopIndexes = {index};
+        _restLoopFlag = false;
+      } else if (index == 0 && first != 0) {
+        _cLoopIndexes = {first};
+        await _restartLoop(first);
+      } else if (_cLoopIndexes.length == _songsPerLoop && index == (first + _songsPerLoop) % _playlist.length) {
+        _cLoopIndexes = {first};
+        await _restartLoop(first);
+      } else if (index == _cLoopIndexes.last || index == _cLoopIndexes.last + 1) {
+        _cLoopIndexes.add(index);
+      } else if (index < first) {
+        _cLoopIndexes = {index};
+      }
 
-        if (_lastIndexes.length > _songsPerLoop) {
-          await _resetLoop(_lastIndexes.first);
-          _lastIndexes = [_lastIndexes.first];
-        }
+      if (kDebugMode) {
+        print('Custom loop updated: $_cLoopIndexes');
       }
     });
 
@@ -176,8 +186,7 @@ class AudioProvider extends ChangeNotifier {
         album: song.album,
         artist: song.artist,
       ),
-    ),
-  ).toList();
+    )).toList();
   }
 
   void setLoopMode(LoopMode mode, CLoopMode cMode) async {
@@ -185,15 +194,20 @@ class AudioProvider extends ChangeNotifier {
     setCLoopMode(cMode);
 
     if (_cLoopMode == CLoopMode.custom) {
-      _lastIndexes.clear();
-      _lastIndexes.add(_audioPlayer.currentIndex ?? 0);
+      _cLoopIndexes = {_audioPlayer.currentIndex ?? 0};
     }
   }
 
-  Future<void> _resetLoop(int index) async {
+  void resetLoop() {
+    if (_cLoopMode != CLoopMode.custom) return;
+    _restLoopFlag = true;
+  }
+
+  Future<void> _restartLoop(int index) async {
+    final bool playing = _audioPlayer.playing;
     await _audioPlayer.stop();
     await _audioPlayer.seek(Duration.zero, index: index);
-    await _audioPlayer.play();
+    if (playing) await _audioPlayer.play();
   }
 
   Future<void> _sortSongs(int state) async {
