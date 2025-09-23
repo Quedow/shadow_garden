@@ -229,7 +229,7 @@ class AudioProvider extends ChangeNotifier {
   }
 
   Future<void> _shuffle(bool enabled) async {
-      await _audioPlayer.setShuffleModeEnabled(enabled);
+    await _audioPlayer.setShuffleModeEnabled(enabled);
   }
 
   Future<void> _smartSort() async {
