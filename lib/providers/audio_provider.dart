@@ -24,13 +24,9 @@ class AudioProvider extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioPlayer get audioPlayer => _audioPlayer;
 
-  bool _shuffleActive = false;
-  bool get shuffleActive => _shuffleActive;
-  void setShuffleActive() async {
-    if (!_shuffleActive) {
-      _shuffleActive = true;
-    }
-    await _sortSongs(-1);
+  bool get shuffleEnabled => _audioPlayer.shuffleModeEnabled;
+  void setShuffleEnabled() async {
+    await _shuffle(!_audioPlayer.shuffleModeEnabled);
     notifyListeners();
   }
 
@@ -54,8 +50,8 @@ class AudioProvider extends ChangeNotifier {
   late int _sortState;
   int get sortState => _sortState;
   void setSortState() async {
-    if (_shuffleActive) {
-      _shuffleActive = false;
+    if (shuffleEnabled) {
+      await _shuffle(false);
     } else {
       _sortState = (_sortState + 1) % _totalState;
     }
@@ -87,7 +83,7 @@ class AudioProvider extends ChangeNotifier {
     getSettings();
 
     _audioPlayer.currentIndexStream.listen((int? index) async {
-      if (_cLoopMode != CLoopMode.custom) return;
+      if (_cLoopMode != CLoopMode.custom || shuffleEnabled) return;
       if (index == null || index == _cLoopIndexes.lastOrNull) return;
 
       final int first = _cLoopIndexes.first;
@@ -107,7 +103,7 @@ class AudioProvider extends ChangeNotifier {
       }
 
       if (kDebugMode) {
-        print('Custom loop updated: $_cLoopIndexes');
+        print('Custom loop updated: $_cLoopIndexes (index: $index)');
       }
     });
 
@@ -227,12 +223,13 @@ class AudioProvider extends ChangeNotifier {
       case 4:
         await _smartSort();
         break;
-      case -1:
-        _songs.shuffle();
-        break;
     }
     _setPlaylist();
     await _audioPlayer.setAudioSources(_playlist);
+  }
+
+  Future<void> _shuffle(bool enabled) async {
+      await _audioPlayer.setShuffleModeEnabled(enabled);
   }
 
   Future<void> _smartSort() async {

@@ -73,7 +73,7 @@ class _LoopButtonState extends State<LoopButton> {
 
   @override
   Widget build(BuildContext context) {
-    AudioProvider audioProvider = Provider.of<AudioProvider>(context);
+    final AudioProvider audioProvider = Provider.of<AudioProvider>(context);
     final CLoopMode cLoopMode = audioProvider.cLoopMode;
 
     if (cLoopMode == CLoopMode.all) {

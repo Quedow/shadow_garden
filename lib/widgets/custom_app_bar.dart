@@ -31,8 +31,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             return AppBar(
               title: Text(title),
               actions: [
-                IconButton(onPressed: audioProvider.setShuffleActive, icon: Icon(Icons.shuffle_rounded, color: audioProvider.shuffleActive ? themeData.colorScheme.primary : themeData.colorScheme.secondary)),
-                IconButton(onPressed: audioProvider.setSortState, icon: SortButtonIcon(state: audioProvider.sortState), color: audioProvider.shuffleActive ? themeData.colorScheme.secondary : themeData.colorScheme.primary),
+                IconButton(onPressed: audioProvider.setShuffleEnabled, icon: Icon(Icons.shuffle_rounded, color: audioProvider.shuffleEnabled ? themeData.colorScheme.primary : themeData.colorScheme.secondary)),
+                IconButton(onPressed: audioProvider.setSortState, icon: SortButtonIcon(state: audioProvider.sortState), color: audioProvider.shuffleEnabled ? themeData.colorScheme.secondary : themeData.colorScheme.primary),
               ],
             );
           },
