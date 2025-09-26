@@ -9,7 +9,7 @@ import 'package:shadow_garden/database/database_service.dart';
 import 'package:shadow_garden/models/report.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
 import 'package:shadow_garden/widgets/controls.dart';
-import 'package:shadow_garden/utils/functions.dart';
+import 'package:shadow_garden/utils/utility.dart';
 
 class AudioProvider extends ChangeNotifier {
   final SettingsService _settings = SettingsService();
@@ -115,14 +115,14 @@ class AudioProvider extends ChangeNotifier {
 
     _audioPlayer.positionDiscontinuityStream.listen((PositionDiscontinuity discontinuity) {
       if (_audioPlayer.position.inSeconds == 0 && audioPlayer.playerState.playing) {
-        SongModel? currentSong = Functions.getSongModel(_audioPlayer, _songs, discontinuity.previousEvent.currentIndex);
+        SongModel? currentSong = Utility.getSongModel(_audioPlayer, _songs, discontinuity.previousEvent.currentIndex);
 
         if (currentSong != null) {
           int duration =  discontinuity.previousEvent.duration != null
             ? discontinuity.previousEvent.duration!.inSeconds
             : _lastPosition.inSeconds;
 
-          final int key = Functions.fastHash(currentSong.album, currentSong.title, currentSong.artist);
+          final int key = Utility.fastHash(currentSong.album, currentSong.title, currentSong.artist);
 
           _db.updateSong(SongsCompanion(
             key: Value(key),
@@ -213,7 +213,7 @@ class AudioProvider extends ChangeNotifier {
     _loading = true;
     SongModel? currentSong;
     if (index != null && _audioPlayer.playing) {
-      currentSong = Functions.getSongModel(_audioPlayer, songs, index);
+      currentSong = Utility.getSongModel(_audioPlayer, songs, index);
       await _audioPlayer.moveAudioSource(index, 0);
     }
     switch(state) {
@@ -255,8 +255,8 @@ class AudioProvider extends ChangeNotifier {
     final int sortPosition = _neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
     
     _songs.sort((a, b) {
-      final int keyA = Functions.fastHash(a.album, a.title, a.artist);
-      final int keyB = Functions.fastHash(b.album, b.title, b.artist);
+      final int keyA = Utility.fastHash(a.album, a.title, a.artist);
+      final int keyB = Utility.fastHash(b.album, b.title, b.artist);
       return (keyToRank[keyA] ?? sortPosition).compareTo(keyToRank[keyB] ?? sortPosition);
     });
   }

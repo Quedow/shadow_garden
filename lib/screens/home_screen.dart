@@ -4,9 +4,9 @@ import 'package:shadow_garden/widgets/interactive_banner.dart';
 import 'package:shadow_garden/screens/songs_screen.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
 import 'package:shadow_garden/screens/statistics_screen.dart';
-import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/utils/translator.dart';
 import 'package:provider/provider.dart';
-import 'package:shadow_garden/utils/functions.dart';
+import 'package:shadow_garden/utils/utility.dart';
 import 'package:shadow_garden/widgets/custom_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _audioProvider = Provider.of<AudioProvider>(context, listen: false);
-    Functions.init(_audioProvider);
+    Utility.init(_audioProvider);
     _audioPlayer = _audioProvider.audioPlayer;
   }
 
@@ -40,8 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: [
-        CustomAppBar(appBarType: AppBarType.home, audioProvider: _audioProvider, title: Texts.textHomeBar),
-        CustomAppBar(appBarType: AppBarType.setting, audioProvider: _audioProvider, title: Texts.textStatisticsBar),
+        CustomAppBar(appBarType: AppBarType.home, audioProvider: _audioProvider, title: 'textHomeBar'.t()),
+        CustomAppBar(appBarType: AppBarType.setting, audioProvider: _audioProvider, title: 'textStatisticsBar'.t()),
       ][currentScreenIndex],
       body: Column(
         children: [
@@ -69,8 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         items: [
-          BottomNavigationBarItem(label: Texts.textHomeBar, icon: const Icon(Icons.music_note_rounded)),
-          BottomNavigationBarItem(label: Texts.textStatisticsBar, icon: const Icon(Icons.bar_chart_rounded)),
+          BottomNavigationBarItem(label: 'textHomeBar'.t(), icon: const Icon(Icons.music_note_rounded)),
+          BottomNavigationBarItem(label: 'textStatisticsBar'.t(), icon: const Icon(Icons.bar_chart_rounded)),
         ],
       ),
     );

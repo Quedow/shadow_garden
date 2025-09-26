@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shadow_garden/database/database_service.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
-import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/widgets/overlays.dart';
 import 'package:shadow_garden/widgets/settings_components.dart';
 
@@ -34,53 +34,53 @@ class SettingsScreenState extends State<SettingsScreen> {
     return ListView(
       children: [
         SettingToggleTile(
-          label: Texts.textNeverListenFirst,
-          description: Texts.textNeverListenFirstContent,
+          label: 'textNeverListenFirst'.t(),
+          description: 'textNeverListenFirstContent'.t(),
           value :_audioProvider.neverListenedFirst, 
           onChanged: _setNeverListenedFirst,
         ),
         SettingSliderTile(
-          label: Texts.textSortWeight,
-          description: Texts.textSortWeightContent,
+          label: 'textSortWeight'.t(),
+          description: 'textSortWeightContent'.t(),
           value: _db.smartWeight,
           onChanged: _setSmartWeight,
-          leftLabel: Texts.textSmartWeight,
-          rightLabel: Texts.textDumbWeight,
+          leftLabel: 'textSmartWeight'.t(),
+          rightLabel: 'textDumbWeight'.t(),
         ),
         SettingIconButtonTile(
-          label: Texts.textWhitelist,
-          description: Texts.textWhitelistContent,
+          label: 'textWhitelist'.t(),
+          description: 'textWhitelistContent'.t(),
           icon: Icons.folder_rounded,
           onPressed: _pickFolder,
         ),
         SettingListView(items: _whitelist, onPressed: _removeFolder),
         SettingIconButtonTile(
-          label: Texts.textDeletePrefs,
-          description: Texts.textDeletePrefsContent,
+          label: 'textDeletePrefs'.t(),
+          description: 'textDeletePrefsContent'.t(),
           icon: Icons.delete_rounded,
           onPressed: () => Dialogs.deletionDialog(context, _clearSettings),
         ),
         SettingIconButtonTile(
-          label: Texts.textDeleteData,
-          description: Texts.textDeleteDataContent,
+          label: 'textDeleteData'.t(),
+          description: 'textDeleteDataContent'.t(),
           icon: Icons.delete_rounded,
           onPressed: () => Dialogs.deletionDialog(context, _clearDatabase),
         ),
         SettingIconButtonTile(
-          label: Texts.textDeleteGlobalStats,
-          description: Texts.textDeleteGlobalStatsContent,
+          label: 'textDeleteGlobalStats'.t(),
+          description: 'textDeleteGlobalStatsContent'.t(),
           icon: Icons.delete_rounded,
           onPressed: () => Dialogs.deletionDialog(context, _settings.clearGlobalStats),
         ),
         SettingIconButtonTile(
-          label: Texts.textImport,
-          description: Texts.textImportContent,
+          label: 'textImport'.t(),
+          description: 'textImportContent'.t(),
           icon: Icons.download_rounded,
           onPressed: _importData,
         ),
         SettingIconButtonTile(
-          label: Texts.textExport,
-          description: Texts.textExportContent,
+          label: 'textExport'.t(),
+          description: 'textExportContent'.t(),
           icon: Icons.upload_rounded,
           onPressed: _exportData,
         ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/utils/translator.dart';
 
 class Dialogs {
   static Future<void> deletionDialog(BuildContext context, void Function() onConfirmation) async {
@@ -8,7 +8,7 @@ class Dialogs {
       builder: (BuildContext context) {
         return AlertDialog(
           actionsAlignment: MainAxisAlignment.spaceAround,
-          title: Text(Texts.textDeletionDialog, style: Theme.of(context).textTheme.headlineSmall),
+          title: Text('textDeletionDialog'.t(), style: Theme.of(context).textTheme.headlineSmall),
           actions: [
             IconButton(icon: Icon(Icons.cancel_rounded, color: Theme.of(context).colorScheme.error),
               onPressed: () async {

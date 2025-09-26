@@ -43,3 +43,4 @@ flutter:
   assets:
     - assets/icons/
     - assets/visualizers/
+    - assets/i18n/

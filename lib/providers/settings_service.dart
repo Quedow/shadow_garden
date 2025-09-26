@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,13 +58,13 @@ class SettingsService {
   }
 
   Future<void> setMonitoringDate([String? date]) async {
-    await _preferences!.setString('monitoringDate', date ?? DateFormat('MM/dd/yyyy').format(DateTime.now()));
+    await _preferences!.setString('monitoringDate', date ?? DateFormat('dateFormat'.t()).format(DateTime.now()));
   }
 
   String getMonitoringDate() {
     String? monitoringDate = _preferences!.getString('monitoringDate');
     if (monitoringDate == null) {
-      monitoringDate = DateFormat('MM/dd/yyyy').format(DateTime.now());
+      monitoringDate = DateFormat('dateFormat'.t()).format(DateTime.now());
       setMonitoringDate(monitoringDate);
     }
     return monitoringDate;

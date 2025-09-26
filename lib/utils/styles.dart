@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ThemeColors {
+class Styles {
   static const Color primaryColor = Color(0xFFAAC9FF);
   static const Color darkPrimaryColor = Color(0xFF6A3DE8); // Previous color 7B93F6
   static const Color darkBlueGrey = Color(0xFF1D2530);

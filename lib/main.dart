@@ -8,6 +8,7 @@ import 'package:shadow_garden/providers/audio_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shadow_garden/screens/home_screen.dart';
 import 'package:shadow_garden/utils/styles.dart';
+import 'package:shadow_garden/utils/translator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,8 +23,9 @@ Future<void> main() async {
     androidShowNotificationBadge: true,
   );
   await SettingsService().init();
-  DatabaseService db = DatabaseService();
-  db.init();
+  await Translator.load();
+
+  DatabaseService db = DatabaseService()..init();
   await performMigrationIfNeeded(db);
 
   runApp(
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeColors.themeData,
+      theme: Styles.themeData,
       home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
     );

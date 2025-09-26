@@ -1,0 +1,53 @@
+{
+  "dateFormat": "MM/dd/yyyy",
+  "backupDateFormat": "dd-MM-yyyy_HH-mm-ss",
+
+  "textHomeBar": "Songs",
+  "textStatisticsBar": "Statistics",
+  "textSettingsBar": "Settings",
+
+  "searchLabel": "Search",
+
+  "errorNoSongFound": "No music found...",
+  "errorLoadingStats": "An error occurred...",
+
+  "textTrackingDate": "Monitoring since",
+  "textTotalListenNb": "Total number of listens",
+  "textTotalListenTime": "Total listening time",
+  "textListeningTime": "{0} min ({1} h)",
+  "textSongStats": "{0} listens - {1} % listened - {2} mos ago",
+
+  "textNeverListenFirst": "Smart sort",
+  "textNeverListenFirstContent": "Put musics never listened at the beginning.",
+
+  "textSortWeight": "Smart sort weight",
+  "textSortWeightContent": "Choose the importance of the smart sort compared to the random sort. Increasing the dumb side will bring back into fashion music that is rarely listened to or liked.",
+  "textSmartWeight": "Smart side",
+  "textDumbWeight": "Dumb side",
+
+  "textWhitelist": "Whitelist music",
+  "textWhitelistContent": "Only the content of whitelist folders is displayed.",
+
+  "textDeletePrefs": "Delete preferences",
+  "textDeletePrefsContent": "Preference settings such as loop mode, sort mode or number of song per loop will be reset default values.",
+
+  "textDeleteData": "Delete music data",
+  "textDeleteDataContent": "Listening data will be delete to reset smart sort (save global statistics).",
+
+  "textDeleteGlobalStats": "Delete global statistics",
+  "textDeleteGlobalStatsContent": "Total number of listens and total listening time will be reset.",
+
+  "textExport": "Export data",
+  "textExportContent": "Export songs statistics.",
+  "textImport": "Import data",
+  "textImportContent": "Import songs statistics from a backup. Current data will be permanently deleted (Reload recommended).",
+
+  "errorBackupNotFoundSnack": "No backup found",
+  "textSuccessImportSnack": "Data imported successfully",
+  "textSuccessExportSnack": "Data exported successfully",
+  "errorImportSnack": "An error occurred during importation",
+  "errorExportSnack": "An error occurred during exportation",
+
+  "textNextSongSnack": "Added to next song",
+  "textDeletionDialog": "Do you confirm the deletion?"
+}

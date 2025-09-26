@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
-import 'package:shadow_garden/utils/functions.dart';
+import 'package:shadow_garden/utils/utility.dart';
 
 class MarqueeSingle extends StatelessWidget {
   final String title;
@@ -12,7 +12,7 @@ class MarqueeSingle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double labelWidth = (textStyle?.fontSize ?? 18) * title.length;
-    final double labelHeight = Functions.getTextHeight(title, textStyle, availableWidth, verticalOffset: 1.5);
+    final double labelHeight = Utility.getTextHeight(title, textStyle, availableWidth, verticalOffset: 1.5);
 
     if (labelWidth > availableWidth) {
       return SizedBox(height: labelHeight, child: MarqueeText(label: title, textStyle: textStyle));

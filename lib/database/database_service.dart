@@ -8,8 +8,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shadow_garden/models/report.dart';
 import 'package:shadow_garden/models/songs.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
-import 'package:shadow_garden/utils/common_text.dart';
-import 'package:shadow_garden/utils/functions.dart';
+import 'package:shadow_garden/utils/translator.dart';
+import 'package:shadow_garden/utils/utility.dart';
 
 part 'database_service.g.dart';
 
@@ -176,7 +176,7 @@ class DatabaseService extends _$DatabaseService {
   Future<String> importData(String path) async {
     try {
       final File file = File(path);
-      if (!await file.exists()) return Texts.errorBackupNotFoundSnack;
+      if (!await file.exists()) return 'errorBackupNotFoundSnack'.t();
 
       final String raw = await file.readAsString();
       final Map<String, dynamic> jsonData = jsonDecode(raw);
@@ -188,15 +188,15 @@ class DatabaseService extends _$DatabaseService {
 
       await managers.songs.bulkCreate((_) => songs);
       await _settings.setGlobalStats(globalStats[0], globalStats[1]);
-      return Texts.textSuccessImportSnack;
+      return 'textSuccessImportSnack'.t();
     } catch (e) {
-      return Texts.errorImportSnack;
+      return 'errorImportSnack'.t();
     }
   }
 
   Future<String> exportData(String path) async {
     try {
-      final File file = File('$path/shadow_garden_backup_${Functions.getBackupDate()}.json');
+      final File file = File('$path/shadow_garden_backup_${Utility.getBackupDate()}.json');
 
       final List<Song> songs = await managers.songs.get();
       final List<String> globalStats = _settings.getGlobalStats();
@@ -206,9 +206,9 @@ class DatabaseService extends _$DatabaseService {
         'globalStats': [int.parse(globalStats[0]), int.parse(globalStats[1])],
       };
       await file.writeAsString(jsonEncode(data));
-      return Texts.textSuccessExportSnack;
+      return 'textSuccessExportSnack'.t();
     } catch (e) {
-      return Texts.errorExportSnack;
+      return 'errorExportSnack'.t();
     }
   }
 }

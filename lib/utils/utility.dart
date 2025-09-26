@@ -3,10 +3,10 @@ import 'package:intl/intl.dart' show DateFormat;
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query_forked/on_audio_query.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
-import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/widgets/overlays.dart';
 
-class Functions {
+class Utility {
   static Future<void> init(AudioProvider audioProvider) async {
     await audioProvider.audioPlayer.setLoopMode(LoopMode.values[audioProvider.cLoopMode.index <= 2 ? audioProvider.cLoopMode.index : LoopMode.all.index]);
     await audioProvider.fetchAudioSongs();
@@ -37,7 +37,7 @@ class Functions {
     audioPlayer.moveAudioSource(index, targetIndex);
     
     ScaffoldMessenger.of(context).showSnackBar(
-      Snack.floating(context, Texts.textNextSongSnack, 1000),
+      Snack.floating(context, 'textNextSongSnack'.t(), 1000),
     );
   }
 
@@ -76,6 +76,6 @@ class Functions {
   }
 
   static String getBackupDate() {
-    return DateFormat('dd-MM-yyyy_HH-mm-ss').format(DateTime.now());
+    return DateFormat('backupDateFormat'.t()).format(DateTime.now());
   }
 }

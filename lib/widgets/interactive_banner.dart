@@ -58,7 +58,7 @@ class SongBanner extends StatelessWidget {
 
     return Container(
       decoration: const BoxDecoration(
-        color: ThemeColors.darkPrimaryColor,
+        color: Styles.darkPrimaryColor,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
       ),
       child: StreamBuilder<SequenceState?>(

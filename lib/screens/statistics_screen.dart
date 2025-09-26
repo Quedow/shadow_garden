@@ -4,9 +4,9 @@ import 'package:shadow_garden/database/database_service.dart';
 import 'package:shadow_garden/models/report.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
-import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/utils/styles.dart';
-import 'package:shadow_garden/utils/functions.dart';
+import 'package:shadow_garden/utils/utility.dart';
 import 'package:shadow_garden/widgets/overlays.dart';
 import 'package:shadow_garden/widgets/artworks.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
@@ -35,7 +35,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
 
         Report? report = snapshot.data;
         if (snapshot.hasError || report == null) {
-          return Center(child: Text(Texts.errorLoadingStats, style: Theme.of(context).textTheme.headlineSmall));
+          return Center(child: Text('errorLoadingStats'.t(), style: Theme.of(context).textTheme.headlineSmall));
         }
 
         final List<Song> songs = report.songs;
@@ -47,13 +47,13 @@ class StatisticsScreenState extends State<StatisticsScreen> {
         
         final Map<int, int> keyToSongId = {};
         final List<SongModel> songModels = widget.audioProvider.songs;
-        for (final song in songModels) { keyToSongId[Functions.fastHash(song.album, song.title, song.artist)] = song.id; }
+        for (final song in songModels) { keyToSongId[Utility.fastHash(song.album, song.title, song.artist)] = song.id; }
 
         return Column(
           children: [
-            statisticText(Texts.textTrackingDate, _settings.getMonitoringDate()),
-            statisticText(Texts.textTotalListenNb, nbListens.toString()),
-            statisticText(Texts.textTotalListenTime, '${(listeningTime / 60).toStringAsFixed(0)} min (${(listeningTime / 3600).toStringAsFixed(0)} h)'),
+            statisticText('textTrackingDate'.t(), _settings.getMonitoringDate()),
+            statisticText('textTotalListenNb'.t(), nbListens.toString()),
+            statisticText('textTotalListenTime'.t(), 'textListeningTime'.t([(listeningTime / 60).toStringAsFixed(0), (listeningTime / 3600).toStringAsFixed(0)])),
             Expanded(
               child: Scrollbar(
                 thickness: DesignSystem.scrollbarThickness,
@@ -76,7 +76,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
                       subtitle: TitleText(
-                        title: '${song.nbOfListens} listens - ${(song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0)} % listened - ${song.daysAgo ~/ 30} mos ago',
+                        title: 'textSongStats'.t([song.nbOfListens, (song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0), (song.daysAgo ~/ 30)]),
                         textStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary),
                       ),
                       trailing: IconButton(

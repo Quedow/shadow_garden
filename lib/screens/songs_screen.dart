@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query_forked/on_audio_query.dart';
-import 'package:shadow_garden/utils/common_text.dart';
+import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/widgets/artworks.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
 import 'package:shadow_garden/utils/styles.dart';
-import 'package:shadow_garden/utils/functions.dart';
+import 'package:shadow_garden/utils/utility.dart';
 import 'package:shadow_garden/widgets/playing_animation.dart';
 
 class SongsScreen extends StatefulWidget {
@@ -50,7 +50,7 @@ class SongsScreenState extends State<SongsScreen> {
             focusNode: _focusNode,
             decoration: InputDecoration(
               isDense: true, contentPadding: EdgeInsets.zero, border: InputBorder.none,
-              hintText: 'Search', hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).hintColor),
+              hintText: 'searchLabel'.t(), hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).hintColor),
             ),
           ),
           trailing: IconButton(
@@ -65,7 +65,7 @@ class SongsScreenState extends State<SongsScreen> {
               final SequenceState? state = snapshot.data;
               
               if (state == null || state.sequence.isEmpty) {
-                return Center(child: Text(Texts.errorNoSongFound, style: Theme.of(context).textTheme.headlineSmall));
+                return Center(child: Text('errorNoSongFound'.t(), style: Theme.of(context).textTheme.headlineSmall));
               } else {
                 final int playlistLength = state.sequence.length;
 
@@ -88,8 +88,8 @@ class SongsScreenState extends State<SongsScreen> {
                         final bool isCurrentSong = _audioPlayer.currentIndex == index;
                         
                         return ListTile(
-                          onTap: () => Functions.onTap(_audioProvider, _audioPlayer, isCurrentSong, index),
-                          onLongPress: () => Functions.onLongPress(_audioPlayer, context, index),
+                          onTap: () => Utility.onTap(_audioProvider, _audioPlayer, isCurrentSong, index),
+                          onLongPress: () => Utility.onLongPress(_audioPlayer, context, index),
                           leading: SongArtwork(songId: int.parse(metadata.id), imgWidth: DesignSystem.artworkSmallSize),
                           title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: isCurrentSong ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary)),
                           subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
