@@ -75,23 +75,28 @@ class SongsScreenState extends State<SongsScreen> {
                   thumbVisibility: true,
                   radius: const Radius.circular(20),
                   interactive: true,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.only(right: DesignSystem.scrollbarThickness),
-                    itemCount: playlistLength,
-                    itemBuilder: (context, index) {
-                      final MediaItem metadata = state.sequence[index].tag;
-                      final bool isCurrentSong = _audioPlayer.currentIndex == index;
-                      
-                      return ListTile(
-                        onTap: () => Functions.onTap(_audioProvider, _audioPlayer, isCurrentSong, index),
-                        onLongPress: () => Functions.onLongPress(_audioPlayer, context, index),
-                        leading: SongArtwork(songId: int.parse(metadata.id), imgWidth: DesignSystem.artworkSmallSize),
-                        title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: isCurrentSong ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary)),
-                        subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
-                        trailing: PlayingAnimation(audioPlayer: _audioPlayer, isCurrentSong: isCurrentSong),
-                      );
-                    },
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
+                    child: ListView.builder(
+                      key: ValueKey(state.sequence.hashCode),
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(right: DesignSystem.scrollbarThickness),
+                      itemCount: playlistLength,
+                      itemBuilder: (context, index) {
+                        final MediaItem metadata = state.sequence[index].tag;
+                        final bool isCurrentSong = _audioPlayer.currentIndex == index;
+                        
+                        return ListTile(
+                          onTap: () => Functions.onTap(_audioProvider, _audioPlayer, isCurrentSong, index),
+                          onLongPress: () => Functions.onLongPress(_audioPlayer, context, index),
+                          leading: SongArtwork(songId: int.parse(metadata.id), imgWidth: DesignSystem.artworkSmallSize),
+                          title: TitleText(title: '${index + 1} - ${metadata.title}', textStyle: Theme.of(context).textTheme.labelLarge!.copyWith(color: isCurrentSong ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary)),
+                          subtitle: SubtitleText(album: metadata.album, artist: metadata.artist, textStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary)),
+                          trailing: PlayingAnimation(audioPlayer: _audioPlayer, isCurrentSong: isCurrentSong),
+                        );
+                      },
+                    ),
                   ),
                 );
               }

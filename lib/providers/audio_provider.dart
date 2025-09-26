@@ -24,6 +24,8 @@ class AudioProvider extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioPlayer get audioPlayer => _audioPlayer;
 
+  bool _loading = false;
+
   bool get shuffleEnabled => _audioPlayer.shuffleModeEnabled;
   void setShuffleEnabled() async {
     await _shuffle(!_audioPlayer.shuffleModeEnabled);
@@ -54,9 +56,9 @@ class AudioProvider extends ChangeNotifier {
       await _shuffle(false);
     } else {
       _sortState = (_sortState + 1) % _totalState;
+      await _settings.setSortState(_sortState);
+      await _sortSongs(_sortState, _audioPlayer.currentIndex);
     }
-    await _settings.setSortState(_sortState);
-    await _sortSongs(_sortState);
     notifyListeners();
   }
 
@@ -154,13 +156,13 @@ class AudioProvider extends ChangeNotifier {
     try {
       List<String> paths = _settings.getWhiteList();
       for (String path in paths) {
-        List<SongModel> songs = await audioQuery.querySongs(
+        List<SongModel> results = await audioQuery.querySongs(
           orderType: OrderType.ASC_OR_SMALLER,
           sortType: SongSortType.TITLE,
           ignoreCase: true,
           path: path,
         );
-        _songs.addAll(songs);
+        _songs.addAll(results);
       }
 
       if (_songs.isEmpty) { return false; }
@@ -206,7 +208,14 @@ class AudioProvider extends ChangeNotifier {
     if (playing) await _audioPlayer.play();
   }
 
-  Future<void> _sortSongs(int state) async {
+  Future<void> _sortSongs(int state, [int? index]) async {
+    if (_loading) return;
+    _loading = true;
+    SongModel? currentSong;
+    if (index != null && _audioPlayer.playing) {
+      currentSong = Functions.getSongModel(_audioPlayer, songs, index);
+      await _audioPlayer.moveAudioSource(index, 0);
+    }
     switch(state) {
       case 0:
         _songs.sort((a, b) => a.title.compareTo(b.title));
@@ -224,8 +233,15 @@ class AudioProvider extends ChangeNotifier {
         await _smartSort();
         break;
     }
-    _setPlaylist();
-    await _audioPlayer.setAudioSources(_playlist);
+    _setPlaylist();    
+    if (currentSong != null) {
+      await _audioPlayer.removeAudioSourceRange(1, _audioPlayer.sequence.length);
+      final duplicateCurrentIndex = _songs.indexOf(currentSong);
+      await _audioPlayer.addAudioSources(_playlist..removeAt(duplicateCurrentIndex));
+    } else {
+      await _audioPlayer.setAudioSources(_playlist);
+    }
+    _loading = false;
   }
 
   Future<void> _shuffle(bool enabled) async {
