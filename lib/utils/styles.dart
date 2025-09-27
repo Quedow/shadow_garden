@@ -56,17 +56,6 @@ class Styles {
       bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
       labelLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       labelMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-      
-      // Text styles not setup
-      headlineLarge: TextStyle(color: errorColor),
-      headlineMedium: TextStyle(color: errorColor),
-      displayLarge: TextStyle(color: errorColor),
-      displayMedium: TextStyle(color: errorColor),
-      displaySmall: TextStyle(color: errorColor),
-      titleSmall: TextStyle(color: errorColor),
-      bodyMedium: TextStyle(color: errorColor),
-      bodySmall: TextStyle(color: errorColor),
-      labelSmall: TextStyle(color: errorColor),
     ),
   );
 }

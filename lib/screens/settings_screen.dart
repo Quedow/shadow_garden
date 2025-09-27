@@ -31,60 +31,67 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {    
-    return ListView(
-      children: [
-        SettingToggleTile(
-          label: 'textNeverListenFirst'.t(),
-          description: 'textNeverListenFirstContent'.t(),
-          value :_audioProvider.neverListenedFirst, 
-          onChanged: _setNeverListenedFirst,
-        ),
-        SettingSliderTile(
-          label: 'textSortWeight'.t(),
-          description: 'textSortWeightContent'.t(),
-          value: _db.smartWeight,
-          onChanged: _setSmartWeight,
-          leftLabel: 'textSmartWeight'.t(),
-          rightLabel: 'textDumbWeight'.t(),
-        ),
-        SettingIconButtonTile(
-          label: 'textWhitelist'.t(),
-          description: 'textWhitelistContent'.t(),
-          icon: Icons.folder_rounded,
-          onPressed: _pickFolder,
-        ),
-        SettingListView(items: _whitelist, onPressed: _removeFolder),
-        SettingIconButtonTile(
-          label: 'textDeletePrefs'.t(),
-          description: 'textDeletePrefsContent'.t(),
-          icon: Icons.delete_rounded,
-          onPressed: () => Dialogs.deletionDialog(context, _clearSettings),
-        ),
-        SettingIconButtonTile(
-          label: 'textDeleteData'.t(),
-          description: 'textDeleteDataContent'.t(),
-          icon: Icons.delete_rounded,
-          onPressed: () => Dialogs.deletionDialog(context, _clearDatabase),
-        ),
-        SettingIconButtonTile(
-          label: 'textDeleteGlobalStats'.t(),
-          description: 'textDeleteGlobalStatsContent'.t(),
-          icon: Icons.delete_rounded,
-          onPressed: () => Dialogs.deletionDialog(context, _settings.clearGlobalStats),
-        ),
-        SettingIconButtonTile(
-          label: 'textImport'.t(),
-          description: 'textImportContent'.t(),
-          icon: Icons.download_rounded,
-          onPressed: _importData,
-        ),
-        SettingIconButtonTile(
-          label: 'textExport'.t(),
-          description: 'textExportContent'.t(),
-          icon: Icons.upload_rounded,
-          onPressed: _exportData,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: ListView(
+        children: [
+          SettingToggleTile(
+            label: 'textNeverListenFirst'.t(),
+            description: 'textNeverListenFirstContent'.t(),
+            value :_audioProvider.neverListenedFirst, 
+            onChanged: _setNeverListenedFirst,
+          ),
+          SettingSliderTile(
+            label: 'textSortWeight'.t(),
+            description: 'textSortWeightContent'.t(),
+            value: _db.smartWeight,
+            onChanged: _setSmartWeight,
+            leftLabel: 'textSmartWeight'.t(),
+            rightLabel: 'textDumbWeight'.t(),
+          ),
+          SettingIconButtonTile(
+            label: 'textWhitelist'.t(),
+            description: 'textWhitelistContent'.t(),
+            icon: Icons.folder_rounded,
+            onPressed: _pickFolder,
+          ),
+          SettingListView(items: _whitelist, onPressed: _removeFolder),
+          SettingIconButtonTile(
+            label: 'textDeletePrefs'.t(),
+            description: 'textDeletePrefsContent'.t(),
+            icon: Icons.delete_rounded,
+            onPressed: () => Dialogs.deletionDialog(context, _clearSettings),
+          ),
+          SettingIconButtonTile(
+            label: 'textDeleteData'.t(),
+            description: 'textDeleteDataContent'.t(),
+            icon: Icons.delete_rounded,
+            onPressed: () => Dialogs.deletionDialog(context, _clearDatabase),
+          ),
+          SettingIconButtonTile(
+            label: 'textDeleteGlobalStats'.t(),
+            description: 'textDeleteGlobalStatsContent'.t(),
+            icon: Icons.delete_rounded,
+            onPressed: () => Dialogs.deletionDialog(context, _settings.clearGlobalStats),
+          ),
+          SettingIconButtonTile(
+            label: 'textImport'.t(),
+            description: 'textImportContent'.t(),
+            icon: Icons.download_rounded,
+            onPressed: _importData,
+          ),
+          SettingIconButtonTile(
+            label: 'textExport'.t(),
+            description: 'textExportContent'.t(),
+            icon: Icons.upload_rounded,
+            onPressed: _exportData,
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: TextButton(onPressed: _openLicencesPage, child: Text('textAboutBtn'.t())),
+          ),
+        ],
+      ),
     );
   }
 
@@ -150,6 +157,22 @@ class SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       Snack.floating(context, result, 2000),
+    );
+  }
+
+  void _openLicencesPage() {
+    final int currentYear = DateTime.now().year;
+    showLicensePage(
+      context: context,
+      applicationName: 'Shadow Garden',
+      applicationLegalese:  '© $currentYear Take Up Tech. All rights reserved.',
+      applicationIcon: Padding(
+        padding: const EdgeInsets.all(10),
+        child: ClipRRect(
+          child: Image.asset('assets/icons/shadow_garden_icon.png', height: 50),
+        ),
+      ),
+      applicationVersion: '2509.1.8.0'
     );
   }
 }

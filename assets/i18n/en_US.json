@@ -42,6 +42,8 @@
   "textImport": "Import data",
   "textImportContent": "Import songs statistics from a backup. Current data will be permanently deleted (Reload recommended).",
 
+  "textAboutBtn": "About",
+
   "errorBackupNotFoundSnack": "No backup found",
   "textSuccessImportSnack": "Data imported successfully",
   "textSuccessExportSnack": "Data exported successfully",
