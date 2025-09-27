@@ -60,7 +60,7 @@ class AudioProvider extends ChangeNotifier {
     } else {
       _sortState = (_sortState + 1) % _totalState;
       await _settings.setSortState(_sortState);
-      await _sortSongs(_sortState, _audioPlayer.currentIndex);
+      await _sortSongs(_sortState, index: _audioPlayer.currentIndex);
     }
     notifyListeners();
   }
@@ -105,10 +105,6 @@ class AudioProvider extends ChangeNotifier {
         _cLoopIndexes.add(index);
       } else if (index < first) {
         _cLoopIndexes = {index};
-      }
-
-      if (kDebugMode) {
-        print('Custom loop updated: $_cLoopIndexes (index: $index)');
       }
     });
 
@@ -171,7 +167,7 @@ class AudioProvider extends ChangeNotifier {
 
       if (_songs.isEmpty) { return false; }
 
-      await _sortSongs(_sortState);
+      await _sortSongs(_sortState, initialIndex: _settings.getLastIndex());
       _loadArtworkInBackground(audioQuery);
       await _updateDaysAgo();
       return true;
@@ -235,7 +231,7 @@ class AudioProvider extends ChangeNotifier {
     if (playing) await _audioPlayer.play();
   }
 
-  Future<void> _sortSongs(int state, [int? index]) async {
+  Future<void> _sortSongs(int state, {int? initialIndex, int? index}) async {
     if (_loading) return;
     _loading = true;
     SongModel? currentSong;
@@ -266,7 +262,7 @@ class AudioProvider extends ChangeNotifier {
       final duplicateCurrentIndex = _songs.indexOf(currentSong);
       await _audioPlayer.addAudioSources(_playlist..removeAt(duplicateCurrentIndex));
     } else {
-      await _audioPlayer.setAudioSources(_playlist);
+      await _audioPlayer.setAudioSources(_playlist, initialIndex: initialIndex);
     }
     _loading = false;
   }

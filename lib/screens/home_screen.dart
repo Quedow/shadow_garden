@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:shadow_garden/providers/settings_service.dart';
 import 'package:shadow_garden/widgets/interactive_banner.dart';
 import 'package:shadow_garden/screens/songs_screen.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
@@ -16,15 +17,16 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  late AudioPlayer _audioPlayer;
-  late AudioProvider _audioProvider;
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  final SettingsService _settings = SettingsService();
+  late final AudioPlayer _audioPlayer;
+  late final AudioProvider _audioProvider;
   int currentScreenIndex = 0;
-  bool isPlaying = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _audioProvider = Provider.of<AudioProvider>(context, listen: false);
     Utility.init(_audioProvider);
     _audioPlayer = _audioProvider.audioPlayer;
@@ -33,7 +35,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _audioPlayer.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
+      _settings.setLastIndex(_audioPlayer.currentIndex);
+    }
   }
 
   @override

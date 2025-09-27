@@ -17,6 +17,15 @@ class SettingsService {
     _preferences ??= await SharedPreferences.getInstance();
   }
 
+  Future<void> setLastIndex(int? index) async {
+    if (index == null) return;
+    await _preferences!.setInt('lastIndex', index);
+  }
+
+  int getLastIndex() {
+    return _preferences!.getInt('lastIndex') ?? 0;
+  }
+
   Future<void> setCLoopMode(CLoopMode cMode) async {
     await _preferences!.setInt('cLoopMode', cMode.index);
   }
@@ -91,14 +100,6 @@ class SettingsService {
 
   Future<void> clearGlobalStats() async {
     await _preferences!.remove('globalStats');
-  }
-
-  Future<void> setVersion(int version) async {
-    await _preferences!.setInt('version', version);
-  }
-
-  int getVersion() {
-    return _preferences!.getInt('version') ?? 5;
   }
 
   Future<void> clearSettings() async {
