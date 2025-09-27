@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query_forked/on_audio_query.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shadow_garden/database/database_service.dart';
 import 'package:shadow_garden/models/report.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
@@ -18,12 +20,13 @@ class AudioProvider extends ChangeNotifier {
   final List<SongModel> _songs = [];
   List<SongModel> get songs => _songs;
 
-  List<AudioSource> _playlist =[];
+  List<AudioSource> _playlist = [];
   List<AudioSource> get playlist => _playlist;
 
   final AudioPlayer _audioPlayer = AudioPlayer();
   AudioPlayer get audioPlayer => _audioPlayer;
 
+  late final String _directoryPath;
   bool _loading = false;
 
   bool get shuffleEnabled => _audioPlayer.shuffleModeEnabled;
@@ -141,11 +144,12 @@ class AudioProvider extends ChangeNotifier {
     _cLoopMode = _settings.getCLoopMode();
     _songsPerLoop = _settings.getSongsPerLoop();
     _sortState = _settings.getSortState();
-    _neverListenedFirst = _settings.getNeverListenedFirst(); 
+    _neverListenedFirst = _settings.getNeverListenedFirst();
   }
 
   Future<bool> fetchAudioSongs() async {
     final OnAudioQuery audioQuery = OnAudioQuery();
+    _directoryPath = (await getTemporaryDirectory()).path;
 
     // Request permissions
     bool hasPermission = await audioQuery.permissionsStatus();
@@ -168,11 +172,33 @@ class AudioProvider extends ChangeNotifier {
       if (_songs.isEmpty) { return false; }
 
       await _sortSongs(_sortState);
+      _loadArtworkInBackground(audioQuery);
       await _updateDaysAgo();
       return true;
     } catch (e) {
       return false;
     }
+  }
+  
+  void _loadArtworkInBackground(OnAudioQuery audioQuery) {
+    Future(() async {
+      await Future.wait(_songs.map((song) async {
+        final File file = File('$_directoryPath/${song.id}.jpg');
+
+        if (await file.exists()) return;
+
+        try {
+          final Uint8List? artworkData = await audioQuery.queryArtwork(song.id, ArtworkType.AUDIO);
+          if (artworkData != null) {
+            await file.writeAsBytes(artworkData, flush: true);
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print(e);
+          }
+        }
+      }));
+    });
   }
 
   void _setPlaylist() {
@@ -183,6 +209,7 @@ class AudioProvider extends ChangeNotifier {
         title: song.title,
         album: song.album,
         artist: song.artist,
+        artUri: Uri.parse('file://$_directoryPath/${song.id}.jpg')
       ),
     )).toList();
   }

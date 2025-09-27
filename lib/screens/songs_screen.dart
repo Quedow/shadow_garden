@@ -79,7 +79,7 @@ class SongsScreenState extends State<SongsScreen> {
                     duration: const Duration(milliseconds: 300),
                     transitionBuilder: (child, animation) => FadeTransition(opacity: animation, child: child),
                     child: ListView.builder(
-                      key: ValueKey(state.sequence.hashCode),
+                      key: ValueKey(_audioProvider.sortState),
                       controller: _scrollController,
                       padding: const EdgeInsets.only(right: DesignSystem.scrollbarThickness),
                       itemCount: playlistLength,
