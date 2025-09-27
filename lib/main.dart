@@ -18,9 +18,9 @@ Future<void> main() async {
   ]);
   
   await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.example.shadow_garden.channel.audio',
+    androidNotificationChannelId: 'com.takeuptech.shadow_garden.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
-    androidShowNotificationBadge: true,
   );
   await SettingsService().init();
   await Translator.load();
