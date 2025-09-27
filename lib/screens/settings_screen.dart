@@ -172,7 +172,7 @@ class SettingsScreenState extends State<SettingsScreen> {
           child: Image.asset('assets/icons/shadow_garden_icon.png', height: 50),
         ),
       ),
-      applicationVersion: '2509.1.8.0'
+      applicationVersion: '2509.1.9.0'
     );
   }
 }
