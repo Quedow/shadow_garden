@@ -143,6 +143,11 @@ class AudioProvider extends ChangeNotifier {
     _neverListenedFirst = _settings.getNeverListenedFirst();
   }
 
+  Future<void> resetSettings() async {
+    initSettings();
+    await _sortSongs(_sortState, listeningIndex: _audioPlayer.playing ? _audioPlayer.currentIndex : null);
+  }
+
   Future<bool> fetchAudioSongs() async {
     final OnAudioQuery audioQuery = OnAudioQuery();
     _directoryPath = (await getTemporaryDirectory()).path;

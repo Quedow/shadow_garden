@@ -131,7 +131,7 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   void _clearSettings() async {
     await _settings.clearSettings();
-    _audioProvider.initSettings();
+    await _audioProvider.resetSettings();
     setState(() {
       _whitelist = _settings.getWhiteList();
       _weights = _settings.getWeights();
