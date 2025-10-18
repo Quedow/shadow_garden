@@ -107,8 +107,7 @@ class DatabaseService extends _$DatabaseService {
       if (column == 'listeningTime') {
         buffer.write('''
           $weight * (
-            (SELECT COUNT(*) FROM songs AS s2 WHERE (CAST(s2.listeningTime AS REAL) / (s2.nbOfListens * s2.duration)) $comparator (CAST(songs.listeningTime AS REAL) / (songs.nbOfListens * songs.duration)))
-            + 0.5 * (SELECT COUNT(*) FROM songs AS s3 WHERE (CAST(s3.listeningTime AS REAL) / (s3.nbOfListens * s3.duration)) = (CAST(songs.listeningTime AS REAL) / (songs.nbOfListens * songs.duration)))
+            (SELECT COUNT(*) FROM songs AS s2 WHERE ROUND((CAST(s2.listeningTime AS REAL) / (s2.nbOfListens * s2.duration)), 2) $comparator ROUND((CAST(songs.listeningTime AS REAL) / (songs.nbOfListens * songs.duration)), 2))
           ) / (SELECT COUNT(*) FROM songs)
         ''');
       } else {

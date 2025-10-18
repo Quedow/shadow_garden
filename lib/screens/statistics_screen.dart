@@ -24,6 +24,8 @@ class StatisticsScreenState extends State<StatisticsScreen> {
   final SettingsService _settings = SettingsService();
   final DatabaseService _db = DatabaseService();
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Report>(
@@ -58,11 +60,12 @@ class StatisticsScreenState extends State<StatisticsScreen> {
             Expanded(
               child: Scrollbar(
                 thickness: DesignSystem.scrollbarThickness,
+                controller: _scrollController,
                 thumbVisibility: true,
                 radius: const Radius.circular(20),
                 interactive: true,
                 child: ListView.builder(
-                  primary: false,
+                  controller: _scrollController,
                   padding: const EdgeInsets.only(right: DesignSystem.scrollbarThickness),
                   itemCount: songs.length,
                   itemBuilder: (context, index) {
