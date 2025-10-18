@@ -60,7 +60,7 @@ class AudioProvider extends ChangeNotifier {
     } else {
       _sortState = (_sortState + 1) % _totalState;
       await _settings.setSortState(_sortState);
-      await _sortSongs(_sortState, index: _audioPlayer.currentIndex);
+      await _sortSongs(_sortState, listeningIndex: _audioPlayer.playing ? _audioPlayer.currentIndex : null);
     }
     notifyListeners();
   }
@@ -114,7 +114,7 @@ class AudioProvider extends ChangeNotifier {
 
     _audioPlayer.positionDiscontinuityStream.listen((PositionDiscontinuity discontinuity) {
       if (_audioPlayer.position.inSeconds == 0 && audioPlayer.playerState.playing) {
-        SongModel? currentSong = Utility.getSongModel(_audioPlayer, _songs, discontinuity.previousEvent.currentIndex);
+        SongModel? currentSong = Utility.getSongModel(_audioPlayer, songs, discontinuity.previousEvent.currentIndex);
 
         if (currentSong != null) {
           int duration =  discontinuity.previousEvent.duration != null
@@ -167,7 +167,7 @@ class AudioProvider extends ChangeNotifier {
 
       if (_songs.isEmpty) { return false; }
 
-      await _sortSongs(_sortState, initialIndex: _settings.getLastIndex());
+      await _sortSongs(_sortState, restoreLastSong: true);
       _loadArtworkInBackground(audioQuery);
       return true;
     } catch (e) {
@@ -177,7 +177,7 @@ class AudioProvider extends ChangeNotifier {
   
   void _loadArtworkInBackground(OnAudioQuery audioQuery) {
     Future(() async {
-      await Future.wait(_songs.map((song) async {
+      await Future.wait(songs.map((song) async {
         final File file = File('$_directoryPath/${song.id}.jpg');
 
         if (await file.exists()) return;
@@ -196,8 +196,8 @@ class AudioProvider extends ChangeNotifier {
     });
   }
 
-  void _setPlaylist() {
-    _playlist = _songs.map((song) => AudioSource.uri(
+  void _setPlaylist(List<SongModel> playlist) {
+    _playlist = playlist.map((song) => AudioSource.uri(
       Uri.file(song.data),
       tag: MediaItem(
         id: song.id.toString(),
@@ -230,38 +230,44 @@ class AudioProvider extends ChangeNotifier {
     if (playing) await _audioPlayer.play();
   }
 
-  Future<void> _sortSongs(int state, {int? initialIndex, int? index}) async {
+  Future<void> _sortSongs(int state, {bool restoreLastSong = false, int? listeningIndex}) async {
     if (_loading) return;
     _loading = true;
-    SongModel? currentSong;
-    if (index != null && _audioPlayer.playing) {
-      currentSong = Utility.getSongModel(_audioPlayer, songs, index);
-      await _audioPlayer.moveAudioSource(index, 0);
-    }
+
+    final int? songIndex = listeningIndex != null
+      ? Utility.getSongIndex(_audioPlayer, songs, listeningIndex)
+      : null;
+
+    List<SongModel> playlist = List.from(songs);
     switch(state) {
       case 0:
-        _songs.sort((a, b) => a.title.compareTo(b.title));
+        playlist.sort((a, b) => a.title.compareTo(b.title));
         break;
       case 1:
-        _songs.sort((a, b) => (a.album ?? '').compareTo(b.album ?? ''));
+        playlist.sort((a, b) => (a.album ?? '').compareTo(b.album ?? ''));
         break;
       case 2:
-        _songs.sort((a, b) => (a.artist ?? '').compareTo(b.artist ?? ''));
+        playlist.sort((a, b) => (a.artist ?? '').compareTo(b.artist ?? ''));
         break;
       case 3:
-        _songs.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
+        playlist.sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
         break;
       case 4:
-        await _smartSort();
+        playlist = await _smartSort();
         break;
     }
-    _setPlaylist();    
-    if (currentSong != null) {
+    _setPlaylist(playlist);
+
+    if (listeningIndex != null && songIndex != null) {
+      await _audioPlayer.moveAudioSource(listeningIndex, 0);
       await _audioPlayer.removeAudioSourceRange(1, _audioPlayer.sequence.length);
-      final duplicateCurrentIndex = _songs.indexOf(currentSong);
-      await _audioPlayer.addAudioSources(_playlist..removeAt(duplicateCurrentIndex));
-    } else {
+      await _audioPlayer.addAudioSources(_playlist..removeAt(songIndex));
+    } else if (restoreLastSong) {
+      final int? lastId = _settings.getLastId();
+      final int initialIndex = lastId == null ? 0 : songs.indexWhere((song) => song.id == lastId).clamp(0, songs.length - 1);
       await _audioPlayer.setAudioSources(_playlist, initialIndex: initialIndex);
+    } else {
+      await _audioPlayer.setAudioSources(_playlist);
     }
     _loading = false;
   }
@@ -270,16 +276,18 @@ class AudioProvider extends ChangeNotifier {
     await _audioPlayer.setShuffleModeEnabled(enabled);
   }
 
-  Future<void> _smartSort() async {
+  Future<List<SongModel>> _smartSort() async {
     final List<int> ranking = await _db.getRanking();
     final int size = ranking.length;
     final Map<int, int> keyToRank = {for (int i = 0; i < size; i++) ranking[i]: i};
     final int sortPosition = _neverListenedFirst ? -1 : size; // Musiques hors bases sont à la fin ou au début
     
-    _songs.sort((a, b) {
+    final List<SongModel> playlist = List.from(songs);
+    playlist.sort((a, b) {
       final int keyA = Utility.fastHash(a.album, a.title, a.artist);
       final int keyB = Utility.fastHash(b.album, b.title, b.artist);
       return (keyToRank[keyA] ?? sortPosition).compareTo(keyToRank[keyB] ?? sortPosition);
     });
+    return playlist;
   }
 }

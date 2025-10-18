@@ -15,13 +15,12 @@ class SettingsService {
     _preferences ??= await SharedPreferences.getInstance();
   }
 
-  Future<void> setLastIndex(int? index) async {
-    if (index == null) return;
-    await _preferences!.setInt('lastIndex', index);
+  Future<void> setLastId(int index) async {
+    await _preferences!.setInt('lastId', index);
   }
 
-  int getLastIndex() {
-    return _preferences!.getInt('lastIndex') ?? 0;
+  int? getLastId() {
+    return _preferences!.getInt('lastId');
   }
 
   Future<void> setCLoopMode(CLoopMode cMode) async {

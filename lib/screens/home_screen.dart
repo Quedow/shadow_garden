@@ -45,7 +45,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
 
     if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
-      _settings.setLastIndex(_audioPlayer.currentIndex);
+      if (_audioPlayer.currentIndex == null) return;
+      final int currentId = int.parse(_audioPlayer.sequence[_audioPlayer.currentIndex!].tag.id);
+      _settings.setLastId(currentId);
     }
   }
 
