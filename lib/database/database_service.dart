@@ -102,16 +102,16 @@ class DatabaseService extends _$DatabaseService {
 
       if (i > 0) buffer.write(' + ');
 
+      final String comparator = column == 'addedDate' ? '>' : '<';
+
       if (column == 'listeningTime') {
         buffer.write('''
           $weight * (
-            (SELECT COUNT(*) FROM songs AS s2 WHERE (CAST(s2.listeningTime AS REAL) / (s2.nbOfListens * s2.duration)) < (CAST(songs.listeningTime AS REAL) / (songs.nbOfListens * songs.duration)))
+            (SELECT COUNT(*) FROM songs AS s2 WHERE (CAST(s2.listeningTime AS REAL) / (s2.nbOfListens * s2.duration)) $comparator (CAST(songs.listeningTime AS REAL) / (songs.nbOfListens * songs.duration)))
             + 0.5 * (SELECT COUNT(*) FROM songs AS s3 WHERE (CAST(s3.listeningTime AS REAL) / (s3.nbOfListens * s3.duration)) = (CAST(songs.listeningTime AS REAL) / (songs.nbOfListens * songs.duration)))
           ) / (SELECT COUNT(*) FROM songs)
         ''');
       } else {
-        final String comparator = column == 'addedDate' ? '>' : '<';
-
         buffer.write('''
           $weight * (
             (SELECT COUNT(*) FROM songs AS s2 WHERE s2.$column $comparator songs.$column)
