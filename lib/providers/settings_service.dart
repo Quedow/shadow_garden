@@ -15,8 +15,8 @@ class SettingsService {
     _preferences ??= await SharedPreferences.getInstance();
   }
 
-  Future<void> setLastId(int index) async {
-    await _preferences!.setInt('lastId', index);
+  Future<void> setLastId(int id) async {
+    await _preferences!.setInt('lastId', id);
   }
 
   int? getLastId() {

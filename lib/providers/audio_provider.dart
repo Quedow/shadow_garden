@@ -264,7 +264,7 @@ class AudioProvider extends ChangeNotifier {
       await _audioPlayer.addAudioSources(_playlist..removeAt(songIndex));
     } else if (restoreLastSong) {
       final int? lastId = _settings.getLastId();
-      final int initialIndex = lastId == null ? 0 : songs.indexWhere((song) => song.id == lastId).clamp(0, songs.length - 1);
+      final int initialIndex = lastId == null ? 0 : playlist.indexWhere((song) => song.id == lastId).clamp(0, songs.length - 1);
       await _audioPlayer.setAudioSources(_playlist, initialIndex: initialIndex);
     } else {
       await _audioPlayer.setAudioSources(_playlist);
