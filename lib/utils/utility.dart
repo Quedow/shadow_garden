@@ -51,15 +51,6 @@ class Utility {
     return currentSong;
   }
 
-  static int? getSongIndex(AudioPlayer audioPlayer, List<SongModel> songs, int? index) {
-    final List<IndexedAudioSource> sequence = audioPlayer.sequence;
-
-    if (index == null) { return null; }
-
-    final int currentAudioId = int.parse(sequence[index].tag.id);
-    return songs.indexWhere((song) => song.id == currentAudioId);
-  }
-
   static int fastHash(String? album, String title, String? artist) {
     String string = '${album ?? ''}$title${artist ?? ''}';
     int hash = 0xcbf29ce484222325;

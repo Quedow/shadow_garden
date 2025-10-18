@@ -239,8 +239,8 @@ class AudioProvider extends ChangeNotifier {
     if (_loading) return;
     _loading = true;
 
-    final int? songIndex = listeningIndex != null
-      ? Utility.getSongIndex(_audioPlayer, songs, listeningIndex)
+    final SongModel? listeningSong = listeningIndex != null
+      ? Utility.getSongModel(_audioPlayer, songs, listeningIndex)
       : null;
 
     List<SongModel> playlist = List.from(songs);
@@ -263,10 +263,13 @@ class AudioProvider extends ChangeNotifier {
     }
     _setPlaylist(playlist);
 
-    if (listeningIndex != null && songIndex != null) {
-      await _audioPlayer.moveAudioSource(listeningIndex, 0);
-      await _audioPlayer.removeAudioSourceRange(1, _audioPlayer.sequence.length);
-      await _audioPlayer.addAudioSources(_playlist..removeAt(songIndex));
+    if (listeningIndex != null && listeningSong != null) {
+      final int duplicatedIndex = playlist.indexOf(listeningSong);
+      await Future.wait([
+        _audioPlayer.moveAudioSource(listeningIndex, 0),
+        _audioPlayer.removeAudioSourceRange(1, _audioPlayer.sequence.length),
+        _audioPlayer.addAudioSources(_playlist..removeAt(duplicatedIndex)),
+      ]);
     } else if (restoreLastSong) {
       final int? lastId = _settings.getLastId();
       final int initialIndex = lastId == null ? 0 : playlist.indexWhere((song) => song.id == lastId).clamp(0, songs.length - 1);
