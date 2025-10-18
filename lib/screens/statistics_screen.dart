@@ -54,7 +54,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
           children: [
             statisticText('textTotalListenTime'.t(), 'textListeningTime'.t([(listeningTime / 60).toStringAsFixed(0), (listeningTime / 3600).toStringAsFixed(0)]), Icons.access_time_rounded),
             statisticText('textTotalListenNb'.t(), nbListens.toString(), Icons.remove_red_eye_rounded),
-            statisticText('textTotalSongs'.t([songs.length])),
+            statisticText('textTotalSongs'.t([songModels.length])),
             Expanded(
               child: Scrollbar(
                 thickness: DesignSystem.scrollbarThickness,
