@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/widgets/controls.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -58,25 +56,15 @@ class SettingsService {
     return _preferences!.getBool('neverListenedFirst') ?? false;
   }
 
-  Future<void> setSmartWeight (double value) async {
-    await _preferences!.setDouble('smartWeight', value);
+  Future<void> setWeights(List<double> weights) async {
+    List<String> data = weights.map((weight) => weight.toString()).toList();
+    await _preferences!.setStringList('weights', data);
   }
 
-  double getSmartWeight() {
-    return _preferences!.getDouble('smartWeight') ?? 0.9;
-  }
-
-  Future<void> setMonitoringDate([String? date]) async {
-    await _preferences!.setString('monitoringDate', date ?? DateFormat('dateFormat'.t()).format(DateTime.now()));
-  }
-
-  String getMonitoringDate() {
-    String? monitoringDate = _preferences!.getString('monitoringDate');
-    if (monitoringDate == null) {
-      monitoringDate = DateFormat('dateFormat'.t()).format(DateTime.now());
-      setMonitoringDate(monitoringDate);
-    }
-    return monitoringDate;
+  List<double> getWeights() {
+    final List<String>? data = _preferences!.getStringList('weights');
+    if (data == null) return [0.25, 0.25, 0.25, 0.25];
+    return data.map(double.parse).toList();
   }
 
   Future<void> setWhiteList(List<String> whitelist) async {
@@ -103,10 +91,8 @@ class SettingsService {
   }
 
   Future<void> clearSettings() async {
-    final String monitoringDateTemp = getMonitoringDate();
     final List<String> globalStatTemp = getGlobalStats();
     await _preferences!.clear();
-    await setMonitoringDate(monitoringDateTemp);
     await _preferences!.setStringList('globalStats', globalStatTemp);
   }
 }

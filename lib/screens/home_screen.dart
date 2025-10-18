@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
+import 'package:shadow_garden/screens/settings_screen.dart';
 import 'package:shadow_garden/widgets/interactive_banner.dart';
 import 'package:shadow_garden/screens/songs_screen.dart';
 import 'package:shadow_garden/providers/audio_provider.dart';
@@ -52,8 +53,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: [
-        CustomAppBar(appBarType: AppBarType.home, audioProvider: _audioProvider, title: 'textHomeBar'.t()),
-        CustomAppBar(appBarType: AppBarType.setting, audioProvider: _audioProvider, title: 'textStatisticsBar'.t()),
+        CustomAppBar(appBarType: AppBarType.home, title: 'textHomeBar'.t()),
+        CustomAppBar(appBarType: AppBarType.classic, title: 'textStatisticsBar'.t()),
+        CustomAppBar(appBarType: AppBarType.classic, title: 'textSettingsBar'.t()),
       ][currentScreenIndex],
       body: Column(
         children: [
@@ -63,10 +65,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: [
                 SongsScreen(audioProvider: _audioProvider),
                 StatisticsScreen(audioProvider: _audioProvider),
+                SettingsScreen(audioProvider: _audioProvider),
               ],
             ),
           ),
-          InteractiveBanner(audioPlayer: _audioPlayer),
+          if (currentScreenIndex != 2)
+            InteractiveBanner(audioPlayer: _audioPlayer),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -83,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         items: [
           BottomNavigationBarItem(label: 'textHomeBar'.t(), icon: const Icon(Icons.music_note_rounded)),
           BottomNavigationBarItem(label: 'textStatisticsBar'.t(), icon: const Icon(Icons.bar_chart_rounded)),
+          BottomNavigationBarItem(label: 'textSettingsBar'.t(), icon: const Icon(Icons.settings_rounded)),
         ],
       ),
     );

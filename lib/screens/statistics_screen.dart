@@ -50,10 +50,11 @@ class StatisticsScreenState extends State<StatisticsScreen> {
         for (final song in songModels) { keyToSongId[Utility.fastHash(song.album, song.title, song.artist)] = song.id; }
 
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            statisticText('textTrackingDate'.t(), _settings.getMonitoringDate()),
-            statisticText('textTotalListenNb'.t(), nbListens.toString()),
-            statisticText('textTotalListenTime'.t(), 'textListeningTime'.t([(listeningTime / 60).toStringAsFixed(0), (listeningTime / 3600).toStringAsFixed(0)])),
+            statisticText('textTotalListenTime'.t(), 'textListeningTime'.t([(listeningTime / 60).toStringAsFixed(0), (listeningTime / 3600).toStringAsFixed(0)]), Icons.access_time_rounded),
+            statisticText('textTotalListenNb'.t(), nbListens.toString(), Icons.remove_red_eye_rounded),
+            statisticText('textTotalSongs'.t([songs.length])),
             Expanded(
               child: Scrollbar(
                 thickness: DesignSystem.scrollbarThickness,
@@ -61,6 +62,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                 radius: const Radius.circular(20),
                 interactive: true,
                 child: ListView.builder(
+                  primary: false,
                   padding: const EdgeInsets.only(right: DesignSystem.scrollbarThickness),
                   itemCount: songs.length,
                   itemBuilder: (context, index) {
@@ -97,14 +99,21 @@ class StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Padding statisticText(String label, String value) {
+  Padding statisticText(String label, [String? value, IconData? icon]) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: Theme.of(context).textTheme.bodyLarge),
-          Text(value, style: Theme.of(context).textTheme.bodyLarge),
+          Wrap(
+            spacing: 10,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (icon != null) Icon(icon, size: 16),
+              Text(label, style: Theme.of(context).textTheme.bodyLarge),
+            ],
+          ),
+          if (value != null) Text(value, style: Theme.of(context).textTheme.bodyLarge),
         ],
       ),
     );

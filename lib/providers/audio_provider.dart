@@ -85,7 +85,7 @@ class AudioProvider extends ChangeNotifier {
   Duration _lastPosition = Duration.zero;
 
   AudioProvider() {
-    getSettings();
+    initSettings();
 
     _audioPlayer.currentIndexStream.listen((int? index) async {
       if (_cLoopMode != CLoopMode.custom || shuffleEnabled) return;
@@ -136,7 +136,7 @@ class AudioProvider extends ChangeNotifier {
     });
   }
 
-  void getSettings() {
+  void initSettings() {
     _cLoopMode = _settings.getCLoopMode();
     _songsPerLoop = _settings.getSongsPerLoop();
     _sortState = _settings.getSortState();

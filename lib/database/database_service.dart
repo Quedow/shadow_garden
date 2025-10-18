@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
@@ -18,16 +17,11 @@ class DatabaseService extends _$DatabaseService {
   static final DatabaseService _instance = DatabaseService._internal();
 
   final SettingsService _settings = SettingsService();
-  final int _maxDateAdded = 30;
-  final int _maxLastListen = 168;
   
-  late double _dumbWeight;
-  late double _smartWeight;
-  double get smartWeight => _smartWeight;
-  void setSmartWeight(double value) async {
-    _smartWeight = value;
-    _dumbWeight = double.parse((1.0 - _smartWeight).toStringAsFixed(2));
-    await _settings.setSmartWeight(value);
+  late List<double> _weights;
+  List<double> get weights => _weights;
+  void setWeights(List<double> values) {
+    _weights = values;
   }
 
   factory DatabaseService() => _instance;
@@ -50,13 +44,12 @@ class DatabaseService extends _$DatabaseService {
   }
 
   void init() {
-    _smartWeight = _settings.getSmartWeight();
-    _dumbWeight = double.parse((1.0 - _smartWeight).toStringAsFixed(2));
+    _weights = _settings.getWeights();
   }
 
   Future<void> updateSong(SongsCompanion song) async {
     await _insertOrUpdateSong(song);
-    await _updateScores();
+    await _updateScores(['nbOfListens', 'listeningTime', 'daysAgo', 'lastListen']);
   }
 
 
@@ -82,39 +75,30 @@ class DatabaseService extends _$DatabaseService {
     }
   }
 
-  Future<void> _updateScores() async {
-    final List<Song> allSongs = await managers.songs.get();
-    final DateTime now = DateTime.now();
+  Future<void> _updateScores(List<String> columns) async {
+    final StringBuffer buffer = StringBuffer();
+    for (int i = 0; i < columns.length; i++) {
+      if (i >= weights.length) break;
 
-    for (Song song in allSongs) {
-      final double smartScore = await _calculateSmartScore(song, allSongs.length, now);
-      final double dumbScore = smartScore <= 0.5 ? _dumbWeight * Random().nextDouble() : 0;
-      await managers.songs.filter((s) => s.id.equals(song.id)).update(
-        (s) => s(
-          score: Value(smartScore + dumbScore),
-        )
-      );
+      final String column = columns[i];
+      final double weight = _weights[i];
+
+      if (i > 0) buffer.write(' + ');
+
+      buffer.write('''
+        $weight * (
+          (SELECT COUNT(*) FROM songs AS s2 WHERE s2.$column < songs.$column)
+          + 0.5 * (SELECT COUNT(*) FROM songs AS s3 WHERE s3.$column = songs.$column)
+        ) / (SELECT COUNT(*) FROM songs)
+      ''');
     }
-  }
 
-  Future<double> _calculateSmartScore(Song song, int totalSongs, DateTime now) async {
-    final int belowSongs = await managers.songs.filter((s) => s.nbOfListens.isSmallerThan(song.nbOfListens)).count();
-    final int equalSongs = await managers.songs.filter((s) => s.nbOfListens.equals(song.nbOfListens)).count();
-    final int listenHoursAgo = now.difference(song.lastListen).inHours;
+    final String sql = '''
+      UPDATE songs
+      SET score = (${buffer.toString()})
+    ''';
 
-    final double addedDateScore = song.daysAgo <= 2 ? 1 : song.daysAgo > _maxDateAdded ? 0 : (-1/_maxDateAdded * song.daysAgo + 1);
-    final double lastListenScore = listenHoursAgo > _maxLastListen ? 0 : (-1/_maxLastListen * listenHoursAgo + 1);
-    final double listeningRate = song.listeningTime / (song.nbOfListens * song.duration);
-    final double percentileRank = (belowSongs + 0.5 * equalSongs) / totalSongs;
-
-    return double.parse((
-      _smartWeight * (
-        0.05 * addedDateScore
-        + 0.05 * lastListenScore
-        + 0.4 * listeningRate
-        + 0.5 * percentileRank
-      )
-    ).toStringAsFixed(3));
+    await customUpdate(sql, updates: {songs});
   }
 
   Future<void> updateDaysAgo(Map<int, int> idToDaysAgo) async {
@@ -143,7 +127,7 @@ class DatabaseService extends _$DatabaseService {
 
     return Statistics(
       totalNbOfListens: result.read(nbOfListensSum) ?? 0,
-      totalListeningTime: result.read(totalListeningTimeSum) ?? 0
+      totalListeningTime: result.read(totalListeningTimeSum) ?? 0,
     );
   }
 
@@ -163,8 +147,8 @@ class DatabaseService extends _$DatabaseService {
     return await managers.songs.filter((s) => s.id.equals(id)).delete() > 0;
   }
 
-  Future<void> clearDatabase([bool keepStats = true]) async {
-    if (keepStats) {
+  Future<void> clearDatabase([bool keepGlobal = true]) async {
+    if (keepGlobal) {
       final Statistics globalStats = await _getGlobalStats();
       await _settings.setGlobalStats(globalStats.totalNbOfListens, globalStats.totalListeningTime);
     } else {

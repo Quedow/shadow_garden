@@ -11,7 +11,7 @@
   "errorNoSongFound": "No music found...",
   "errorLoadingStats": "An error occurred...",
 
-  "textTrackingDate": "Monitoring since",
+  "textTotalSongs": "Spread across {0} songs",
   "textTotalListenNb": "Total number of listens",
   "textTotalListenTime": "Total listening time",
   "textListeningTime": "{0} min ({1} h)",
@@ -20,22 +20,25 @@
   "textNeverListenFirst": "Smart sort",
   "textNeverListenFirstContent": "Put musics never listened at the beginning.",
 
-  "textSortWeight": "Smart sort weight",
-  "textSortWeightContent": "Choose the importance of the smart sort compared to the random sort. Increasing the dumb side will bring back into fashion music that is rarely listened to or liked.",
-  "textSmartWeight": "Smart side",
-  "textDumbWeight": "Dumb side",
+  "textSortWeight": "Smart sort weights",
+  "textSortWeightContent": "Adjust the balance between number of listening (NoL), listening time (LT), added date (AD), and last listen (LL). Each thumb controls how much that factor impacts the smart sort.",
+  "textNumberOfListensRate": "NoL",
+  "textListeningTimeRate": "LT",
+  "textDaysAgoRate": "AD",
+  "textLastListenRate": "LL",
 
   "textWhitelist": "Whitelist music",
   "textWhitelistContent": "Only the content of whitelist folders is displayed.",
 
   "textDeletePrefs": "Delete preferences",
-  "textDeletePrefsContent": "Preference settings such as loop mode, sort mode or number of song per loop will be reset default values.",
+  "textDeletePrefsContent": "Preferences and settings will be reset default values.",
 
   "textDeleteData": "Delete music data",
-  "textDeleteDataContent": "Listening data will be delete to reset smart sort (save global statistics).",
+  "textDeleteDataContent": "Listening data will be deleted to reset smart sort (you can keep global statistics).",
 
-  "textDeleteGlobalStats": "Delete global statistics",
-  "textDeleteGlobalStatsContent": "Total number of listens and total listening time will be reset.",
+  "textConfirmDeleteAll": "Delete all",
+  "textConfirmKeepGlobal": "Keep global statistics",
+  "textCancelDeletion": "Cancel",
 
   "textExport": "Export data",
   "textExportContent": "Export songs statistics.",

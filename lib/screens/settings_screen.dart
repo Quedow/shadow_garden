@@ -6,6 +6,7 @@ import 'package:shadow_garden/providers/settings_service.dart';
 import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/widgets/overlays.dart';
 import 'package:shadow_garden/widgets/settings_components.dart';
+import 'package:shadow_garden/widgets/settings_multi_slider.dart';
 
 class SettingsScreen extends StatefulWidget {
   final AudioProvider audioProvider;
@@ -20,13 +21,16 @@ class SettingsScreenState extends State<SettingsScreen> {
   late final AudioProvider _audioProvider;
   final SettingsService _settings = SettingsService();
   final DatabaseService _db = DatabaseService();
+
   late List<String> _whitelist;
+  late List<double> _weights;
 
   @override
   void initState() {
     super.initState();
     _audioProvider = widget.audioProvider;
     _whitelist = _settings.getWhiteList();
+    _weights = _settings.getWeights();
   }
 
   @override
@@ -41,13 +45,17 @@ class SettingsScreenState extends State<SettingsScreen> {
             value :_audioProvider.neverListenedFirst, 
             onChanged: _setNeverListenedFirst,
           ),
-          SettingSliderTile(
-            label: 'textSortWeight'.t(),
+          SettingMultiSlider(
+            title: 'textSortWeight'.t(),
             description: 'textSortWeightContent'.t(),
-            value: _db.smartWeight,
-            onChanged: _setSmartWeight,
-            leftLabel: 'textSmartWeight'.t(),
-            rightLabel: 'textDumbWeight'.t(),
+            labels: [
+              'textNumberOfListensRate'.t(),
+              'textListeningTimeRate'.t(),
+              'textDaysAgoRate'.t(),
+              'textLastListenRate'.t(),
+            ],
+            values: _weights,
+            onChanged: _setWeights,
           ),
           SettingIconButtonTile(
             label: 'textWhitelist'.t(),
@@ -66,13 +74,14 @@ class SettingsScreenState extends State<SettingsScreen> {
             label: 'textDeleteData'.t(),
             description: 'textDeleteDataContent'.t(),
             icon: Icons.delete_rounded,
-            onPressed: () => Dialogs.deletionDialog(context, _clearDatabase),
-          ),
-          SettingIconButtonTile(
-            label: 'textDeleteGlobalStats'.t(),
-            description: 'textDeleteGlobalStatsContent'.t(),
-            icon: Icons.delete_rounded,
-            onPressed: () => Dialogs.deletionDialog(context, _settings.clearGlobalStats),
+            onPressed: () => Dialogs.deletionDialogAdvanced(
+              context,
+              actions: [
+                  { Text('textConfirmDeleteAll'.t()): () => _clearDatabase(false) },
+                  { Text('textConfirmKeepGlobal'.t()): () => _clearDatabase(true) },
+                  { Text('textCancelDeletion'.t()): null },
+              ],
+            ),
           ),
           SettingIconButtonTile(
             label: 'textImport'.t(),
@@ -95,16 +104,15 @@ class SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _setSmartWeight(double value) {
+  void _setNeverListenedFirst(bool value) {
     setState(() {
-      _db.setSmartWeight(value);
+      _audioProvider.setNeverListenedFirst(value);
     });
   }
 
-  void _setNeverListenedFirst(bool value) {
-    setState(() {
-      widget.audioProvider.setNeverListenedFirst(value);
-    });
+  void _setWeights(List<double> values) async {
+    await _settings.setWeights(values);
+    _db.setWeights(values);
   }
 
   Future<void> _pickFolder() async {
@@ -123,15 +131,16 @@ class SettingsScreenState extends State<SettingsScreen> {
 
   void _clearSettings() async {
     await _settings.clearSettings();
-    widget.audioProvider.getSettings();
-    _whitelist = _settings.getWhiteList();
-    _db.setSmartWeight(_settings.getSmartWeight());
-    setState(() {});
+    _audioProvider.initSettings();
+    setState(() {
+      _whitelist = _settings.getWhiteList();
+      _weights = _settings.getWeights();
+    });
+    _db.setWeights(_weights);
   }
 
-  void _clearDatabase() async {
-    await _db.clearDatabase();
-    await _settings.setMonitoringDate();
+  void _clearDatabase(bool keepGlobal) async {
+    await _db.clearDatabase(keepGlobal);
   }
 
   Future<void> _importData() async {
@@ -172,7 +181,7 @@ class SettingsScreenState extends State<SettingsScreen> {
           child: Image.asset('assets/icons/shadow_garden_icon.png', height: 50),
         ),
       ),
-      applicationVersion: '2509.1.9.0'
+      applicationVersion: '2509.1.10.0',
     );
   }
 }
