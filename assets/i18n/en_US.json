@@ -21,7 +21,7 @@
   "textNeverListenFirstContent": "Put musics never listened at the beginning.",
 
   "textSortWeight": "Smart sort weights",
-  "textSortWeightContent": "Adjust the balance between number of listening (NoL), listening time (LT), added date (AD), and last listen (LL). Each thumb controls how much that factor impacts the smart sort.",
+  "textSortWeightContent": "Adjust how each factor influences the smart sort: number of listens (NoL) and listening time (LT) boost frequently played songs, added date (AD) favors older tracks, and last listen (LL) highlights recently played ones.",
   "textNumberOfListensRate": "NoL",
   "textListeningTimeRate": "LT",
   "textDaysAgoRate": "AD",

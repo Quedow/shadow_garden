@@ -9,6 +9,7 @@ import 'package:shadow_garden/models/songs.dart';
 import 'package:shadow_garden/providers/settings_service.dart';
 import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/utils/utility.dart';
+import 'package:shadow_garden/database/database_service.steps.dart';
 
 part 'database_service.g.dart';
 
@@ -29,7 +30,23 @@ class DatabaseService extends _$DatabaseService {
   DatabaseService._internal() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration {
+    return MigrationStrategy(
+      onUpgrade: stepByStep(
+        from1To2: (m, schema) async {
+          await customStatement('ALTER TABLE Songs ADD COLUMN addedDate INTEGER;');
+          await customStatement('''
+            UPDATE Songs
+            SET addedDate = CAST(strftime('%s', 'now', '-' || daysAgo || ' days') AS INTEGER)
+          ''');
+          await m.dropColumn(songs, 'daysAgo');
+        },
+      ),
+    );
+  }
 
   static QueryExecutor _openConnection() {
     return driftDatabase(
@@ -49,7 +66,7 @@ class DatabaseService extends _$DatabaseService {
 
   Future<void> updateSong(SongsCompanion song) async {
     await _insertOrUpdateSong(song);
-    await _updateScores(['nbOfListens', 'listeningTime', 'daysAgo', 'lastListen']);
+    await _updateScores(['nbOfListens', 'listeningTime', 'addedDate', 'lastListen']);
   }
 
 
@@ -85,9 +102,11 @@ class DatabaseService extends _$DatabaseService {
 
       if (i > 0) buffer.write(' + ');
 
+      final String comparator = column == 'addedDate' ? '>' : '<';
+
       buffer.write('''
         $weight * (
-          (SELECT COUNT(*) FROM songs AS s2 WHERE s2.$column < songs.$column)
+          (SELECT COUNT(*) FROM songs AS s2 WHERE s2.$column $comparator songs.$column)
           + 0.5 * (SELECT COUNT(*) FROM songs AS s3 WHERE s3.$column = songs.$column)
         ) / (SELECT COUNT(*) FROM songs)
       ''');
@@ -99,19 +118,6 @@ class DatabaseService extends _$DatabaseService {
     ''';
 
     await customUpdate(sql, updates: {songs});
-  }
-
-  Future<void> updateDaysAgo(Map<int, int> idToDaysAgo) async {
-    for (MapEntry<int, int> entry in idToDaysAgo.entries) {
-      final bool exists = await managers.songs.filter((s) => s.id.equals(entry.key)).exists();
-      if (exists) {
-        await managers.songs.filter((s) => s.id.equals(entry.key)).update(
-          (s) => s(
-            daysAgo: Value(entry.value),
-          )
-        );
-      }
-    }
   }
 
   Future<List<int>> getRanking() async {

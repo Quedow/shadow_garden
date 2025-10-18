@@ -127,7 +127,7 @@ class AudioProvider extends ChangeNotifier {
             key: Value(key),
             title: Value(currentSong.title),
             duration: Value(duration),
-            daysAgo: Value(_getDays(currentSong.dateAdded)),
+            addedDate: Value(DateTime.now()),
             listeningTime: Value(_lastPosition.inSeconds),
             lastListen: Value(DateTime.now()),
           ));
@@ -169,7 +169,6 @@ class AudioProvider extends ChangeNotifier {
 
       await _sortSongs(_sortState, initialIndex: _settings.getLastIndex());
       _loadArtworkInBackground(audioQuery);
-      await _updateDaysAgo();
       return true;
     } catch (e) {
       return false;
@@ -282,17 +281,5 @@ class AudioProvider extends ChangeNotifier {
       final int keyB = Utility.fastHash(b.album, b.title, b.artist);
       return (keyToRank[keyA] ?? sortPosition).compareTo(keyToRank[keyB] ?? sortPosition);
     });
-  }
-
-  Future<void> _updateDaysAgo() async {
-    final Map<int, int> idToDaysAgo = Map.fromEntries(
-      _songs.map((song) => MapEntry(song.id, _getDays(song.dateAdded)))
-    );
-    await _db.updateDaysAgo(idToDaysAgo);
-  }
-
-  int _getDays(int? dateAdded) {
-    final DateTime date = DateTime.fromMillisecondsSinceEpoch((dateAdded ?? 30) * 1000, isUtc: true);
-    return DateTime.now().difference(date).inDays;
   }
 }

@@ -33,12 +33,6 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
   late final GeneratedColumn<int> duration = GeneratedColumn<int>(
       'duration', aliasedName, false,
       type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _daysAgoMeta =
-      const VerificationMeta('daysAgo');
-  @override
-  late final GeneratedColumn<int> daysAgo = GeneratedColumn<int>(
-      'daysAgo', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _listeningTimeMeta =
       const VerificationMeta('listeningTime');
   @override
@@ -50,6 +44,12 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
   @override
   late final GeneratedColumn<DateTime> lastListen = GeneratedColumn<DateTime>(
       'lastListen', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _addedDateMeta =
+      const VerificationMeta('addedDate');
+  @override
+  late final GeneratedColumn<DateTime> addedDate = GeneratedColumn<DateTime>(
+      'addedDate', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
   static const VerificationMeta _nbOfListensMeta =
       const VerificationMeta('nbOfListens');
@@ -72,9 +72,9 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
         key,
         title,
         duration,
-        daysAgo,
         listeningTime,
         lastListen,
+        addedDate,
         nbOfListens,
         score
       ];
@@ -109,12 +109,6 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
     } else if (isInserting) {
       context.missing(_durationMeta);
     }
-    if (data.containsKey('daysAgo')) {
-      context.handle(_daysAgoMeta,
-          daysAgo.isAcceptableOrUnknown(data['daysAgo']!, _daysAgoMeta));
-    } else if (isInserting) {
-      context.missing(_daysAgoMeta);
-    }
     if (data.containsKey('listeningTime')) {
       context.handle(
           _listeningTimeMeta,
@@ -130,6 +124,12 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
               data['lastListen']!, _lastListenMeta));
     } else if (isInserting) {
       context.missing(_lastListenMeta);
+    }
+    if (data.containsKey('addedDate')) {
+      context.handle(_addedDateMeta,
+          addedDate.isAcceptableOrUnknown(data['addedDate']!, _addedDateMeta));
+    } else if (isInserting) {
+      context.missing(_addedDateMeta);
     }
     if (data.containsKey('nbOfListens')) {
       context.handle(
@@ -158,12 +158,12 @@ class $SongsTable extends Songs with TableInfo<$SongsTable, Song> {
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       duration: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}duration'])!,
-      daysAgo: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}daysAgo'])!,
       listeningTime: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}listeningTime'])!,
       lastListen: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}lastListen'])!,
+      addedDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}addedDate'])!,
       nbOfListens: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}nbOfListens'])!,
       score: attachedDatabase.typeMapping
@@ -182,9 +182,9 @@ class Song extends DataClass implements Insertable<Song> {
   final int key;
   final String title;
   final int duration;
-  final int daysAgo;
   final int listeningTime;
   final DateTime lastListen;
+  final DateTime addedDate;
   final int nbOfListens;
   final double score;
   const Song(
@@ -192,9 +192,9 @@ class Song extends DataClass implements Insertable<Song> {
       required this.key,
       required this.title,
       required this.duration,
-      required this.daysAgo,
       required this.listeningTime,
       required this.lastListen,
+      required this.addedDate,
       required this.nbOfListens,
       required this.score});
   @override
@@ -204,9 +204,9 @@ class Song extends DataClass implements Insertable<Song> {
     map['key'] = Variable<int>(key);
     map['title'] = Variable<String>(title);
     map['duration'] = Variable<int>(duration);
-    map['daysAgo'] = Variable<int>(daysAgo);
     map['listeningTime'] = Variable<int>(listeningTime);
     map['lastListen'] = Variable<DateTime>(lastListen);
+    map['addedDate'] = Variable<DateTime>(addedDate);
     map['nbOfListens'] = Variable<int>(nbOfListens);
     map['score'] = Variable<double>(score);
     return map;
@@ -218,9 +218,9 @@ class Song extends DataClass implements Insertable<Song> {
       key: Value(key),
       title: Value(title),
       duration: Value(duration),
-      daysAgo: Value(daysAgo),
       listeningTime: Value(listeningTime),
       lastListen: Value(lastListen),
+      addedDate: Value(addedDate),
       nbOfListens: Value(nbOfListens),
       score: Value(score),
     );
@@ -234,9 +234,9 @@ class Song extends DataClass implements Insertable<Song> {
       key: serializer.fromJson<int>(json['key']),
       title: serializer.fromJson<String>(json['title']),
       duration: serializer.fromJson<int>(json['duration']),
-      daysAgo: serializer.fromJson<int>(json['daysAgo']),
       listeningTime: serializer.fromJson<int>(json['listeningTime']),
       lastListen: serializer.fromJson<DateTime>(json['lastListen']),
+      addedDate: serializer.fromJson<DateTime>(json['addedDate']),
       nbOfListens: serializer.fromJson<int>(json['nbOfListens']),
       score: serializer.fromJson<double>(json['score']),
     );
@@ -249,9 +249,9 @@ class Song extends DataClass implements Insertable<Song> {
       'key': serializer.toJson<int>(key),
       'title': serializer.toJson<String>(title),
       'duration': serializer.toJson<int>(duration),
-      'daysAgo': serializer.toJson<int>(daysAgo),
       'listeningTime': serializer.toJson<int>(listeningTime),
       'lastListen': serializer.toJson<DateTime>(lastListen),
+      'addedDate': serializer.toJson<DateTime>(addedDate),
       'nbOfListens': serializer.toJson<int>(nbOfListens),
       'score': serializer.toJson<double>(score),
     };
@@ -262,9 +262,9 @@ class Song extends DataClass implements Insertable<Song> {
           int? key,
           String? title,
           int? duration,
-          int? daysAgo,
           int? listeningTime,
           DateTime? lastListen,
+          DateTime? addedDate,
           int? nbOfListens,
           double? score}) =>
       Song(
@@ -272,9 +272,9 @@ class Song extends DataClass implements Insertable<Song> {
         key: key ?? this.key,
         title: title ?? this.title,
         duration: duration ?? this.duration,
-        daysAgo: daysAgo ?? this.daysAgo,
         listeningTime: listeningTime ?? this.listeningTime,
         lastListen: lastListen ?? this.lastListen,
+        addedDate: addedDate ?? this.addedDate,
         nbOfListens: nbOfListens ?? this.nbOfListens,
         score: score ?? this.score,
       );
@@ -284,12 +284,12 @@ class Song extends DataClass implements Insertable<Song> {
       key: data.key.present ? data.key.value : this.key,
       title: data.title.present ? data.title.value : this.title,
       duration: data.duration.present ? data.duration.value : this.duration,
-      daysAgo: data.daysAgo.present ? data.daysAgo.value : this.daysAgo,
       listeningTime: data.listeningTime.present
           ? data.listeningTime.value
           : this.listeningTime,
       lastListen:
           data.lastListen.present ? data.lastListen.value : this.lastListen,
+      addedDate: data.addedDate.present ? data.addedDate.value : this.addedDate,
       nbOfListens:
           data.nbOfListens.present ? data.nbOfListens.value : this.nbOfListens,
       score: data.score.present ? data.score.value : this.score,
@@ -303,9 +303,9 @@ class Song extends DataClass implements Insertable<Song> {
           ..write('key: $key, ')
           ..write('title: $title, ')
           ..write('duration: $duration, ')
-          ..write('daysAgo: $daysAgo, ')
           ..write('listeningTime: $listeningTime, ')
           ..write('lastListen: $lastListen, ')
+          ..write('addedDate: $addedDate, ')
           ..write('nbOfListens: $nbOfListens, ')
           ..write('score: $score')
           ..write(')'))
@@ -313,8 +313,8 @@ class Song extends DataClass implements Insertable<Song> {
   }
 
   @override
-  int get hashCode => Object.hash(id, key, title, duration, daysAgo,
-      listeningTime, lastListen, nbOfListens, score);
+  int get hashCode => Object.hash(id, key, title, duration, listeningTime,
+      lastListen, addedDate, nbOfListens, score);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -323,9 +323,9 @@ class Song extends DataClass implements Insertable<Song> {
           other.key == this.key &&
           other.title == this.title &&
           other.duration == this.duration &&
-          other.daysAgo == this.daysAgo &&
           other.listeningTime == this.listeningTime &&
           other.lastListen == this.lastListen &&
+          other.addedDate == this.addedDate &&
           other.nbOfListens == this.nbOfListens &&
           other.score == this.score);
 }
@@ -335,9 +335,9 @@ class SongsCompanion extends UpdateCompanion<Song> {
   final Value<int> key;
   final Value<String> title;
   final Value<int> duration;
-  final Value<int> daysAgo;
   final Value<int> listeningTime;
   final Value<DateTime> lastListen;
+  final Value<DateTime> addedDate;
   final Value<int> nbOfListens;
   final Value<double> score;
   const SongsCompanion({
@@ -345,9 +345,9 @@ class SongsCompanion extends UpdateCompanion<Song> {
     this.key = const Value.absent(),
     this.title = const Value.absent(),
     this.duration = const Value.absent(),
-    this.daysAgo = const Value.absent(),
     this.listeningTime = const Value.absent(),
     this.lastListen = const Value.absent(),
+    this.addedDate = const Value.absent(),
     this.nbOfListens = const Value.absent(),
     this.score = const Value.absent(),
   });
@@ -356,25 +356,25 @@ class SongsCompanion extends UpdateCompanion<Song> {
     required int key,
     required String title,
     required int duration,
-    required int daysAgo,
     required int listeningTime,
     required DateTime lastListen,
+    required DateTime addedDate,
     this.nbOfListens = const Value.absent(),
     this.score = const Value.absent(),
   })  : key = Value(key),
         title = Value(title),
         duration = Value(duration),
-        daysAgo = Value(daysAgo),
         listeningTime = Value(listeningTime),
-        lastListen = Value(lastListen);
+        lastListen = Value(lastListen),
+        addedDate = Value(addedDate);
   static Insertable<Song> custom({
     Expression<int>? id,
     Expression<int>? key,
     Expression<String>? title,
     Expression<int>? duration,
-    Expression<int>? daysAgo,
     Expression<int>? listeningTime,
     Expression<DateTime>? lastListen,
+    Expression<DateTime>? addedDate,
     Expression<int>? nbOfListens,
     Expression<double>? score,
   }) {
@@ -383,9 +383,9 @@ class SongsCompanion extends UpdateCompanion<Song> {
       if (key != null) 'key': key,
       if (title != null) 'title': title,
       if (duration != null) 'duration': duration,
-      if (daysAgo != null) 'daysAgo': daysAgo,
       if (listeningTime != null) 'listeningTime': listeningTime,
       if (lastListen != null) 'lastListen': lastListen,
+      if (addedDate != null) 'addedDate': addedDate,
       if (nbOfListens != null) 'nbOfListens': nbOfListens,
       if (score != null) 'score': score,
     });
@@ -396,9 +396,9 @@ class SongsCompanion extends UpdateCompanion<Song> {
       Value<int>? key,
       Value<String>? title,
       Value<int>? duration,
-      Value<int>? daysAgo,
       Value<int>? listeningTime,
       Value<DateTime>? lastListen,
+      Value<DateTime>? addedDate,
       Value<int>? nbOfListens,
       Value<double>? score}) {
     return SongsCompanion(
@@ -406,9 +406,9 @@ class SongsCompanion extends UpdateCompanion<Song> {
       key: key ?? this.key,
       title: title ?? this.title,
       duration: duration ?? this.duration,
-      daysAgo: daysAgo ?? this.daysAgo,
       listeningTime: listeningTime ?? this.listeningTime,
       lastListen: lastListen ?? this.lastListen,
+      addedDate: addedDate ?? this.addedDate,
       nbOfListens: nbOfListens ?? this.nbOfListens,
       score: score ?? this.score,
     );
@@ -429,14 +429,14 @@ class SongsCompanion extends UpdateCompanion<Song> {
     if (duration.present) {
       map['duration'] = Variable<int>(duration.value);
     }
-    if (daysAgo.present) {
-      map['daysAgo'] = Variable<int>(daysAgo.value);
-    }
     if (listeningTime.present) {
       map['listeningTime'] = Variable<int>(listeningTime.value);
     }
     if (lastListen.present) {
       map['lastListen'] = Variable<DateTime>(lastListen.value);
+    }
+    if (addedDate.present) {
+      map['addedDate'] = Variable<DateTime>(addedDate.value);
     }
     if (nbOfListens.present) {
       map['nbOfListens'] = Variable<int>(nbOfListens.value);
@@ -454,9 +454,9 @@ class SongsCompanion extends UpdateCompanion<Song> {
           ..write('key: $key, ')
           ..write('title: $title, ')
           ..write('duration: $duration, ')
-          ..write('daysAgo: $daysAgo, ')
           ..write('listeningTime: $listeningTime, ')
           ..write('lastListen: $lastListen, ')
+          ..write('addedDate: $addedDate, ')
           ..write('nbOfListens: $nbOfListens, ')
           ..write('score: $score')
           ..write(')'))
@@ -482,9 +482,9 @@ typedef $$SongsTableCreateCompanionBuilder = SongsCompanion Function({
   required int key,
   required String title,
   required int duration,
-  required int daysAgo,
   required int listeningTime,
   required DateTime lastListen,
+  required DateTime addedDate,
   Value<int> nbOfListens,
   Value<double> score,
 });
@@ -493,9 +493,9 @@ typedef $$SongsTableUpdateCompanionBuilder = SongsCompanion Function({
   Value<int> key,
   Value<String> title,
   Value<int> duration,
-  Value<int> daysAgo,
   Value<int> listeningTime,
   Value<DateTime> lastListen,
+  Value<DateTime> addedDate,
   Value<int> nbOfListens,
   Value<double> score,
 });
@@ -521,14 +521,14 @@ class $$SongsTableFilterComposer
   ColumnFilters<int> get duration => $composableBuilder(
       column: $table.duration, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get daysAgo => $composableBuilder(
-      column: $table.daysAgo, builder: (column) => ColumnFilters(column));
-
   ColumnFilters<int> get listeningTime => $composableBuilder(
       column: $table.listeningTime, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get lastListen => $composableBuilder(
       column: $table.lastListen, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get addedDate => $composableBuilder(
+      column: $table.addedDate, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get nbOfListens => $composableBuilder(
       column: $table.nbOfListens, builder: (column) => ColumnFilters(column));
@@ -558,15 +558,15 @@ class $$SongsTableOrderingComposer
   ColumnOrderings<int> get duration => $composableBuilder(
       column: $table.duration, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get daysAgo => $composableBuilder(
-      column: $table.daysAgo, builder: (column) => ColumnOrderings(column));
-
   ColumnOrderings<int> get listeningTime => $composableBuilder(
       column: $table.listeningTime,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<DateTime> get lastListen => $composableBuilder(
       column: $table.lastListen, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get addedDate => $composableBuilder(
+      column: $table.addedDate, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get nbOfListens => $composableBuilder(
       column: $table.nbOfListens, builder: (column) => ColumnOrderings(column));
@@ -596,14 +596,14 @@ class $$SongsTableAnnotationComposer
   GeneratedColumn<int> get duration =>
       $composableBuilder(column: $table.duration, builder: (column) => column);
 
-  GeneratedColumn<int> get daysAgo =>
-      $composableBuilder(column: $table.daysAgo, builder: (column) => column);
-
   GeneratedColumn<int> get listeningTime => $composableBuilder(
       column: $table.listeningTime, builder: (column) => column);
 
   GeneratedColumn<DateTime> get lastListen => $composableBuilder(
       column: $table.lastListen, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get addedDate =>
+      $composableBuilder(column: $table.addedDate, builder: (column) => column);
 
   GeneratedColumn<int> get nbOfListens => $composableBuilder(
       column: $table.nbOfListens, builder: (column) => column);
@@ -639,9 +639,9 @@ class $$SongsTableTableManager extends RootTableManager<
             Value<int> key = const Value.absent(),
             Value<String> title = const Value.absent(),
             Value<int> duration = const Value.absent(),
-            Value<int> daysAgo = const Value.absent(),
             Value<int> listeningTime = const Value.absent(),
             Value<DateTime> lastListen = const Value.absent(),
+            Value<DateTime> addedDate = const Value.absent(),
             Value<int> nbOfListens = const Value.absent(),
             Value<double> score = const Value.absent(),
           }) =>
@@ -650,9 +650,9 @@ class $$SongsTableTableManager extends RootTableManager<
             key: key,
             title: title,
             duration: duration,
-            daysAgo: daysAgo,
             listeningTime: listeningTime,
             lastListen: lastListen,
+            addedDate: addedDate,
             nbOfListens: nbOfListens,
             score: score,
           ),
@@ -661,9 +661,9 @@ class $$SongsTableTableManager extends RootTableManager<
             required int key,
             required String title,
             required int duration,
-            required int daysAgo,
             required int listeningTime,
             required DateTime lastListen,
+            required DateTime addedDate,
             Value<int> nbOfListens = const Value.absent(),
             Value<double> score = const Value.absent(),
           }) =>
@@ -672,9 +672,9 @@ class $$SongsTableTableManager extends RootTableManager<
             key: key,
             title: title,
             duration: duration,
-            daysAgo: daysAgo,
             listeningTime: listeningTime,
             lastListen: lastListen,
+            addedDate: addedDate,
             nbOfListens: nbOfListens,
             score: score,
           ),

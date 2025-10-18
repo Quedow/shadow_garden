@@ -6,7 +6,7 @@ class Songs extends Table {
   IntColumn get key => integer()();
   TextColumn get title => text()();
   IntColumn get duration => integer()();
-  IntColumn get daysAgo => integer()();
+  DateTimeColumn get addedDate => dateTime()();
   IntColumn get listeningTime => integer()();
   DateTimeColumn get lastListen => dateTime()();
   IntColumn get nbOfListens => integer().withDefault(const Constant(1))();

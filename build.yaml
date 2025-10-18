@@ -5,3 +5,5 @@ targets:
         options:
           # mutable_classes: true
           case_from_dart_to_sql: preserve
+          databases:
+            skuld_db: lib/database/database_service.dart

@@ -69,6 +69,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                     final Song song = songs[index];
                     final int? songId = keyToSongId[song.key];
 
+                    final int daysAgo = DateTime.now().difference(song.addedDate).inDays;
                     return ListTile(
                       dense: true,
                       contentPadding: const EdgeInsets.only(left: 16, top: 4, right: 0, bottom: 4),
@@ -78,7 +79,7 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
                       subtitle: TitleText(
-                        title: 'textSongStats'.t([song.nbOfListens, (song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0), (song.daysAgo ~/ 30)]),
+                        title: 'textSongStats'.t([song.nbOfListens, (song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0), (daysAgo ~/ 30)]),
                         textStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Theme.of(context).colorScheme.tertiary),
                       ),
                       trailing: IconButton(
