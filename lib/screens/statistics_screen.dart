@@ -77,9 +77,13 @@ class StatisticsScreenState extends State<StatisticsScreen> {
                       dense: true,
                       contentPadding: const EdgeInsets.only(left: 16, top: 4, right: 0, bottom: 4),
                       leading: songId != null ? SongArtwork(songId: songId, imgWidth: DesignSystem.artworkSmallSize) : const ErrorArtwork(imgWidth: DesignSystem.artworkSmallSize),
-                      title: TitleText(
-                        title: '${song.score.toStringAsFixed(3)} - ${song.title}',
-                        textStyle: Theme.of(context).textTheme.labelLarge,
+                      title: Row(
+                        spacing: 50,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(child: TitleText(title: song.title, textStyle: Theme.of(context).textTheme.labelLarge)),
+                          TitleText(title: song.score.toStringAsFixed(3), textStyle: Theme.of(context).textTheme.labelLarge),
+                        ],
                       ),
                       subtitle: TitleText(
                         title: 'textSongStats'.t([song.nbOfListens, (song.listeningTime / (song.nbOfListens * song.duration) * 100).toStringAsFixed(0), (daysAgo ~/ 30)]),
