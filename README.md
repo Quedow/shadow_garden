@@ -2,8 +2,6 @@
 
 > February 2024 to now
 
-Download [link](https://github.com/Quedow/projects/releases)
-
 **Elevating Your Music Experience with Shadow Garden: The Smart Music Player App**
 
 <p align="center">
