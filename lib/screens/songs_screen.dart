@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:on_audio_query_forked/on_audio_query.dart';
 import 'package:shadow_garden/utils/translator.dart';
 import 'package:shadow_garden/widgets/artworks.dart';
 import 'package:shadow_garden/widgets/text_display.dart';
@@ -107,17 +106,17 @@ class SongsScreenState extends State<SongsScreen> {
     );
   }
 
-  void searchFor(String query) {    
-    if (query.isEmpty) { 
+  void searchFor(String query) {
+    if (query.isEmpty) {
       _songIndexes.clear();
     } else {
       String lowerCaseQuery = query.toLowerCase();
-      _songIndexes = widget.audioProvider.songs.asMap().entries.where(
+      _songIndexes = _audioPlayer.sequence.asMap().entries.where(
         (entry) {
-          SongModel song = entry.value;
-          return (song.title.toLowerCase().contains(lowerCaseQuery)) ||
-            (song.album != null && song.album!.toLowerCase().contains(lowerCaseQuery)) ||
-            (song.artist != null && song.artist!.toLowerCase().contains(lowerCaseQuery));
+          final MediaItem tag = entry.value.tag;
+          return (tag.title.toLowerCase().contains(lowerCaseQuery)) ||
+            (tag.album != null && tag.album!.toLowerCase().contains(lowerCaseQuery)) ||
+            (tag.artist != null && tag.artist!.toLowerCase().contains(lowerCaseQuery));
         },
       ).map((entry) => entry.key).toList();
 
